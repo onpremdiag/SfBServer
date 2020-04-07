@@ -45,8 +45,8 @@ found here:
 
 # Support
 If you encounter an issue with OPD for Skype for Business Server, please select the appropriate link below:
-- <a href="mailto:opd-support@microsoft.com?subject=[OPD QUESTION] General Questions">General questions</a>
-- <a href="mailto:opd-support@microsoft.com?subject=[OPD BUG] Encountered an exception/bug during use">Bug/Exception</a>
+- <a href="mailto:pop-sfbsupport@microsoft.com?subject=[OPD QUESTION] General Questions">General questions</a>
+- <a href="mailto:pop-sfbsupport@microsoft.com?subject=[OPD BUG] Encountered an exception/bug during use">Bug/Exception</a>
   - Please include the following in your bug/exception report
     - Version of OPD for Skype for Business Server - this can be found in the title bar of the console window. Or, you can run OPD with the -DiagnosticData option and paste the output (already in your clipboard) into the bug.
     - Screen shot of error/exception
