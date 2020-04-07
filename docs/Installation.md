@@ -48,7 +48,7 @@ Now, you are ready to copy the contents of the file to your installation folder.
 2. Open another window to the destination folder that will contain OPD
 3. Copy all of the files from the source folder to the destination folder
 
-	<img src="./media/copyfiles.gif" alt="Copy files from source to destination" />
+	<img src="./media/CopyFiles.gif" alt="Copy files from source to destination" />
 
 4. Open a PowerShell command window in the installation folder. OPD requires an administrative instance to execute the scenario properly. One of the first
 checks that it will do is to determine if you are running under an administrative context. If not, it will re-start PowerShell
