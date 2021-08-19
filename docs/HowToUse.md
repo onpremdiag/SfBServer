@@ -55,4 +55,6 @@ to check on the status of the issue. If a rule fails, you will be provided with 
 In our example we are faced with a situation where our Federation is not working in a hybrid deployment. We select option 1
 to analyze the various pieces/parts that are required for successful federation. Here are the results that we get:
 
-From this, we can see that remote user access is disabled. We are instructed on where to get further assistance on resolving this issue.
+<img src="./media/FederationIsNotWorking-Hybrid.png" alt="Active directory imports are failing" />
+
+  From this, we can see that remote user access is disabled. We are instructed on where to get further assistance on resolving this issue.
