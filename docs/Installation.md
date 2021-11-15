@@ -31,7 +31,7 @@ To download the release, simply follow these steps:
 
 ### Downloading
 
-1. Select the release (zip file) that you want to download from GitHub or you can [download the latest release by clicking here](https://github.com/onpremdiag/SfBServer/releases/download/1.4.2102.17005/1.4.2102.17005.zip)
+1. Select the release (zip file) that you want to download from GitHub or you can [download the latest release by clicking here](https://github.com/onpremdiag/SfBServer/releases/download/1.6.2110.01001/1.6.2110.01001.zip)
 
 	<img src="./media/selectrelease.png" alt="Select the release to download" />
 
