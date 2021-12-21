@@ -17,7 +17,7 @@ The **O**n **P**remise **D**iagnostic (**OPD**) for Skype for Business is a coll
   <tr>
     <td> Download latest release </td>
     <td> 
-        <a href="https://github.com/onpremdiag/SfBServer/releases/download/1.6.2110.01001/1.6.2110.01001.zip">
+        <a href="https://github.com/onpremdiag/SfBServer/releases/download/1.7.2112.21001/1.7.2112.21001.zip">
             <img alt="Download latest release" src="https://img.shields.io/github/v/release/onpremdiag/sfbserver?label=latest%20version&style=plastic" /> <br>
         </a>
     </td>
