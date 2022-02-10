@@ -11,19 +11,13 @@ pool:
 
 steps:
 - task: PowerShell@2
-  displayName: Set the product here
-  inputs:
-    targetType: 'inline'
-    script: |
-      $buildProduct = 'SfBServer'
-- task: PowerShell@2
   displayName: What kind of build is it?
   inputs:
     targetType: 'inline'
     script: |
       $alias = $env:BUILD_REQUESTEDFOREMAIL.Split('@')[0]
       $buildPrefix = '{0}_{1}' -f $alias, $env:BUILD_SOURCEBRANCHNAME
-      
+      $buildProduct = 'SfBServer'
       Write-Host "##vso[task.setvariable variable=BUILD_PREFIX]$buildPrefix"
       Write-Host "##vso[task.setvariable variable=BUILD_PRODUCT]$buildProduct"
 - task: PowerShell@2
