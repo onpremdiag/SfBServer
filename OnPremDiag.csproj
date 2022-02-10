@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>6CAFC0C6-A428-4d30-A9F9-700E829FEA51</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MyApplication</RootNamespace>
+    <AssemblyName>MyApplication</AssemblyName>
+    <Name>OnPremDiag</Name>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="ApplyVersionToConsole.ps1" />
+    <Compile Include="build.ps1" />
+    <Compile Include="build_utils.ps1" />
+    <Compile Include="PSScriptAnalyzerSettings.psd1" />
+    <Compile Include="src\AdminTest.ps1" />
+    <Compile Include="src\analyzers\samples\LawnMower\ADBattery.ps1" />
+    <Compile Include="src\analyzers\samples\LawnMower\ADBelt.ps1" />
+    <Compile Include="src\analyzers\samples\LawnMower\ADBlade.ps1" />
+    <Compile Include="src\analyzers\samples\LawnMower\ADEngine.ps1" />
+    <Compile Include="src\analyzers\samples\LawnMower\ADFuel.ps1" />
+    <Compile Include="src\analyzers\samples\LawnMower\ADSensor.ps1" />
+    <Compile Include="src\analyzers\SharePoint\ADLogonAsBatchJobRightCheck.ps1" />
+    <Compile Include="src\analyzers\search\ADSearchHost.ps1" />
+    <Compile Include="src\analyzers\SharePoint\ADPatchLevel.ps1" />
+    <Compile Include="src\analyzers\SharePoint\ADScomApmAgentCheck.ps1" />
+    <Compile Include="src\analyzers\SharePoint\ADSmtpServerCertCheck.ps1" />
+    <Compile Include="src\analyzers\SharePoint\ADTimerServiceDisabled.ps1" />
+    <Compile Include="src\analyzers\SetupUpgrade\ADMissingFeaturesCheck.ps1" />
+    <Compile Include="src\classes\AnalyzerDefinition.ps1" />
+    <Compile Include="src\classes\InsightDefinition.ps1" />
+    <Compile Include="src\classes\RuleDefinition.ps1" />
+    <Compile Include="src\classes\ScenarioDefinition.ps1" />
+    <Compile Include="src\common\AI.psm1" />
+    <Compile Include="src\common\Files.ps1" />
+    <Compile Include="src\common\Globals.ps1" />
+    <Compile Include="src\common\SharePoint.ps1" />
+    <Compile Include="src\common\Utils.ps1" />
+    <Compile Include="src\common\locale\en-us\Common.resx" />
+    <Compile Include="src\insights\SharePoint\IDFarmAccountIsMissingLogonAsBatchJobRight.ps1" />
+    <Compile Include="src\insights\search\IDSearchHostIsOffline.ps1" />
+    <Compile Include="src\insights\SharePoint\IDFarmPatchLevelNotInSync.ps1" />
+    <Compile Include="src\insights\SharePoint\IDFarmPatchLevelUnsupported.ps1" />
+    <Compile Include="src\insights\SharePoint\IDRequireLocalAdministratorForScomApmAgentCheck.ps1" />
+    <Compile Include="src\insights\SharePoint\IDRequireLocalAdminRightForCheckIfFarmAccountHasLogonAsBatchJobRightAnalyzer.ps1" />
+    <Compile Include="src\insights\SharePoint\IDRequireLocalAdminRightForSmtpAnalyzer.ps1" />
+    <Compile Include="src\insights\SharePoint\IDScenarioHasToRunOnOtherCentralAdminServers.ps1" />
+    <Compile Include="src\insights\SharePoint\IDScomApmAgentInstalled.ps1" />
+    <Compile Include="src\insights\SharePoint\IDSmtpServerCertificateValidationError.ps1" />
+    <Compile Include="src\insights\SharePoint\IDTimerServiceIsDisabled.ps1" />
+    <Compile Include="src\insights\SetupUpgrade\IDCheckMissingFeaturesInContentDB.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDAirFilterIsDirty.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDBatteryIsNotCharged.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDBatteryIsNotConnected.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDBeltDoesNotTurnWhenEngineEngaged.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDBeltIsNotEngagedWithBlade.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDBeltIsNotPresent.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDBeltIsNotProperlyTensioned.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDBladeDoesNotTurn.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDBladeIsNotAttached.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDBladeNotOrientedCorrectly.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDBrakeSensorIsNotConnected.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDBrakeSensorIsNotEngaged.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDFuelIsWrongOctane.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDFuelNotReachingEngine.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDSeatSensorIsNotConnected.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDSeatSensorIsNotEngaged.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDSparkPlugIsLoose.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDSparkPlugIsNotSparking.ps1" />
+    <Compile Include="src\insights\samples\LawnMower\IDTankIsEmpty.ps1" />
+    <Compile Include="src\local\de-de\OPD.resx" />
+    <Compile Include="src\local\en-us\OPD.resx" />
+    <Compile Include="src\local\fr-fr\OPD.resx" />
+    <Compile Include="src\OPD-console.ps1" />
+    <Compile Include="src\OPD.ps1" />
+    <Compile Include="src\rules\Global\RDIsLocalAdministrator.ps1" />
+    <Compile Include="src\rules\Global\RDIsFarmAdministrator.ps1" />
+    <Compile Include="src\rules\Global\RDReportOtherCentralAdminServersTheScenarioHasToRunOn.ps1" />
+    <Compile Include="src\rules\Global\RDReportOtherFarmServersTheScenarioHasToRunOn.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDAirFilterIsDirty.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDBatteryCharged.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDBatteryIsConnected.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDBeltIsEngagedWithBlade.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDBeltIsPresent.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDBeltIsProperlyTensioned.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDBeltTurnWhenEngineEngaged.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDBladeIsAttached.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDBladeIsOrientedCorrectly.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDBladeTurnsFreely.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDBrakeSensorIsConnected.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDBrakeSensorIsEngaged.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDFuelIsCorrectOctane.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDFuelIsInTheTank.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDFuelIsReachingEngine.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDSeatSensorIsConnected.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDSeatSensorIsEngaged.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDSparkPlugIsSparking.ps1" />
+    <Compile Include="src\rules\samples\LawnMower\RDSparkPlugIsTight.ps1" />
+    <Compile Include="src\rules\search\RDSearchHostIsOnline.ps1" />
+    <Compile Include="src\rules\SharePoint\RDCheckConsistentPatchLevelInFarm.ps1" />
+    <Compile Include="src\rules\SharePoint\RDCheckForSmtpCertificateErrors.ps1" />
+    <Compile Include="src\rules\SharePoint\RDCheckScomApmAgentInstalled.ps1" />
+    <Compile Include="src\rules\SharePoint\RDCheckSupportedPatchLevel.ps1" />
+    <Compile Include="src\rules\SharePoint\RDCheckTimerServiceInstanceDisabled.ps1" />
+    <Compile Include="src\rules\SharePoint\RDFarmAccountHasLogonAsBatchJobRight.ps1" />
+    <Compile Include="src\rules\SetupUpgrade\RDCheckMissingFeaturesInContentDB.ps1" />
+    <Compile Include="src\scenarios\samples\LawnMower\SDLawnMowerNotCutting.ps1" />
+    <Compile Include="src\scenarios\samples\LawnMower\SDLawnMowerWontStart.ps1" />
+    <Compile Include="src\scenarios\search\SDSearchHostsOnline.ps1" />
+    <Compile Include="src\scenarios\SharePoint\SDIsMyFarmSupported.ps1" />
+    <Compile Include="src\scenarios\SharePoint\SDCentralAdminNotWorking.ps1" />
+    <Compile Include="src\scenarios\SharePoint\SDOutgoingEmailsNotWorking.ps1" />
+    <Compile Include="src\scenarios\SharePoint\SDTimerJobsNotExecuting.ps1" />
+    <Compile Include="src\SearchTest.ps1" />
+  <Compile Include="src\scenarios\SetupUpgrade\SDCheckDatabaseErrors.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\" />
+    <Folder Include="src\analyzers\search\" />
+    <Folder Include="src\analyzers\samples\" />
+    <Folder Include="src\analyzers\samples\LawnMower\" />
+    <Folder Include="src\analyzers\SharePoint\" />
+    <Folder Include="src\analyzers\SetupUpgrade\" />
+    <Folder Include="src\common\" />
+    <Folder Include="src\common\locale\" />
+    <Folder Include="src\common\locale\en-us\" />
+    <Folder Include="src\analyzers\" />
+    <Folder Include="src\classes\" />
+    <Folder Include="src\insights\" />
+    <Folder Include="src\insights\search\" />
+    <Folder Include="src\insights\samples\" />
+    <Folder Include="src\insights\samples\LawnMower\" />
+    <Folder Include="src\insights\SharePoint\" />
+    <Folder Include="src\insights\SetupUpgrade\" />
+    <Folder Include="src\locale\" />
+    <Folder Include="src\locale\de-de\" />
+    <Folder Include="src\locale\en-us\" />
+    <Folder Include="src\locale\fr-fr\" />
+    <Folder Include="src\resources\" />
+    <Folder Include="src\resources\sysinternals\" />
+    <Folder Include="src\rules\Global\" />
+    <Folder Include="src\rules\search\" />
+    <Folder Include="src\rules\samples\" />
+    <Folder Include="src\rules\samples\LawnMower\" />
+    <Folder Include="src\rules\SharePoint\" />
+    <Folder Include="src\rules\SetupUpgrade\" />
+    <Folder Include="src\scenarios\" />
+    <Folder Include="src\rules\" />
+    <Folder Include="src\scenarios\search\" />
+    <Folder Include="src\scenarios\samples\" />
+    <Folder Include="src\scenarios\samples\LawnMower\" />
+    <Folder Include="src\scenarios\SharePoint\" />
+    <Folder Include="src\scenarios\SetupUpgrade\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.ApplicationInsights, Version=2.7.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Name>Microsoft.ApplicationInsights</Name>
+      <AssemblyName>Microsoft.ApplicationInsights.dll</AssemblyName>
+      <HintPath>src\resources\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="src\resources\Microsoft.ApplicationInsights.dll" />
+    <Content Include="src\resources\SysInternals\accesschk64.exe" />
+    <Content Include="src\resources\SysInternals\Eula.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="src\rules\samples\LawnMower\LawnMower-Data.json" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Target Name="Build" />
+  <Import Project="$(MSBuildExtensionsPath)\PowerShell Tools for Visual Studio\PowerShellTools.targets" Condition="Exists('$(MSBuildExtensionsPath)\PowerShell Tools for Visual Studio\PowerShellTools.targets')" />
+</Project>
