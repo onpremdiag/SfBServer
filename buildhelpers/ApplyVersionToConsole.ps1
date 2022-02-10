@@ -136,7 +136,7 @@ if ($files)
     foreach ($file in $files)
     {
         $fileContent = Get-Content -Path $file.FullName
-        attrib $file -r
+        $file.IsReadOnly = $false
         $fileContent = $fileContent -replace $VersionRegex, $NewVersion
         $fileContent | Out-File -FilePath $file.FullName
         Write-Host "$($file.FullName) - version applied"
