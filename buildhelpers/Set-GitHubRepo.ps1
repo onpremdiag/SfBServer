@@ -77,7 +77,7 @@ foreach($file in $files)
         Write-Host "Applying $Product to $($file.Name)"
 
         $fileContent = Get-Content -Path  $file.FullName
-        attrib $file -r
+        $file.IsReadOnly = $false
         $fileContent = $fileContent -replace $GitHubRepoRegex, $Product
         $fileContent | Out-File -FilePath $file.FullName
     }
