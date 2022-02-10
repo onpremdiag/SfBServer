@@ -75,7 +75,7 @@ if ($file)
     Write-Host "Applying $Product to $($file.Name)"
 
     $fileContent = Get-Content -Path  $file.FullName
-    attrib $file -r
+    $file.IsReadOnly = $false
     $fileContent = $fileContent -replace $ProductRegex, $Product
     $fileContent | Out-File -FilePath $file.FullName
 }
