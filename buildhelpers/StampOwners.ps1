@@ -76,7 +76,7 @@ Write-Verbose "BUILD_SOURCESDIRECTORY: $Env:BUILD_SOURCESDIRECTORY"
 $files  = Get-ChildItem -Path $Env:BUILD_SOURCESDIRECTORY\src\classes -Recurse -Include *.ps*
 $files += Get-ChildItem -Path $Env:BUILD_SOURCESDIRECTORY\src\common -Recurse -Include *.ps*
 $files += Get-ChildItem -Path $Env:BUILD_SOURCESDIRECTORY\src\locale -Recurse -Include *.ps*
-$files += Get-ChildItem -Path $Env:BUILD_SOURCESDIRECTORY\src\opd-console.ps1
+$files += Get-ChildItem -Path $Env:BUILD_SOURCESDIRECTORY\src -File
 
 if ([string]::IsNullOrEmpty($Product))
 {
