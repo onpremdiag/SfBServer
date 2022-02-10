@@ -91,7 +91,7 @@ if ($file)
     Write-Verbose "Will apply $AIGuid"
 
     $fileContent = Get-Content -Path $file.FullName
-    attrib $file -r
+    $file.IsReadOnly = $false
     $fileContent = $fileContent -replace $GUIDRegex, $AIGuid
     $fileContent | Out-File -FilePath $file.FullName
 }
