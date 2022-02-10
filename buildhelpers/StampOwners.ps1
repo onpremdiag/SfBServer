@@ -98,7 +98,7 @@ if ($files)
     {
         $i++
         $fileContent = Get-Content -Path $file.FullName
-        attrib $file -r
+        $file.IsReadOnly = $false
         $fileContent = $fileContent -replace $OwnerRegex, $newOwner
         $fileContent | Out-File -FilePath $file.FullName
         "{0:000} : Ownership set on {1}" -f $i, $file.FullName | Write-Host
