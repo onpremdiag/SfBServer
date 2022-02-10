@@ -22,7 +22,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      $buildProduct = "SfBServer"
+      $buildProduct = 'SfBServer'
 - task: PowerShell@2
   displayName: What kind of build is it?
   inputs:
