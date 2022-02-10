@@ -35,6 +35,10 @@ steps:
       Write-Host "##vso[task.setvariable variable=BUILD_PRODUCT]$buildProduct"
 - task: PowerShell@2
   displayName: Display the build variables that are available
+  inputs:
+   targetType: 'inline'
+   script: |
+     Get-ChildItem env:
 - task: PowerShell@2
   displayName: Stamp support ownership on all files
   inputs:
