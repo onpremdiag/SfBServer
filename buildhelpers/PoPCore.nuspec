@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>OPDCore</id>
+    <version>$version$</version>
+    <title>OPDCore</title>
+    <authors>opd-dev@microsoft.com</authors>
+    <owners>opd-dev@microsoft.com</owners>
+    <license type="expression">MIT</license>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>On Premise Diagnostic (OPD) Core</description>
+    <copyright>Copyright (c) 2018-2021, Microsoft Corporation. All rights reserved.</copyright>
+    <tags></tags>
+  </metadata>
+  <files>
+    <!-- Main driver(s) -->
+    <file src="..\src\OPD-console.ps1" target="."></file>
+
+    <!-- Class definitions -->
+    <file src="..\src\classes\**" target="classes"></file>
+
+    <!-- Common/shared files/utilities-->
+    <file src="..\src\common\**" target="common"></file>
+
+    <!-- Locale files-->
+    <file src="..\src\locale\**" target="locale"></file>
+
+    <!--3rd party dependencies-->
+    <file src="..\src\resources\**" target="resources"></file>
+  </files>
+</package>
