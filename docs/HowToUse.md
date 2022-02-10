@@ -57,4 +57,4 @@ to analyze the various pieces/parts that are required for successful federation.
 
 <img src="./media/FederationIsNotWorking-Hybrid.png" alt="Active directory imports are failing" />
 
-  From this, we can see that remote user access is disabled. We are instructed on where to get further assistance on resolving this issue.
+From this, we can see that remote user access is disabled. We are instructed on where to get further assistance on resolving this issue.

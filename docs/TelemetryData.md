@@ -23,7 +23,7 @@ a successful analyzer operation.
 |--------|-------------|
 | **Name**  | The actual name of the analyzer (rule/scenario) that was executed |
 | **Description**  | The textual description of the analyzer (rule/scenario) as it appears in the console application |
-| **ID***  | A unique value that identifies the analyzer (rule/scenario)   |
+| **ID**  | A unique value that identifies the analyzer (rule/scenario)   |
 | **Execution ID**  | The global execution ID associated with this execution. All scenario/analyzer/rules that are part of the same run will have the same execution ID. This makes it possible to filter on a specific OPD	session. |
 | **Status**  | The final state of the analyzer (rule/scenario)  |
 | **Scenario Id**  | A unique value that identifies the scenario that this analyzer is part of  |
@@ -38,5 +38,5 @@ specific failure.
 
 ## Upload telemetry data to Microsoft *(optional)*
 The same information will be uploaded to Microsoft for analysis, trending, troubleshooting. However, no
-end user information (machine name, IP address, etc.) will be transmitted to Microsoft. Any insights that 
+end user information (machine name, IP address, etc.) will be transmitted to Microsoft. Any insights that
 contain machine/user specific information is *scrubbed* prior to transmission.

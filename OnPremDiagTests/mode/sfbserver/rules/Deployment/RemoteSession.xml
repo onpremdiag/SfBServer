@@ -1,0 +1,173 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>System.Management.Automation.Runspaces.PSSession</T>
+      <T>System.Object</T>
+    </TN>
+    <ToString>[PSSession]WinRM1</ToString>
+    <Props>
+      <Obj N="ComputerType" RefId="1">
+        <TN RefId="1">
+          <T>System.Management.Automation.Runspaces.TargetMachineType</T>
+          <T>System.Enum</T>
+          <T>System.ValueType</T>
+          <T>System.Object</T>
+        </TN>
+        <ToString>RemoteMachine</ToString>
+        <I32>0</I32>
+      </Obj>
+      <S N="ComputerName">edge.contoso.com</S>
+      <S N="ContainerId"></S>
+      <S N="VMName"></S>
+      <Nil N="VMId" />
+      <S N="ConfigurationName">Microsoft.PowerShell</S>
+      <G N="InstanceId">7cec96db-aaf9-42e1-950f-c1359e579458</G>
+      <I32 N="Id">1</I32>
+      <S N="Name">WinRM1</S>
+      <Obj N="Availability" RefId="2">
+        <TN RefId="2">
+          <T>System.Management.Automation.Runspaces.RunspaceAvailability</T>
+          <T>System.Enum</T>
+          <T>System.ValueType</T>
+          <T>System.Object</T>
+        </TN>
+        <ToString>Available</ToString>
+        <I32>1</I32>
+      </Obj>
+      <Obj N="ApplicationPrivateData" RefId="3">
+        <TN RefId="3">
+          <T>System.Management.Automation.PSPrimitiveDictionary</T>
+          <T>System.Collections.Hashtable</T>
+          <T>System.Object</T>
+        </TN>
+        <DCT>
+          <En>
+            <S N="Key">DebugMode</S>
+            <I32 N="Value">1</I32>
+          </En>
+          <En>
+            <S N="Key">DebugStop</S>
+            <B N="Value">false</B>
+          </En>
+          <En>
+            <S N="Key">UnhandledBreakpointMode</S>
+            <I32 N="Value">1</I32>
+          </En>
+          <En>
+            <S N="Key">PSVersionTable</S>
+            <Obj N="Value" RefId="4">
+              <TNRef RefId="3" />
+              <DCT>
+                <En>
+                  <S N="Key">PSVersion</S>
+                  <Version N="Value">5.1.17763.1007</Version>
+                </En>
+                <En>
+                  <S N="Key">PSEdition</S>
+                  <S N="Value">Desktop</S>
+                </En>
+                <En>
+                  <S N="Key">PSCompatibleVersions</S>
+                  <Obj N="Value" RefId="5">
+                    <TN RefId="4">
+                      <T>Deserialized.System.Version[]</T>
+                      <T>Deserialized.System.Array</T>
+                      <T>Deserialized.System.Object</T>
+                    </TN>
+                    <LST>
+                      <Version>1.0</Version>
+                      <Version>2.0</Version>
+                      <Version>3.0</Version>
+                      <Version>4.0</Version>
+                      <Version>5.0</Version>
+                      <Version>5.1.17763.1007</Version>
+                    </LST>
+                  </Obj>
+                </En>
+                <En>
+                  <S N="Key">PSRemotingProtocolVersion</S>
+                  <Version N="Value">2.3</Version>
+                </En>
+                <En>
+                  <S N="Key">BuildVersion</S>
+                  <Version N="Value">10.0.17763.1007</Version>
+                </En>
+                <En>
+                  <S N="Key">CLRVersion</S>
+                  <Version N="Value">4.0.30319.42000</Version>
+                </En>
+                <En>
+                  <S N="Key">WSManStackVersion</S>
+                  <Version N="Value">3.0</Version>
+                </En>
+                <En>
+                  <S N="Key">SerializationVersion</S>
+                  <Version N="Value">1.1.0.1</Version>
+                </En>
+              </DCT>
+            </Obj>
+          </En>
+          <En>
+            <S N="Key">BreakAll</S>
+            <B N="Value">false</B>
+          </En>
+          <En>
+            <S N="Key">DebugBreakpointCount</S>
+            <I32 N="Value">0</I32>
+          </En>
+        </DCT>
+      </Obj>
+      <Obj N="Runspace" RefId="6">
+        <TN RefId="5">
+          <T>System.Management.Automation.RemoteRunspace</T>
+          <T>System.Management.Automation.Runspaces.Runspace</T>
+          <T>System.Object</T>
+        </TN>
+        <ToString>System.Management.Automation.RemoteRunspace</ToString>
+        <Props>
+          <Version N="Version">5.1.17763.1007</Version>
+          <S N="RunspaceStateInfo">Opened</S>
+          <S N="ThreadOptions">Default</S>
+          <S N="RunspaceAvailability">Available</S>
+          <S N="ConnectionInfo">System.Management.Automation.Runspaces.WSManConnectionInfo</S>
+          <S N="OriginalConnectionInfo">System.Management.Automation.Runspaces.WSManConnectionInfo</S>
+          <S N="Events">System.Management.Automation.PSRemoteEventManager</S>
+          <S N="Debugger">System.Management.Automation.RemoteDebugger</S>
+          <S N="ApartmentState">Unknown</S>
+          <B N="RunspaceIsRemote">true</B>
+          <G N="InstanceId">7cec96db-aaf9-42e1-950f-c1359e579458</G>
+          <Nil N="DisconnectedOn" />
+          <Nil N="ExpiresOn" />
+          <S N="Name">Runspace9</S>
+          <I32 N="Id">9</I32>
+          <S N="SessionStateProxy">System.Management.Automation.RemoteSessionStateProxy</S>
+        </Props>
+      </Obj>
+    </Props>
+    <MS>
+      <Obj N="State" RefId="7">
+        <TN RefId="6">
+          <T>System.Management.Automation.Runspaces.RunspaceState</T>
+          <T>System.Enum</T>
+          <T>System.ValueType</T>
+          <T>System.Object</T>
+        </TN>
+        <ToString>Opened</ToString>
+        <I32>2</I32>
+      </Obj>
+      <I32 N="IdleTimeout">7200000</I32>
+      <Obj N="OutputBufferingMode" RefId="8">
+        <TN RefId="7">
+          <T>System.Management.Automation.Runspaces.OutputBufferingMode</T>
+          <T>System.Enum</T>
+          <T>System.ValueType</T>
+          <T>System.Object</T>
+        </TN>
+        <ToString>Block</ToString>
+        <I32>2</I32>
+      </Obj>
+      <Nil N="DisconnectedOn" />
+      <Nil N="ExpiresOn" />
+    </MS>
+  </Obj>
+</Objs>
