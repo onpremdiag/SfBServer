@@ -42,5 +42,5 @@ steps:
 - task: PowerShell@2
   displayName: Stamp support ownership on all files
   inputs:
-    filePath: '$(Build.SourcesDirectory)\buildhelpers\StampOwners.ps1'
+    filePath: '$(Build.SourcesDirectory)/buildhelpers/StampOwners.ps1'
     arguments: '-OwnerName ''On Premise Diagnostic for SfBServer Support'' -OwnerEmail ''pop-sfbsupport@microsoft.com'' -Product $env:BUILD_PRODUCT'
