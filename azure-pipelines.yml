@@ -17,176 +17,19 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
-
-# Variable 'MajorVersion' was defined in the Variables tab
-# Variable 'MinorVersion' was defined in the Variables tab
-name: $(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rrr)-alpha
-resources:
-  repositories:
-  - repository: self
-    type: git
-    ref: master
-jobs:
-- job: Job_1
-  displayName: Agent job 1
-  pool:
-    vmImage: windows-latest
-  steps:
-  - checkout: self
-    clean: true
-  - task: InlinePowershell@1
-    displayName: Set the product here
-    inputs:
-      Script: >-
-        $buildProduct = "SfBServer"
-
-
-        Write-Host "##vso[task.setvariable variable=BUILD_PRODUCT]$buildProduct"
-  - task: InlinePowershell@1
-    displayName: What kind of build is it?
-    inputs:
-      Script: >-
-        $alias = $env:BUILD_REQUESTEDFOREMAIL.Split('@')[0]
-
-        $buildPrefix = '{0}_{1}' -f $alias, $env:BUILD_SOURCEBRANCHNAME
-
-
-        Write-Host "##vso[task.setvariable variable=BUILD_PREFIX]$buildPrefix"
-  - task: InlinePowershell@1
-    displayName: Display the build variables that are available
-    inputs:
-      Script: 'Get-ChildItem env:'
-  - task: PowerShell@2
-    displayName: Stamp support ownership on all files
-    inputs:
-      filePath: $(Build.SourcesDirectory)\buildhelpers\StampOwners.ps1
-      arguments: -OwnerName 'On Premise Diagnostic for SfBServer Support' -OwnerEmail 'pop-sfbsupport@microsoft.com' -Product $env:BUILD_PRODUCT
-  - task: PowerShell@2
-    displayName: Stamp version
-    inputs:
-      filePath: $(Build.SourcesDirectory)\buildhelpers\ApplyVersionToConsole.ps1
-  - task: PowerShell@2
-    displayName: Stamp application insight key
-    inputs:
-      filePath: $(Build.SourcesDirectory)\buildhelpers\SetApplicationInsightKey.ps1
-      arguments: -Stage Development
-  - task: PowerShell@2
-    displayName: '[SfB] Stamp the product/ruleset version'
-    inputs:
-      filePath: $(Build.SourcesDirectory)\buildhelpers\Set-ProductMode.ps1
-      arguments: -Product $env:BUILD_PRODUCT
-  - task: PowerShell@2
-    displayName: Set the product title
-    inputs:
-      filePath: $(Build.SourcesDirectory)\buildhelpers\Set-Title.ps1
-      arguments: -Product $env:BUILD_PRODUCT
-  - task: PowerShell@2
-    displayName: Set the GitHub repo
-    inputs:
-      filePath: $(Build.SourcesDirectory)\buildhelpers\Set-GitHubRepo.ps1
-      arguments: -Product $env:BUILD_PRODUCT
-  - task: PowerShell@2
-    displayName: Run Script Analyzer (Lint)
-    inputs:
-      filePath: $(Build.SourcesDirectory)\buildhelpers\Invoke-ScriptAnalyzer.ps1
-      arguments: -SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT
-  - task: PowerShell@2
-    displayName: Run the Pester tests (English)
-    inputs:
-      filePath: $(Build.SourcesDirectory)\buildhelpers\Invoke-TestCases.ps1
-      arguments: -SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'
-      errorActionPreference: silentlyContinue
-  - task: PublishTestResults@2
-    displayName: Publish Test Results
-    inputs:
-      testRunner: NUnit
-      failTaskOnFailedTests: true
-  - task: PowerShell@2
-    displayName: Create BI Tables
-    enabled: False
-    inputs:
-      filePath: $(Build.SourcesDirectory)\buildhelpers\GenerateBITables.ps1
-      arguments: -SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT
-  - task: PowerShell@2
-    displayName: Remove any non-product files
-    inputs:
-      targetType: inline
-      filePath: $(Build.SourcesDirectory)\buildhelpers\GenerateBITables.ps1
-      arguments: -SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT
-      script: >-
-        Write-Host "Removing non-product files..."
-
-
-        foreach($folder in (Get-ChildItem -Path $(Build.SourcesDirectory)\src\mode -Directory))
-
-        {
-            Write-Host "Checking [$($folder.name)] against [$env:BUILD_PRODUCT]"
-            if ($folder.Name -ne $env:BUILD_PRODUCT)
-            {
-                Write-Host "Removing [$($folder.FullName)]"
-                Remove-Item -Recurse -Path $folder.FullName -Force
-            }
-        }
-  - task: PowerShell@2
-    displayName: Remove documentation files (not part of official release)
-    inputs:
-      targetType: inline
-      filePath: $(Build.SourcesDirectory)\buildhelpers\GenerateBITables.ps1
-      arguments: -SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT
-      script: >
-        Write-Host "Removing online documentation files..."
-
-
-        Remove-Item -Recurse -Path $(Build.SourcesDirectory)\src\mode\$env:BUILD_PRODUCT\docs -Force
-  - task: PublishBuildArtifacts@1
-    displayName: Publish Script Analyzer results
-    inputs:
-      PathtoPublish: $(System.DefaultWorkingDirectory)/PSSA-output.txt
-      ArtifactName: ScriptAnalyzerOutput
-  - task: PublishBuildArtifacts@1
-    displayName: Publish BI Tables
-    enabled: False
-    inputs:
-      PathtoPublish: $(System.DefaultWorkingDirectory)/OPD-BI-SfBServer.csv
-      ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)-BI
-  - task: PublishBuildArtifacts@1
-    displayName: Create build drop
-    inputs:
-      PathtoPublish: $(Build.SourcesDirectory)/src
-      ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)
-  - task: PublishBuildArtifacts@1
-    displayName: Create buildhelpers drop
-    inputs:
-      PathtoPublish: $(Build.SourcesDirectory)/buildhelpers
-      ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)-BuildHelpers
-  - task: GenerateReleaseNotes@3
-    displayName: Generate release notes
-    enabled: False
-    inputs:
-      outputfile: $(System.DefaultWorkingDirectory)/ReleaseNotes.md
-      templateLocation: InLine
-      inlinetemplate: >+
-        # Release notes for build $(Build.DefinitionName)
-
-        **Build Number**  : $($build.buildnumber)
-
-        **Build started** : $("{0:dd/MM/yy HH:mm:ss}" -f [datetime]$build.startTime)
-
-        **Source Branch** : $($build.sourceBranch)
-
-
-        ### Associated work items
-
-        @@WILOOP@@
-
-        * **$($widetail.fields.'System.WorkItemType') $($widetail.id)** - $($widetail.fields.'System.Title')
-
-        @@WILOOP@@
-
-  - task: PublishBuildArtifacts@1
-    displayName: Drop release notes
-    enabled: False
-    inputs:
-      PathtoPublish: $(System.DefaultWorkingDirectory)/ReleaseNotes.md
-      ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)-ReleaseNotes.md
-...
+- task: PowerShell@2
+  displayName: Set the product here
+  inputs:
+    targetType: 'inline'
+    script: |
+      $buildProduct = "SfBServer"
+- task: PowerShell@2
+  displayName: What kind of build is it?
+  inputs:
+    targetType: 'inline'
+    script: |
+      $alias = $env:BUILD_REQUESTEDFOREMAIL.Split('@')[0]
+      $buildPrefix = '{0}_{1}' -f $alias, $env:BUILD_SOURCEBRANCHNAME
+      
+      Write-Host "##vso[task.setvariable variable=BUILD_PREFIX]$buildPrefix"
+      Write-Host "##vso[task.setvariable variable=BUILD_PRODUCT]$buildProduct"
