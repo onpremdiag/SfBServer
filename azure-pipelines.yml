@@ -27,6 +27,12 @@ steps:
    script: |
      Get-ChildItem env:
 - task: PowerShell@2
+  displayName: Display source tree
+  inputs:
+   targetType: 'inline'
+   script: |
+     Get-ChildItem -Recurse -Path $(Build.SourcesDirectory)
+- task: PowerShell@2
   displayName: Stamp support ownership on all files
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/StampOwners.ps1'
