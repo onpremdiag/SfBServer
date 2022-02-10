@@ -1,3 +1,0 @@
-#
-# SDPresenceAndIMDelay.ps1
-#

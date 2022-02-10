@@ -1,3 +1,0 @@
-#
-# SDExchangeOnPremiseIntegrationNotWorking.ps1
-#

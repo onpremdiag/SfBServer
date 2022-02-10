@@ -1,3 +1,0 @@
-#
-# SDModernAuthenticationNotWorking.ps1
-#

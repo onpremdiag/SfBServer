@@ -1,3 +1,0 @@
-#
-# SDExchangeOnlineIntegrationNotWorking.ps1
-#
