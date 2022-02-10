@@ -44,3 +44,37 @@ steps:
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/StampOwners.ps1'
     arguments: "-OwnerName 'On Premise Diagnostic for SfBServer Support' -OwnerEmail 'pop-sfbsupport@microsoft.com' -Product $env:BUILD_PRODUCT"
+- task: PowerShell@2
+  displayName: Stamp version
+  inputs:
+    filePath: '$(Build.SourcesDirectory)\buildhelpers\ApplyVersionToConsole.ps1'
+- task: PowerShell@2
+  displayName: Stamp application insight key
+  inputs:
+    filePath: '$(Build.SourcesDirectory)\buildhelpers\SetApplicationInsightKey.ps1'
+    arguments: '-Stage Development'
+- task: PowerShell@2
+  displayName: Stamp the product/ruleset version
+  inputs:
+    filePath: '$(Build.SourcesDirectory)\buildhelpers\Set-ProductMode.ps1'
+    arguments: '-Product $env:BUILD_PRODUCT'
+- task: PowerShell@2
+  displayName: Set the product title
+  inputs:
+    filePath: '$(Build.SourcesDirectory)\buildhelpers\Set-Title.ps1'
+    arguments: '-Product $env:BUILD_PRODUCT'    
+- task: PowerShell@2
+  displayName: Set the GitHub repo
+  inputs:
+    filePath: '$(Build.SourcesDirectory)\buildhelpers\Set-GitHubRepo.ps1'
+    arguments: '-Product $env:BUILD_PRODUCT'
+- task: PowerShell@2
+  displayName: Run Script Analyzer
+  inputs:
+    filePath: '$(Build.SourcesDirectory)\buildhelpers\Invoke-ScriptAnalyzer.ps1'
+    arguments: '-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT'
+- task: PowerShell@2
+  displayName: Run the Pester tests (English)
+  inputs:
+    filePath: '$(Build.SourcesDirectory)\buildhelpers\Invoke-TestCases.ps1'
+    arguments: "-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'"
