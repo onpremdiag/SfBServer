@@ -33,3 +33,13 @@ steps:
       
       Write-Host "##vso[task.setvariable variable=BUILD_PREFIX]$buildPrefix"
       Write-Host "##vso[task.setvariable variable=BUILD_PRODUCT]$buildProduct"
+- task: PowerShell@2
+  displayName: Display the build variables that are available
+- task: PowerShell@2
+  displayName: Stamp support ownership on all files
+  inputs:
+    filePath: '$(Build.SourcesDirectory)\buildhelpers\StampOwners.ps1'
+    arguments: '-OwnerName ''On Premise Diagnostic for SfBServer Support'' -OwnerEmail ''pop-sfbsupport@microsoft.com'' -Product $env:BUILD_PRODUCT'
+  inputs:
+    targetType: 'inline'
+    script: 'Get-ChildItem env:'
