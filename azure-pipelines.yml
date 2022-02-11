@@ -34,7 +34,7 @@ steps:
       $BuildProduct = 'SfBServer'
 
       Write-Host "##vso[task.setvariable variable=BUILD_PREFIX]$buildPrefix"
-      Write-Host "##vso[task.setvariable variable=BUILD_PRODUCT]$BuildProduct
+      Write-Host "##vso[task.setvariable variable=BUILD_PRODUCT]$BuildProduct"
 - task: PowerShell@2
   displayName: Display the build variables that are available
   inputs:
