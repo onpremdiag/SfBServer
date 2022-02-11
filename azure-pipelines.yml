@@ -17,9 +17,10 @@ steps:
     script: |
       $alias = $env:BUILD_REQUESTEDFOREMAIL.Split('@')[0]
       $buildPrefix = '{0}_{1}' -f $alias, $env:BUILD_SOURCEBRANCHNAME
-      $buildVersion = '{0}.{1}.{2}.{3}{4}-alpha' -f $(MajorVersion),$(MinorVersion),$(Date:yyMM),$(Date:dd),$(Rev:rrr)
+      $buildNumber = '{0}.{1}.{2}.{3}{4}-alpha' -f $(MajorVersion),$(MinorVersion),$(Date:yyMM),$(Date:dd),$(Rev:rrr)
       Write-Host "##vso[task.setvariable variable=BUILD_PREFIX]$buildPrefix"
       Write-Host "##vso[task.setvariable variable=BUILD_PRODUCT]$buildProduct"
+      Write-Host "##vso[task.setvariable variable=BUILD_BUILDNUMBER]$buildNumber"
 - task: PowerShell@2
   displayName: Display the build variables that are available
   inputs:
