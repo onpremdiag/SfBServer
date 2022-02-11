@@ -92,7 +92,7 @@ steps:
     targetType: inline
     filePath: $(Build.SourcesDirectory)\buildhelpers\GenerateBITables.ps1
     arguments: -SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT
-    script: >-
+    script: |
       Write-Host "Removing non-product files..."
       foreach($folder in (Get-ChildItem -Path $(Build.SourcesDirectory)\src\mode -Directory))
       {
