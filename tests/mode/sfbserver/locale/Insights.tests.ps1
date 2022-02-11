@@ -32,42 +32,45 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$myPath   = $PSCommandPath
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+BeforeAll {
+	$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+	$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+	$myPath   = $PSCommandPath
+	$srcRoot  = "$root\src"
+	$testRoot = "$root\tests"
+	$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
 
-Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
-$global:OPDOptions  = @{
-    OriginalCulture  = ([System.Threading.Thread]::CurrentThread.CurrentCulture).Name
+	Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
+	$global:OPDOptions  = @{
+		OriginalCulture  = ([System.Threading.Thread]::CurrentThread.CurrentCulture).Name
+	}
+
+	# Load resource files needed for tests
+	. (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
+	. (Join-Path -Path $srcRoot  -ChildPath common\Globals.ps1)
+	. (Join-Path -Path $srcRoot  -ChildPath common\Utils.ps1)
+
+	Initialize-ResourceString -Root $srcRoot -MyMode 'SfBServer'
 }
-
-# Load resource files needed for tests
-. (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
-. (Join-Path -Path $srcRoot  -ChildPath common\Globals.ps1)
-. (Join-Path -Path $srcRoot  -ChildPath common\Utils.ps1)
-
-Initialize-ResourceString -Root $srcRoot -MyMode 'SfBServer'
 
 Describe -Tag 'SfBServer' "InsightActions" {
 	Context "Insight Actions" {
-		foreach($InsightAction in $global:InsightActions.Keys)
-		{
-			It "Checking Insight Actions for $InsightAction" {
+		It "Insight Actions should not have TODO marker" {
+			foreach($InsightAction in $global:InsightActions.Keys)
+			{
+				#"Checking Insight Actions for $InsightAction" | Write-Host
 				$global:InsightActions.$InsightAction | Should -Not -Match 'TODO'
 			}
 		}
 	}
 
 	Context "Insight Detections" {
-		foreach($InsightDetection in $global:InsightDetections.Keys)
-		{
-			It "Checking Insight Detections for $InsightDetection" {
+		It "Insight Detections should not have TODO marker" {
+			foreach($InsightDetection in $global:InsightDetections.Keys)
+			{
+				#"Checking Insight Detections for $InsightDetection" | Write-Host
 				$global:InsightDetections.$InsightDetection | Should -Not -Match 'TODO'
 			}
 		}
 	}
-
 }

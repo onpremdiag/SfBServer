@@ -27,28 +27,30 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$myPath   = $PSCommandPath
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
-$mode     = $Matches.Mode
+BeforeAll {
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $myPath   = $PSCommandPath
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
+    $testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+    $mode     = $Matches.Mode
 
-Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
+    Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
 
-# Load resource files needed for tests
-. (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
+    # Load resource files needed for tests
+    . (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
 
-Import-ResourceFiles -Root $srcRoot -MyMode $mode
+    Import-ResourceFiles -Root $srcRoot -MyMode $mode
 
-. (Join-Path -Path $srcRoot -ChildPath common\Globals.ps1)
-. (Join-Path -Path $srcRoot -ChildPath common\Utils.ps1)
-. (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\Globals.ps1)
-. (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\$mode.ps1)
-. (Join-Path -Path $srcRoot -ChildPath classes\RuleDefinition.ps1)
-. (Join-Path -Path $srcRoot -ChildPath classes\InsightDefinition.ps1)
-. (Join-Path -Path $srcRoot -ChildPath mode\$mode\insights\Global\IDException.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath common\Globals.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath common\Utils.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\Globals.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\$mode.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath classes\RuleDefinition.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath classes\InsightDefinition.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath mode\$mode\insights\Global\IDException.ps1)
+}
 
 Describe -Tag 'sfbserver' "Check rule resources" {
     BeforeAll {
@@ -57,37 +59,42 @@ Describe -Tag 'sfbserver' "Check rule resources" {
     }
 
     Context "1.0 Filenames/Class Names" {
-        $index = 0
-        foreach($rule in $rules)
-        {
-            $index++
-            It "1.$($index) Class name for $($rule.BaseName) should match internal name" {
-                . $rule.FullName
+        It "Class name for rule should match internal name" {
+            $index = 0
 
-                $obj = New-Object -TypeName $rule.BaseName -ArgumentList $insight
+            foreach($rule in $rules)
+            {
+                $index++
+                #"`t1.$($index) Class name for $($rule.BaseName) should match internal name" | Write-Host
+                    . $rule.FullName
 
-                $rule.BaseName | Should -BeExactly $obj.GetType().Name
+                    $obj = New-Object -TypeName $rule.BaseName -ArgumentList $insight
+
+                    $rule.BaseName | Should -BeExactly $obj.GetType().Name
             }
         }
     }
 
     Context "2.0 Resources" {
-        $index = 0
-        foreach($rule in $rules)
-        {
-            $index++
-            It "2.$($index) Rule $($rule.BaseName) should have resource in RuleDescriptions" {
+        It "Rule should have a resources in RuleDescriptions" {
+            $index = 0
+
+            foreach($rule in $rules)
+            {
+                $index++
+                #"`t2.$($index) Rule $($rule.BaseName) should have resource in RuleDescriptions: $($Global:RuleDescriptions.($rule.BaseName))" | Write-Host
                 $Global:RuleDescriptions.($rule.BaseName) | Should -Not -BeNullOrEmpty
             }
         }
     }
 
     Context "3.0 Event IDs" {
-        $index = 0
-        foreach($rule in $rules)
-        {
-            $index++
-            It "3.$($index) Rule $($rule.BaseName) should have an event ID" {
+        It "Rule should have an event ID" {
+            $index = 0
+            foreach($rule in $rules)
+            {
+                $index++
+                #"`t3.$($index) Rule $($rule.BaseName) should have an event ID: $($Global:EventIDs.$($rule.BaseName))" | Write-Host
                 $Global:EventIDs.$($rule.BaseName) | Should -Not -BeNullOrEmpty
             }
         }

@@ -29,50 +29,53 @@
 # Last Modified On: 1/15/2020 1:20 PM
 #################################################################################
 Set-StrictMode -Version Latest
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
-$mode     = $Matches.Mode
 
-$classes   = Get-ChildItem -Path "$srcRoot\classes"              -Recurse -Filter *.ps1
-$rules     = Get-ChildItem -Path "$srcRoot\mode\$mode\rules"     -Recurse -Filter RD*.ps1 | Where-Object { $_.FullName -notlike "*\samples\*"}
-$insights  = Get-ChildItem -Path "$srcRoot\mode\$mode\insights"  -Recurse -Filter ID*.ps1 | Where-Object { $_.FullName -notlike "*\samples\*"}
-$analyzers = Get-ChildItem -Path "$srcRoot\mode\$mode\analyzers" -Recurse -Filter AD*.ps1 | Where-Object { $_.FullName -notlike "*\samples\*"}
+BeforeAll {
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
+    $testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+    $mode     = $Matches.Mode
 
-foreach ($group in $classes, $insights, $rules, $analyzers)
-{
-    foreach ($file in $group)
+    $classes   = Get-ChildItem -Path "$srcRoot\classes"              -Recurse -Filter *.ps1
+    $rules     = Get-ChildItem -Path "$srcRoot\mode\$mode\rules"     -Recurse -Filter RD*.ps1 | Where-Object { $_.FullName -notlike "*\samples\*"}
+    $insights  = Get-ChildItem -Path "$srcRoot\mode\$mode\insights"  -Recurse -Filter ID*.ps1 | Where-Object { $_.FullName -notlike "*\samples\*"}
+    $analyzers = Get-ChildItem -Path "$srcRoot\mode\$mode\analyzers" -Recurse -Filter AD*.ps1 | Where-Object { $_.FullName -notlike "*\samples\*"}
+
+    foreach ($group in $classes, $insights, $rules, $analyzers)
     {
-        . $file.FullName
+        foreach ($file in $group)
+        {
+            . $file.FullName
+        }
     }
+
+    # Load resource files needed for tests
+    . "$testRoot\testhelpers\LoadResourceFiles.ps1"
+    Import-ResourceFiles -Root $srcRoot -MyMode $mode
+
+    . "$srcRoot\common\Globals.ps1"
+    . "$srcRoot\common\Utils.ps1"
+    . "$srcRoot\mode\$mode\common\Globals.ps1"
+    . "$srcRoot\mode\$mode\common\$mode.ps1"
+    . "$testRoot\mocks\SfbServerMock.ps1"
+    . "$testRoot\mocks\ActiveDirectoryMocks.ps1"
+
+    . $sut
 }
 
-# Load resource files needed for tests
-. "$testRoot\testhelpers\LoadResourceFiles.ps1"
-Import-ResourceFiles -Root $srcRoot -MyMode $mode
-
-. "$srcRoot\common\Globals.ps1"
-. "$srcRoot\common\Utils.ps1"
-. "$srcRoot\mode\$mode\common\Globals.ps1"
-. "$srcRoot\mode\$mode\common\$mode.ps1"
-. "$testRoot\mocks\SfbServerMock.ps1"
-. "$testRoot\mocks\ActiveDirectoryMocks.ps1"
-
-. $sut
-
 Describe -Tag 'SfbServer' "ADCheckSecurityGroupMembership" {
-    BeforeAll {
-        Mock Write-OPDEventLog {}
-    }
-
-    BeforeEach {
-        Mock Initialize-Module { return $true }
-        $ad = [ADCheckSecurityGroupMembership]::new()
-    }
-
     Context "Current acount has Skype for Business Server administrative privileges" {
+        BeforeAll {
+            Mock Write-OPDEventLog {}
+        }
+
+        BeforeEach {
+            Mock Initialize-Module { return $true }
+            $ad = [ADCheckSecurityGroupMembership]::new()
+        }
+
         It "User is a member of RTCUniversalServerAdmins security group" {
             Mock Test-IsADGroupMember { return $true }
             Mock Get-ADAccountAuthorizationGroup {

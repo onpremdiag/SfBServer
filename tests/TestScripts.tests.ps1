@@ -30,30 +30,23 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
+BeforeDiscovery {
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
 
-Describe -Tag 'Core' "TestScripts" {
-    BeforeAll {
-        $srcFiles  = Get-ChildItem -Path $srcRoot -Recurse -Include *.ps? -File `
-                        | Where-Object {$_.BaseName -notlike 'ID*'} `
-                        | Where-Object {$_.BaseName -notlike 'PD*'} `
-                        | Where-Object {$_.BaseName -notlike 'AD*'} `
-                        | Where-Object {$_.BaseName -notlike 'SD*'} | Sort-Object -Property BaseName
-    }
+    $srcFiles  = Get-ChildItem -Path $srcRoot -Recurse -Include *.ps? -File `
+        | Where-Object {$_.BaseName -notlike 'ID*'} `
+        | Where-Object {$_.BaseName -notlike 'PD*'} `
+        | Where-Object {$_.BaseName -notlike 'AD*'} `
+        | Where-Object {$_.BaseName -notlike 'SD*'} | Sort-Object -Property BaseName
 
-    Context "1.0 Check to see if we have test scripts" {
-        $index = 0
-        foreach($srcFile in $srcFiles)
-        {
-            $index++
-            $testScript = $srcFile.FullName -replace '^(.*)\\src\\(.*?)\\(.*?)\.*.ps1', '$1\tests\$2\$3.tests.ps1'
+}
 
-            It "1.$($index) $testScript should exist" {
-                $testScript | Should -Exist
-            }
-        }
+Describe -Tag 'Core' "Test Scripts" -ForEach $srcFiles {
+    It "Checking to see if test script for $($_.FullName) exists" {
+        $testScript = $_.FullName -replace '^(.*)\\src\\(.*?)\\(.*?)\.*.ps1', '$1\tests\$2\$3.tests.ps1'
+        $testScript | Should -Exist
     }
 }

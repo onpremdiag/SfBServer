@@ -30,13 +30,15 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
+BeforeAll {
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
 
-. (Join-Path -Path $srcRoot -ChildPath common\Utils.ps1)
-. (Join-Path -Path $srcRoot -ChildPath common\Globals.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath common\Utils.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath common\Globals.ps1)
+}
 
 Describe -Tag 'Core' "Common utility functions" {
     Context "Get current OPD Version" {
@@ -162,16 +164,6 @@ Describe -Tag 'Core' "Common utility functions" {
             }
 
             (Test-MinimumNETFramework -MinimumVersion "4.7.2").Passed | Should -BeFalse
-        }
-    }
-
-    Context "Test-ConnectionLocalSubnet" {
-        It 'Should fail because computername is invalid' {
-            Test-ConnectionLocalSubnet -ComputerName "contoso.com" | Should -BeFalse
-        }
-
-        It 'Should pass because computername is valid' {
-            Test-ConnectionLocalSubnet -ComputerName $env:COMPUTERNAME | Should -BeTrue
         }
     }
 }

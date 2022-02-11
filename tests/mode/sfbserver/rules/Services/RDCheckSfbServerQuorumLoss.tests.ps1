@@ -29,29 +29,31 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
-$mode     = $Matches.Mode
+BeforeAll {
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
+    $testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+    $mode     = $Matches.Mode
 
-Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
+    Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
 
-# Load resource files needed for tests
-. "$testRoot\testhelpers\LoadResourceFiles.ps1"
-Import-ResourceFiles -Root $srcRoot -MyMode $mode
+    # Load resource files needed for tests
+    . "$testRoot\testhelpers\LoadResourceFiles.ps1"
+    Import-ResourceFiles -Root $srcRoot -MyMode $mode
 
-. "$srcRoot\common\Globals.ps1"
-. "$srcRoot\common\Utils.ps1"
-. "$srcRoot\mode\$mode\common\Globals.ps1"
-. "$srcRoot\mode\$mode\common\$mode.ps1"
-. "$srcRoot\classes\RuleDefinition.ps1"
-. "$srcRoot\classes\InsightDefinition.ps1"
-. "$srcRoot\mode\$mode\insights\Services\IDSfbServerNoQuorum.ps1"
-. "$testRoot\mocks\SfbServerMock.ps1"
+    . "$srcRoot\common\Globals.ps1"
+    . "$srcRoot\common\Utils.ps1"
+    . "$srcRoot\mode\$mode\common\Globals.ps1"
+    . "$srcRoot\mode\$mode\common\$mode.ps1"
+    . "$srcRoot\classes\RuleDefinition.ps1"
+    . "$srcRoot\classes\InsightDefinition.ps1"
+    . "$srcRoot\mode\$mode\insights\Services\IDSfbServerNoQuorum.ps1"
+    . "$testRoot\mocks\SfbServerMock.ps1"
 
-. $sut
+    . $sut
+}
 
 Describe  -Tag 'SfBServer' "RDCheckSfbServerQuorumLoss" {
     BeforeAll {
@@ -119,15 +121,23 @@ Describe  -Tag 'SfBServer' "RDCheckSfbServerQuorumLoss" {
             $rd.Insight.Detection | Should -Be $global:InsightDetections.'IDUnableToResolveDNSName'
         }
 
-        It "Unable to get information on PoolFqdn (Get-CsComputer fails-IDUnableToResolveDNSName)" {
-            Mock Get-CsComputer { }
+        It "Unable to get information on PoolFqdn (Get-CsComputer fails-IDNullOrEmptyPoolFQDN)" {
+            Mock Get-CsComputer {
+                @(
+                    @{
+                        Identity = [string]::Empty
+                        Pool     = [string]::Empty
+                        Fqdn     = [string]::Empty
+                    }
+                )
+            }
 
             $rd.Execute($null)
 
             $rd.Success           | Should -BeFalse
             $rd.EventId           | Should -Be $global:EventIds.($rd.Name)
-            $rd.Insight.Action    | Should -Be $global:InsightActions.'IDUnableToResolveDNSName'
-            $rd.Insight.Detection | Should -Be $global:InsightDetections.'IDUnableToResolveDNSName'
+            $rd.Insight.Action    | Should -Be ($global:InsightActions.'IDNullOrEmptyPoolFQDN' -f 'sfb2019.contoso.com')
+            $rd.Insight.Detection | Should -Be ($global:InsightDetections.'IDNullOrEmptyPoolFQDN' -f 'sfb2019.contoso.com')
         }
 
         It "Unable to validate network connection (Test-NetConnection fails-IDTestNetworkConnectionFails)" {

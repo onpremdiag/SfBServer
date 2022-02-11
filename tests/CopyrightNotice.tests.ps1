@@ -30,10 +30,14 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$srcRoot = Split-Path -Parent (Split-Path -LiteralPath $sut)
+BeforeDiscovery {
+    $sut     = $PSCommandPath.Replace('^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1')
+    $srcRoot = Split-Path -Parent (Split-Path -LiteralPath $sut)
+    $testFiles = Get-ChildItem -Path $srcRoot\src -Recurse -Include *.ps* | Sort-Object -Property BaseName
+}
 
-$MITLicenseHeader = @"
+BeforeAll {
+    $MITLicenseHeader = @"
 ################################################################################
 # MIT License
 #
@@ -58,22 +62,11 @@ $MITLicenseHeader = @"
 # SOFTWARE.
 #
 "@
+}
 
-Describe -Tag 'Core' "CopyrightNotice" {
-    BeforeAll {
-        $testFiles = Get-ChildItem -Path $srcRoot\src -Recurse -Include *.ps* | Sort-Object -Property BaseName
-    }
-
-    Context "1.0 Should contain the MIT License notice" {
-        $index = 0
-        foreach($testFile in $testFiles)
-        {
-            $index++
-            It "1.$($index) File $($testFile.FullName) should have the MIT license header" {
-                $contents = Get-Content -Path $testFile.FullName
-
-                $contents[0..22] -join "`r`n" | Should -BeExactly $MITLicenseHeader
-            }
-        }
+Describe -Tag 'Core' "Copyright Notice" -ForEach $testFiles {
+    It "Checking $($_) for MIT license notice" {
+        $contents = Get-Content -Path $_
+        $contents[0..22] -join "`r`n" | Should -BeExactly $MITLicenseHeader
     }
 }

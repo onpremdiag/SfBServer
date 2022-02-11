@@ -27,27 +27,29 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$myPath   = $PSCommandPath
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
-$mode     = $Matches.Mode
+BeforeAll {
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $myPath   = $PSCommandPath
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
+    $testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+    $mode     = $Matches.Mode
 
-Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
+    Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
 
-# Load resource files needed for tests
-. (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
+    # Load resource files needed for tests
+    . (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
 
-Import-ResourceFiles -Root $srcRoot -MyMode $mode
+    Import-ResourceFiles -Root $srcRoot -MyMode $mode
 
-. (Join-Path -Path $srcRoot -ChildPath common\Globals.ps1)
-. (Join-Path -Path $srcRoot -ChildPath common\Utils.ps1)
-. (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\Globals.ps1)
-. (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\$mode.ps1)
-. (Join-Path -Path $srcRoot -ChildPath classes\RuleDefinition.ps1)
-. (Join-Path -Path $srcRoot -ChildPath classes\InsightDefinition.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath common\Globals.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath common\Utils.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\Globals.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\$mode.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath classes\RuleDefinition.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath classes\InsightDefinition.ps1)
+}
 
 Describe -Tag 'sfbserver' "Check insight resources" {
     BeforeAll {
@@ -55,9 +57,9 @@ Describe -Tag 'sfbserver' "Check insight resources" {
     }
 
     Context "Class names" {
-        foreach($insight in $insights)
-        {
-            It "Class name for $($insight.BaseName) should match internal name" {
+        It "Class name should match internal name" {
+            foreach($insight in $insights)
+            {
                 . $insight.FullName
 
                 $id1 = New-Object -TypeName $insight.BaseName -ArgumentList $null
@@ -70,9 +72,9 @@ Describe -Tag 'sfbserver' "Check insight resources" {
     }
 
     Context "Constructor names" {
-        foreach($insight in $insights)
-        {
-            It "Class name for $($insight.BaseName) should match internal name" {
+        It "Class name should not be null or empty" {
+            foreach($insight in $insights)
+            {
                 . $insight.FullName
 
                 $id1 = New-Object -TypeName $insight.BaseName -ArgumentList $null
@@ -82,36 +84,12 @@ Describe -Tag 'sfbserver' "Check insight resources" {
                 $id2.Name | Should -Not -BeNullOrEmpty
             }
         }
+    }
 
-        foreach($insight in $insights)
-        {
-            It "Class name for $($insight.BaseName) should" {
-                . $insight.FullName
-
-                $id1 = New-Object -TypeName $insight.BaseName -ArgumentList $null
-                $id2 = New-Object -TypeName $insight.BaseName -ArgumentList "WARNING"
-
-                $id1.Name | Should -Not -BeNullOrEmpty
-                $id2.Name | Should -Not -BeNullOrEmpty
-            }
-        }
-
-        foreach($insight in $insights)
-        {
-            It "Class name for $($insight.BaseName) should have two (2) constructors" {
-                . $insight.FullName
-
-                $id1 = New-Object -TypeName $insight.BaseName -ArgumentList $null
-                $id2 = New-Object -TypeName $insight.BaseName -ArgumentList "WARNING"
-
-                $id1 | Should -Not -BeNullOrEmpty
-                $id2 | Should -Not -BeNullOrEmpty
-            }
-        }
-
-        foreach($insight in $insights)
-        {
-            It "Constructors for $($insight.BaseName) should be in sync" {
+    Context "Constructors should be in sync" {
+        It "Constructors should be in sync" {
+            foreach($insight in $insights)
+            {
                 . $insight.FullName
 
                 $id1 = New-Object -TypeName $insight.BaseName -ArgumentList $null
@@ -129,16 +107,16 @@ Describe -Tag 'sfbserver' "Check insight resources" {
     }
 
     Context "Resources" {
-        foreach($insight in $insights)
-        {
-            It "$($insight.BaseName) should have a resource in InsightDetections" {
+        It "Insight should have a resource in InsightDetections" {
+            foreach($insight in $insights)
+            {
                 $global:InsightDetections.($insight.BaseName) | Should -Not -BeNullOrEmpty
             }
         }
 
-        foreach($insight in $insights)
-        {
-            It "$($insight.BaseName) should have a resource in InsightDetections" {
+        It "Insight should have a resource in InsightActions" {
+            foreach($insight in $insights)
+            {
                 $global:InsightActions.($insight.BaseName) | Should -Not -BeNullOrEmpty
             }
         }

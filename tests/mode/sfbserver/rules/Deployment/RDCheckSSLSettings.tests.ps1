@@ -29,35 +29,37 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut                   = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root                  = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$srcRoot               = "$root\src"
-$testRoot              = "$root\tests"
-$testMode              = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
-$mode                  = $Matches.Mode
-$webConfigWithProxy    = Join-Path -Path (Split-Path -Path $PSCommandPath -Parent) -ChildPath 'WithProxy.web.config'
-$webConfigWithoutProxy = Join-Path -Path (Split-Path -Path $PSCommandPath -Parent) -ChildPath 'WithoutProxy.web.config'
+BeforeAll {
+	$sut                   = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+	$root                  = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+	$srcRoot               = "$root\src"
+	$testRoot              = "$root\tests"
+	$testMode              = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+	$mode                  = $Matches.Mode
+	$webConfigWithProxy    = Join-Path -Path (Split-Path -Path $PSCommandPath -Parent) -ChildPath 'WithProxy.web.config'
+	$webConfigWithoutProxy = Join-Path -Path (Split-Path -Path $PSCommandPath -Parent) -ChildPath 'WithoutProxy.web.config'
 
-Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
+	Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
 
-# Load resource files needed for tests
-. (Join-Path $testRoot -ChildPath "testhelpers\LoadResourceFiles.ps1")
+	# Load resource files needed for tests
+	. (Join-Path $testRoot -ChildPath "testhelpers\LoadResourceFiles.ps1")
 
-Import-ResourceFiles -Root $srcRoot -MyMode $mode
+	Import-ResourceFiles -Root $srcRoot -MyMode $mode
 
-. (Join-Path $srcRoot  -ChildPath "common\Globals.ps1")
-. (Join-Path $srcRoot  -ChildPath "common\Utils.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\common\Globals.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\common\$mode.ps1")
-. (Join-Path $srcRoot  -ChildPath "classes\RuleDefinition.ps1")
-. (Join-Path $srcRoot  -ChildPath "classes\InsightDefinition.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDSSLNotDisabled.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDNotFEMachine.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Global\IDRegistryKeyNotFound.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Global\IDPropertyNotFoundException.ps1")
-. (Join-Path $testRoot -ChildPath "mocks\SfbServerMock.ps1")
+	. (Join-Path $srcRoot  -ChildPath "common\Globals.ps1")
+	. (Join-Path $srcRoot  -ChildPath "common\Utils.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\common\Globals.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\common\$mode.ps1")
+	. (Join-Path $srcRoot  -ChildPath "classes\RuleDefinition.ps1")
+	. (Join-Path $srcRoot  -ChildPath "classes\InsightDefinition.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDSSLNotDisabled.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDNotFEMachine.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Global\IDRegistryKeyNotFound.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Global\IDPropertyNotFoundException.ps1")
+	. (Join-Path $testRoot -ChildPath "mocks\SfbServerMock.ps1")
 
-. $sut
+	. $sut
+}
 
 Describe -Tag 'SfBServer' "RDCheckSSLSettings" {
 	Context "Exists" {
@@ -86,6 +88,7 @@ Describe -Tag 'SfBServer' "RDCheckSSLSettings" {
 						Identity = $env:ComputerName + '.' + $env:USERDNSDOMAIN
 						Fqdn     = $env:ComputerName + '.' + $env:USERDNSDOMAIN
 						Services = @('Registrar:FEServer.contoso.com','UserServer:FEServer.contoso.com','ApplicationServer:FEServer.contoso.com')
+						Computers = @($env:ComputerName + '.' + $env:USERDNSDOMAIN, 'Server1.contoso.com', 'Server2.contoso.com')
 					}
 				)
 			}
@@ -127,6 +130,7 @@ Describe -Tag 'SfBServer' "RDCheckSSLSettings" {
 						Identity = $env:ComputerName + '.' + $env:USERDNSDOMAIN
 						Fqdn     = $env:ComputerName + '.' + $env:USERDNSDOMAIN
 						Services = @('Registrar:FEServer.contoso.com','UserServer:FEServer.contoso.com','ApplicationServer:FEServer.contoso.com')
+						Computers = @($env:ComputerName + '.' + $env:USERDNSDOMAIN, 'Server1.contoso.com', 'Server2.contoso.com')
 					}
 				)
 			}
@@ -170,6 +174,7 @@ Describe -Tag 'SfBServer' "RDCheckSSLSettings" {
 						Identity = $env:ComputerName + '.' + $env:USERDNSDOMAIN
 						Fqdn     = $env:ComputerName + '.' + $env:USERDNSDOMAIN
 						Services = @('Registrar:FEServer.contoso.com','UserServer:FEServer.contoso.com','ApplicationServer:FEServer.contoso.com')
+						Computers = @($env:ComputerName + '.' + $env:USERDNSDOMAIN, 'Server1.contoso.com', 'Server2.contoso.com')
 					}
 				)
 			}
@@ -213,6 +218,7 @@ Describe -Tag 'SfBServer' "RDCheckSSLSettings" {
 						Identity = $env:ComputerName + '.' + $env:USERDNSDOMAIN
 						Fqdn     = $env:ComputerName + '.' + $env:USERDNSDOMAIN
 						Services = @('Registrar:FEServer.contoso.com','UserServer:FEServer.contoso.com','ApplicationServer:FEServer.contoso.com')
+						Computers = @($env:ComputerName + '.' + $env:USERDNSDOMAIN, 'Server1.contoso.com', 'Server2.contoso.com')
 					}
 				)
 			}
@@ -256,6 +262,7 @@ Describe -Tag 'SfBServer' "RDCheckSSLSettings" {
 						Identity = $env:ComputerName + '.' + $env:USERDNSDOMAIN
 						Fqdn     = $env:ComputerName + '.' + $env:USERDNSDOMAIN
 						Services = @('Registrar:FEServer.contoso.com','UserServer:FEServer.contoso.com','ApplicationServer:FEServer.contoso.com')
+						Computers = @($env:ComputerName + '.' + $env:USERDNSDOMAIN, 'Server1.contoso.com', 'Server2.contoso.com')
 					}
 				)
 			}

@@ -32,41 +32,45 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$myPath   = $PSCommandPath
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+BeforeAll {
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $myPath   = $PSCommandPath
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
+    $testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
 
-Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
-$global:OPDOptions  = @{
-    OriginalCulture  = ([System.Threading.Thread]::CurrentThread.CurrentCulture).Name
+    Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
+    $global:OPDOptions  = @{
+        OriginalCulture  = ([System.Threading.Thread]::CurrentThread.CurrentCulture).Name
+    }
+
+    # Load resource files needed for tests
+    . (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
+    . (Join-Path -Path $srcRoot  -ChildPath common\Globals.ps1)
+    . (Join-Path -Path $srcRoot  -ChildPath common\Utils.ps1)
+
+    Initialize-ResourceString -Root $srcRoot -MyMode 'SfBServer'
 }
-
-# Load resource files needed for tests
-. (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
-. (Join-Path -Path $srcRoot  -ChildPath common\Globals.ps1)
-. (Join-Path -Path $srcRoot  -ChildPath common\Utils.ps1)
-
-Initialize-ResourceString -Root $srcRoot -MyMode 'SfBServer'
 
 Describe -Tag 'SfBServer' "RuleDescriptions" {
     Context "Checking for TODO in rule description" {
-        foreach($RuleDescription in $global:RuleDescriptions.Keys)
-        {
-            It "Rule Description for $RuleDescription should not have a TODO marker" {
+        It "Rule Descriptions should not have a TODO marker" {
+            foreach($RuleDescription in $global:RuleDescriptions.Keys)
+            {
+                #"Rule Description for $RuleDescription should not have a TODO marker" | Write-Host
                 $global:RuleDescriptions.$RuleDescription | Should -Not -Match 'TODO'
             }
         }
     }
 
 	Context "Uniformity" {
-		foreach($RuleDescription in $global:RuleDescriptions.Keys)
-		{
-			It "Rule Description for $RuleDescription should begin with Determine..." {
+        It "Rule Descriptions should begin with Determine..." {
+		    foreach($RuleDescription in $global:RuleDescriptions.Keys)
+		    {
+			    #"Rule Description for $RuleDescription should begin with Determine..." | Write-Host
 				$global:RuleDescriptions.$RuleDescription | Should -BeLike "Determine*"
-			}
-		}
+		    }
+        }
 	}
 }

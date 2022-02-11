@@ -30,31 +30,33 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
-$mode     = $Matches.Mode
+BeforeAll {
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
+    $testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+    $mode     = $Matches.Mode
 
-Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
+    Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
 
-. (Join-Path -Path $srcRoot -ChildPath common\Globals.ps1)
-. (Join-Path -Path $srcRoot -ChildPath common\Utils.ps1)
-. (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\Globals.ps1)
-. (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\$mode.ps1)
-. (Join-Path -Path $testRoot -ChildPath mocks\SfBServerMock.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath common\Globals.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath common\Utils.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\Globals.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\$mode.ps1)
+    . (Join-Path -Path $testRoot -ChildPath mocks\SfBServerMock.ps1)
+}
 
 Describe -Tag 'SfBServer' "Test-SfbServerPSModuleIsLoaded" {
-    BeforeEach {
-        $global:SfbServerPowerShellModuleLoaded = $false
-    }
-
-    AfterEach {
-        $global:SfbServerPowerShellModuleLoaded = $false
-    }
-
     Context "SfBServer PowerShell Modules" {
+        BeforeEach {
+            $global:SfbServerPowerShellModuleLoaded = $false
+        }
+
+        AfterEach {
+            $global:SfbServerPowerShellModuleLoaded = $false
+        }
+
         It "SfBServer PowerShell Module is loaded" {
             Mock Get-Module { return @{Name = $global:SfBServerModule} }
 

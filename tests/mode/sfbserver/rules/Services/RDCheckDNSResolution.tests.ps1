@@ -30,59 +30,61 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
-$mode     = $Matches.Mode
+BeforeAll {
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
+    $testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+    $mode     = $Matches.Mode
 
-Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
+    Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
 
-# Load resource files needed for tests
-. "$testRoot\testhelpers\LoadResourceFiles.ps1"
-Import-ResourceFiles -Root $srcRoot -MyMode $mode
+    # Load resource files needed for tests
+    . "$testRoot\testhelpers\LoadResourceFiles.ps1"
+    Import-ResourceFiles -Root $srcRoot -MyMode $mode
 
-. (Join-Path -Path $srcRoot  -ChildPath "common\Globals.ps1")
-. (Join-Path -Path $srcRoot  -ChildPath "common\Utils.ps1")
-. (Join-Path -Path $srcRoot  -ChildPath "mode\$mode\common\Globals.ps1")
-. (Join-Path -Path $srcRoot  -ChildPath "mode\$mode\common\$mode.ps1")
-. (Join-Path -Path $srcRoot  -ChildPath "classes\RuleDefinition.ps1")
-. (Join-Path -Path $srcRoot  -ChildPath "classes\InsightDefinition.ps1")
-. (Join-Path -Path $srcRoot  -ChildPath "mode\$mode\insights\Services\IDIPv4DoesNotMatchReverseLookup.ps1")
-. (Join-Path -Path $testRoot -ChildPath "mocks\SfbServerMock.ps1")
+    . (Join-Path -Path $srcRoot  -ChildPath "common\Globals.ps1")
+    . (Join-Path -Path $srcRoot  -ChildPath "common\Utils.ps1")
+    . (Join-Path -Path $srcRoot  -ChildPath "mode\$mode\common\Globals.ps1")
+    . (Join-Path -Path $srcRoot  -ChildPath "mode\$mode\common\$mode.ps1")
+    . (Join-Path -Path $srcRoot  -ChildPath "classes\RuleDefinition.ps1")
+    . (Join-Path -Path $srcRoot  -ChildPath "classes\InsightDefinition.ps1")
+    . (Join-Path -Path $srcRoot  -ChildPath "mode\$mode\insights\Services\IDIPv4DoesNotMatchReverseLookup.ps1")
+    . (Join-Path -Path $testRoot -ChildPath "mocks\SfbServerMock.ps1")
 
-. $sut
+    . $sut
+}
 
 Describe -Tag 'SfBServer' "RDCheckDNSResolution" {
-    BeforeAll {
-        Mock Write-OPDEventLog {}
+    Context "Check to see if DNS IPv4 IP can be resolved and that the reverse" {
+        BeforeAll {
+            Mock Write-OPDEventLog {}
 
-        Mock Resolve-DnsName {
-            @(
-                @{
-                    Address      = "127.0.0.1"
-                    IPAddress    = "127.0.0.1"
-                    QueryType    = "A"
-                    IP4Address   = "127.0.0.1"
-                    Name         = "sfb2019.contoso.com"
-                    Type         = "A"
-                    CharacterSet = "Unicode"
-                    Section      = "Answer"
-                    DataLength   = 4
-                    TTL          = 1200
-                }
-            )
+            Mock Resolve-DnsName {
+                @(
+                    @{
+                        Address      = "127.0.0.1"
+                        IPAddress    = "127.0.0.1"
+                        QueryType    = "A"
+                        IP4Address   = "127.0.0.1"
+                        Name         = "sfb2019.contoso.com"
+                        Type         = "A"
+                        CharacterSet = "Unicode"
+                        Section      = "Answer"
+                        DataLength   = 4
+                        TTL          = 1200
+                    }
+                )
+            }
+
+            Mock Get-HostEntry { return "sfb2019.contoso.com" }
         }
 
-        Mock Get-HostEntry { return "sfb2019.contoso.com" }
-    }
+        BeforeEach {
+            $rd = [RDCheckDNSResolution]::new([IDIPv4DoesNotMatchReverseLookup]::new())
+        }
 
-    BeforeEach {
-        $rd = [RDCheckDNSResolution]::new([IDIPv4DoesNotMatchReverseLookup]::new())
-    }
-
-    Context "Check to see if DNS IPv4 IP can be resolved and that the reverse" {
         It "Resolution is good" {
             Mock Get-CsComputer {
                 @(
@@ -103,7 +105,18 @@ Describe -Tag 'SfBServer' "RDCheckDNSResolution" {
         }
 
         It "Does not match" {
+            Mock Get-CsComputer {
+                @(
+                    @{
+                        Identity = "sfb2019.contoso.com"
+                        Pool     = "sfb2019.contoso.com"
+                        Fqdn     = "sfb2019.contoso.com"
+                    }
+                )
+            }
+
             Mock Get-HostEntry { return "sfb2018.contoso.com"}
+
             $DNSAddress = Resolve-DnsName -Name "anything"
 
             $rd.Execute($null)

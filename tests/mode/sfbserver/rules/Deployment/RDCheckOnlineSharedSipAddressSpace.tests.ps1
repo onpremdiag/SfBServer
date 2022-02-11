@@ -27,34 +27,35 @@
 # Created On: 9/27/2021 2:25 PM
 #
 #################################################################################
-
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
-$mode     = $Matches.Mode
+BeforeAll {
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
+    $testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+    $mode     = $Matches.Mode
 
-Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
+    Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
 
-# Load resource files needed for tests
-. "$testRoot\testhelpers\LoadResourceFiles.ps1"
-Import-ResourceFiles -Root $srcRoot -MyMode $mode
+    # Load resource files needed for tests
+    . "$testRoot\testhelpers\LoadResourceFiles.ps1"
+    Import-ResourceFiles -Root $srcRoot -MyMode $mode
 
-. "$srcRoot\common\Globals.ps1"
-. "$srcRoot\common\Utils.ps1"
-. "$srcRoot\mode\$mode\common\Globals.ps1"
-. "$srcRoot\mode\$mode\common\$mode.ps1"
-. "$srcRoot\classes\RuleDefinition.ps1"
-. "$srcRoot\classes\InsightDefinition.ps1"
-. "$srcRoot\mode\$mode\insights\Deployment\IDSIPHostingProviderSharedAddressSpaceEnabled.ps1"
-. "$srcRoot\mode\$mode\insights\Deployment\IDSIPSharedAddressSpaceEnabled.ps1"
-. "$testRoot\mocks\SfbServerMock.ps1"
-. "$testRoot\mocks\LyncOnlineConnectorMocks.ps1"
+    . "$srcRoot\common\Globals.ps1"
+    . "$srcRoot\common\Utils.ps1"
+    . "$srcRoot\mode\$mode\common\Globals.ps1"
+    . "$srcRoot\mode\$mode\common\$mode.ps1"
+    . "$srcRoot\classes\RuleDefinition.ps1"
+    . "$srcRoot\classes\InsightDefinition.ps1"
+    . "$srcRoot\mode\$mode\insights\Deployment\IDSIPHostingProviderSharedAddressSpaceEnabled.ps1"
+    . "$srcRoot\mode\$mode\insights\Deployment\IDSIPSharedAddressSpaceEnabled.ps1"
+    . "$testRoot\mocks\SfbServerMock.ps1"
+    . "$testRoot\mocks\LyncOnlineConnectorMocks.ps1"
 
-. $sut
+    . $sut
+}
 
 Describe -Tag 'SfBServer' "RDCheckOnlineSharedSipAddressSpace" {
 	Context "Checks if the online settings for ShareSipAddressSpace are disabled" {

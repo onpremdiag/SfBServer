@@ -30,30 +30,32 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
-$mode     = $Matches.Mode
+BeforeAll {
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
+    $testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+    $mode     = $Matches.Mode
 
-Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
+    Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
 
-# Load resource files needed for tests
-. (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
+    # Load resource files needed for tests
+    . (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
 
-Import-ResourceFiles -Root $srcRoot -MyMode $mode
+    Import-ResourceFiles -Root $srcRoot -MyMode $mode
 
-. (Join-Path -Path $srcRoot -ChildPath common\Globals.ps1)
-. (Join-Path -Path $srcRoot -ChildPath common\Utils.ps1)
-. (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\Globals.ps1)
-. (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\$mode.ps1)
-. (Join-Path -Path $srcRoot -ChildPath classes\RuleDefinition.ps1)
-. (Join-Path -Path $srcRoot -ChildPath classes\InsightDefinition.ps1)
-. (Join-Path -Path $srcRoot -ChildPath mode\$mode\insights\Deployment\IDSIPHostingProviderAutodiscoverURLInvalid.ps1)
-. (Join-Path -Path $testRoot -ChildPath mocks\SfbServerMock.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath common\Globals.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath common\Utils.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\Globals.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\$mode.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath classes\RuleDefinition.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath classes\InsightDefinition.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath mode\$mode\insights\Deployment\IDSIPHostingProviderAutodiscoverURLInvalid.ps1)
+    . (Join-Path -Path $testRoot -ChildPath mocks\SfbServerMock.ps1)
 
-. $sut
+    . $sut
+}
 
 Describe -Tag 'SfBServer' "RDCheckAutoDiscoverURL" {
     Context "Checks the AutodiscoverURL value" {
@@ -82,7 +84,7 @@ Describe -Tag 'SfBServer' "RDCheckAutoDiscoverURL" {
                 }
 
                 Export-ModuleMember -Function Get-CsHostingProvider
-            } | Import-Module -Force        
+            } | Import-Module -Force
             $rd.Execute($null)
 
             $rd.Success           | Should -BeTrue
@@ -161,7 +163,7 @@ Describe -Tag 'SfBServer' "RDCheckAutoDiscoverURL" {
                 }
 
                 Export-ModuleMember -Function Get-CsHostingProvider
-            } | Import-Module -Force                  
+            } | Import-Module -Force
 
             $rd.Execute($null)
 

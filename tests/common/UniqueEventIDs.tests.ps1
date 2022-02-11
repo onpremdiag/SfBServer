@@ -50,44 +50,43 @@ $global:OPDOptions  = @{
 Initialize-CommonResourceStrings -Root $srcRoot
 
 Describe -Tag 'Core' "UniqueEventIDs" {
-    BeforeAll {
-        $eventIDNames  = [Collections.Generic.SortedDictionary[string,array]] @{}
-        $eventIDValues = [Collections.Generic.SortedDictionary[int,array]] @{}
-    }
-
     Context "There should be no duplicate Event ID values" {
-        $ids = $global:OPDEventIDs.Values | Sort-Object -Unique
-        $obj = @()
+        It "Checking Event ID values for duplicates" {
+            $eventIDValues = [Collections.Generic.SortedDictionary[int,array]] @{}
 
-        foreach($id in $ids)
-        {
-            $eventIDValues.Add($id, $global:OPDEventIDs.ContainsValue($id))
-        }
+            $ids = $global:OPDEventIDs.Values | Sort-Object -Unique
+            $obj = @()
 
-        foreach($id in $ids)
-        {
-            It "Checking eventID $id" {
+            foreach($id in $ids)
+            {
+                $eventIDValues.Add($id, $global:OPDEventIDs.ContainsValue($id))
+            }
+
+            foreach($id in $ids)
+            {
                 $eventIDValues.TryGetValue($id, [ref]$obj)
-                $obj       | Should Not BeNullOrEmpty
+                $obj       | Should -Not -BeNullOrEmpty
                 $obj.Count | Should -Be 1
             }
         }
     }
 
     Context "There should be no duplicate Event ID names" {
-        $names = $global:OPDEventIDs.Keys | Sort-Object -Unique
-        $obj   = @()
+        It "Checking Event ID names for duplicates" {
+            $eventIDNames  = [Collections.Generic.SortedDictionary[string,array]] @{}
 
-        foreach($name in $names)
-        {
-            $eventIDNames.Add($name, $global:OPDEventIDs.ContainsKey($name))
-        }
+            $names = $global:OPDEventIDs.Keys | Sort-Object -Unique
+            $obj   = @()
 
-        foreach($name in $names)
-        {
-            It "Checking event name $name" {
+            foreach($name in $names)
+            {
+                $eventIDNames.Add($name, $global:OPDEventIDs.ContainsKey($name))
+            }
+
+            foreach($name in $names)
+            {
                 $eventIDNames.TryGetValue($name, [ref]$obj)
-                $obj       | Should Not BeNullOrEmpty
+                $obj       | Should -Not -BeNullOrEmpty
                 $obj.Count | Should -Be 1
             }
         }

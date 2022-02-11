@@ -51,22 +51,22 @@ Initialize-ResourceString -Root $srcRoot -MyMode 'SfBServer'
 
 Describe -Tag 'Core' "UniqueEventIDs" {
     Context "There should be no duplicate Event ID values" {
-        $ids = $global:EventIDs.Values | Sort-Object
+        It "Checking Event ID value count" {
+            $ids = $global:EventIDs.Values | Sort-Object
 
-        foreach($id in $ids)
-        {
-            It "Checking event ID value $id" {
+            foreach($id in $ids)
+            {
                 $ids | Where-Object {$_ -eq $id} | Should -HaveCount 1
             }
         }
     }
 
     Context "There should be no duplicate Event ID names" {
-        $names = $global:EventIDs.Keys | Sort-Object
+        It "Checking event ID name count " {
+            $names = $global:EventIDs.Keys | Sort-Object
 
-        foreach($name in $names)
-        {
-            It "Checking event name $name" {
+            foreach($name in $names)
+            {
                 $names | Where-Object {$_ -eq $name} | Should -HaveCount 1
             }
         }

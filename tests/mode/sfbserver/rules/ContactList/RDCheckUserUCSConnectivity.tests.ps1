@@ -29,106 +29,108 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
-$mode     = $Matches.Mode
+BeforeAll {
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
+    $testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+    $mode     = $Matches.Mode
 
-Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
+    Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
 
-# Load resource files needed for tests
-. "$testRoot\testhelpers\LoadResourceFiles.ps1"
-Import-ResourceFiles -Root $srcRoot -MyMode $mode
+    # Load resource files needed for tests
+    . "$testRoot\testhelpers\LoadResourceFiles.ps1"
+    Import-ResourceFiles -Root $srcRoot -MyMode $mode
 
-. "$srcRoot\common\Globals.ps1"
-. "$srcRoot\common\Utils.ps1"
-. "$srcRoot\mode\$mode\common\Globals.ps1"
-. "$srcRoot\mode\$mode\common\$mode.ps1"
-. "$srcRoot\classes\RuleDefinition.ps1"
-. "$srcRoot\classes\InsightDefinition.ps1"
-. "$srcRoot\mode\$mode\insights\ContactList\IDUCSConnectivityNotAvailable.ps1"
-. "$testRoot\mocks\SfbServerMock.ps1"
+    . "$srcRoot\common\Globals.ps1"
+    . "$srcRoot\common\Utils.ps1"
+    . "$srcRoot\mode\$mode\common\Globals.ps1"
+    . "$srcRoot\mode\$mode\common\$mode.ps1"
+    . "$srcRoot\classes\RuleDefinition.ps1"
+    . "$srcRoot\classes\InsightDefinition.ps1"
+    . "$srcRoot\mode\$mode\insights\ContactList\IDUCSConnectivityNotAvailable.ps1"
+    . "$testRoot\mocks\SfbServerMock.ps1"
 
-. $sut
+    . $sut
+}
 
 Describe -Tag 'SfBServer' "RDCheckUserUCSConnectivity" {
-    BeforeAll {
-        Mock Write-OPDEventLog {}
-    }
-
-     Mock Resolve-DnsName {
-            @(
-                @{
-                    Address    = [ipaddress]"127.0.0.1"
-                    IPAddress  = [ipaddress]"127.0.0.1"
-                    QueryType  = "A"
-                    IP4Address = [ipaddress]"127.0.0.1"
-                    Name       = "sfb2019.contoso.com"
-                }
-            )
-        }
-
-        Mock Get-CsComputer {
-            @(
-                @{
-                    Identity = "sfb2019.contoso.com"
-                    Pool     = "sfb2019.contoso.com"
-                    Fqdn     = "sfb2019.contoso.com"
-                }
-            )
-        }
-
-        Mock Test-CsUnifiedContactStore {
-            @(
-                @{
-                    Result = "Success"
-                 }
-            )
-        }
-
-    BeforeEach {
-        $rd = [RDCheckUserUCSConnectivity]::new([IDUCSConnectivityNotAvailable]::new())
-    }
-
     Context "Determine if server-to-server Skype for Business and Exchange connectivity is working" {
-          It "Exchange connection available" {
+        BeforeAll {
+            Mock Write-OPDEventLog {}
 
-              $rd.ParameterDefinitions = @{
-                  Name  = "PDSipAddress";
-                  Value = "user@contoso.com"
-              }
+            Mock Resolve-DnsName {
+                @(
+                    @{
+                        Address    = [ipaddress]"127.0.0.1"
+                        IPAddress  = [ipaddress]"127.0.0.1"
+                        QueryType  = "A"
+                        IP4Address = [ipaddress]"127.0.0.1"
+                        Name       = "sfb2019.contoso.com"
+                    }
+                )
+            }
 
-              $rd.Execute($null)
+            Mock Get-CsComputer {
+                @(
+                    @{
+                        Identity = "sfb2019.contoso.com"
+                        Pool     = "sfb2019.contoso.com"
+                        Fqdn     = "sfb2019.contoso.com"
+                    }
+                )
+            }
 
-              $rd.Success           | Should -BeTrue
-              $rd.EventId           | Should -Be $global:EventIds.($rd.Name)
-              $rd.Insight.Detection | Should -Be $global:InsightDetections.($rd.Insight.Name)
-              $rd.Insight.Action    | Should -Be $global:InsightActions.($rd.Insight.Name)
-          }
+            Mock Test-CsUnifiedContactStore {
+                @(
+                    @{
+                        Result = "Success"
+                        }
+                )
+            }
+        }
 
-          It "Exchange connection not available" {
-              Mock Test-CsUnifiedContactStore {
-                  @(
-                      @{
-                          Result = "Failure"
-                      }
-                  )
-              }
+        BeforeEach {
+            $rd = [RDCheckUserUCSConnectivity]::new([IDUCSConnectivityNotAvailable]::new())
+        }
 
-              $rd.ParameterDefinitions = @{
-                  Name  = "PDSipAddress";
-                  Value = "user@contoso.com"
-              }
+        It "Exchange connection available" {
 
-              $rd.Execute($null)
+            $rd.ParameterDefinitions = @{
+                Name  = "PDSipAddress";
+                Value = "user@contoso.com"
+            }
 
-              $rd.Success           | Should -BeFalse
-              $rd.EventId           | Should -Be $global:EventIds.($rd.Name)
-              $rd.Insight.Detection | Should -Be $global:InsightDetections.($rd.Insight.Name)
-              $rd.Insight.Action    | Should -Be $global:InsightActions.($rd.Insight.Name)
-          }
+            $rd.Execute($null)
+
+            $rd.Success           | Should -BeTrue
+            $rd.EventId           | Should -Be $global:EventIds.($rd.Name)
+            $rd.Insight.Detection | Should -Be $global:InsightDetections.($rd.Insight.Name)
+            $rd.Insight.Action    | Should -Be $global:InsightActions.($rd.Insight.Name)
+        }
+
+        It "Exchange connection not available" {
+            Mock Test-CsUnifiedContactStore {
+                @(
+                    @{
+                        Result = "Failure"
+                    }
+                )
+            }
+
+            $rd.ParameterDefinitions = @{
+                Name  = "PDSipAddress";
+                Value = "user@contoso.com"
+            }
+
+            $rd.Execute($null)
+
+            $rd.Success           | Should -BeFalse
+            $rd.EventId           | Should -Be $global:EventIds.($rd.Name)
+            $rd.Insight.Detection | Should -Be $global:InsightDetections.($rd.Insight.Name)
+            $rd.Insight.Action    | Should -Be $global:InsightActions.($rd.Insight.Name)
+        }
 
         It "Unable to resolve DNS name for server (Resolve-DnsName fails)" {
             Mock Resolve-DnsName { }
@@ -141,13 +143,21 @@ Describe -Tag 'SfBServer' "RDCheckUserUCSConnectivity" {
         }
 
         It "Unable to get information on PoolFqdn (Get-CsComputer fails)" {
-            Mock Get-CsComputer { }
+            Mock Get-CsComputer {
+                @(
+                    @{
+                        Identity = [string]::Empty
+                        Pool     = [string]::Empty
+                        Fqdn     = [string]::Empty
+                    }
+                )
+            }
 
             $rd.Execute($null)
 
             $rd.Success           | Should -BeFalse
             $rd.EventId           | Should -Be $global:EventIds.($rd.Name)
-            $rd.Insight.Detection | Should -Be $global:InsightDetections.'IDUnableToResolveDNSName'
+            $rd.Insight.Detection | Should -Be $global:InsightDetections.'IDUnableToResolveServerFQDN'
         }
 
         It "Server FQDN Name is missing" {

@@ -30,38 +30,40 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut                   = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root                  = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$srcRoot               = "$root\src"
-$testRoot              = "$root\tests"
-$testMode              = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
-$mode                  = $Matches.Mode
-$webConfigWithProxy    = Join-Path -Path (Split-Path -Path $PSCommandPath -Parent) -ChildPath 'WithProxy.web.config'
-$webConfigWithoutProxy = Join-Path -Path (Split-Path -Path $PSCommandPath -Parent) -ChildPath 'WithoutProxy.web.config'
+BeforeAll {
+	$sut                   = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+	$root                  = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+	$srcRoot               = "$root\src"
+	$testRoot              = "$root\tests"
+	$testMode              = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+	$mode                  = $Matches.Mode
+	$webConfigWithProxy    = Join-Path -Path (Split-Path -Path $PSCommandPath -Parent) -ChildPath 'WithProxy.web.config'
+	$webConfigWithoutProxy = Join-Path -Path (Split-Path -Path $PSCommandPath -Parent) -ChildPath 'WithoutProxy.web.config'
 
-Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
+	Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
 
-# Load resource files needed for tests
-. (Join-Path $testRoot -ChildPath "testhelpers\LoadResourceFiles.ps1")
+	# Load resource files needed for tests
+	. (Join-Path $testRoot -ChildPath "testhelpers\LoadResourceFiles.ps1")
 
-Import-ResourceFiles -Root $srcRoot -MyMode $mode
+	Import-ResourceFiles -Root $srcRoot -MyMode $mode
 
-. (Join-Path $srcRoot  -ChildPath "common\Globals.ps1")
-. (Join-Path $srcRoot  -ChildPath "common\Utils.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\common\Globals.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\common\$mode.ps1")
-. (Join-Path $srcRoot  -ChildPath "classes\RuleDefinition.ps1")
-. (Join-Path $srcRoot  -ChildPath "classes\InsightDefinition.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDProxyMismatch.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDGetCsServerVersionFailed.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDUnableToGetVersion.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Global\IDFileDoesNotExist.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Global\IDFileIsEmpty.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Global\IDRegistryKeyNotFound.ps1")
-. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Global\IDPropertyNotFoundException.ps1")
-. (Join-Path $testRoot -ChildPath "mocks\SfbServerMock.ps1")
+	. (Join-Path $srcRoot  -ChildPath "common\Globals.ps1")
+	. (Join-Path $srcRoot  -ChildPath "common\Utils.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\common\Globals.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\common\$mode.ps1")
+	. (Join-Path $srcRoot  -ChildPath "classes\RuleDefinition.ps1")
+	. (Join-Path $srcRoot  -ChildPath "classes\InsightDefinition.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDProxyMismatch.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDGetCsServerVersionFailed.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDUnableToGetVersion.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Global\IDFileDoesNotExist.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Global\IDFileIsEmpty.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Global\IDRegistryKeyNotFound.ps1")
+	. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Global\IDPropertyNotFoundException.ps1")
+	. (Join-Path $testRoot -ChildPath "mocks\SfbServerMock.ps1")
 
-. $sut
+	. $sut
+}
 
 Describe "RDCheckProxyConfiguration" {
 	Context "RDCheckProxyConfiguration" {
@@ -78,7 +80,18 @@ Describe "RDCheckProxyConfiguration" {
 
 			Mock Get-CsServerVersion { "Skype for Business Server 2019 (7.0.2046.0): Volume license key installed." }
 			Mock Test-Path { $true }
-			Mock Get-ItemProperty {
+			#Mock Get-ItemProperty {
+			#	@(
+			#		@{
+			#			EnableNegotiate    = 1
+			#			MigrateProxy       = 1
+			#			ProxyEnable        = 1
+			#			WarnonZoneCrossing = 0
+			#		}
+			#	)
+			#}
+
+            Mock Invoke-RegistryGetValue {
 				@(
 					@{
 						EnableNegotiate    = 1
@@ -146,7 +159,7 @@ Describe "RDCheckProxyConfiguration" {
 		It "Proxy mismatch - no proxy in registry  (IDProxyMismatch)" {
 			$global:WebConfigInternal = (Join-Path -Path 'TestDrive:' -ChildPath (Split-Path -Path $webConfigWithProxy -Leaf))
 
-			Mock Get-ItemProperty {
+			Mock Invoke-RegistryGetValue {
 				@(
 					@{
 						EnableNegotiate    = 1

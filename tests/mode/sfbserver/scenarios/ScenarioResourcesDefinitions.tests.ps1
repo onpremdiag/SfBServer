@@ -27,38 +27,40 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$myPath   = $PSCommandPath
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
-$mode     = $Matches.Mode
+BeforeAll {
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $myPath   = $PSCommandPath
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
+    $testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+    $mode     = $Matches.Mode
 
-$classes    = Get-ChildItem -Path "$srcRoot\classes"               -Recurse -Filter *.ps1
-$rules      = Get-ChildItem -Path "$srcRoot\mode\$mode\rules"      -Recurse -Filter RD*.ps1
-$insights   = Get-ChildItem -Path "$srcRoot\mode\$mode\insights"   -Recurse -Filter ID*.ps1
-$analyzers  = Get-ChildItem -Path "$srcRoot\mode\$mode\analyzers"  -Recurse -Filter AD*.ps1
-$parameters = Get-ChildItem -Path "$srcRoot\mode\$mode\parameters" -Recurse -Filter PD*.ps1
+    $classes    = Get-ChildItem -Path "$srcRoot\classes"               -Recurse -Filter *.ps1
+    $rules      = Get-ChildItem -Path "$srcRoot\mode\$mode\rules"      -Recurse -Filter RD*.ps1
+    $insights   = Get-ChildItem -Path "$srcRoot\mode\$mode\insights"   -Recurse -Filter ID*.ps1
+    $analyzers  = Get-ChildItem -Path "$srcRoot\mode\$mode\analyzers"  -Recurse -Filter AD*.ps1
+    $parameters = Get-ChildItem -Path "$srcRoot\mode\$mode\parameters" -Recurse -Filter PD*.ps1
 
-foreach ($group in $classes, $insights, $rules, $analyzers, $parameters)
-{
-    foreach ($file in $group)
+    foreach ($group in $classes, $insights, $rules, $analyzers, $parameters)
     {
-        . $file.FullName
+        foreach ($file in $group)
+        {
+            . $file.FullName
+        }
     }
+
+    # Load resource files needed for tests
+    . (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
+
+    Import-ResourceFiles -Root $srcRoot -MyMode $mode
+
+    . (Join-Path -Path $srcRoot -ChildPath common\Globals.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath common\Utils.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\Globals.ps1)
+    . (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\$mode.ps1)
+    . (Join-Path -Path $testRoot -ChildPath mocks\SfbServerMock.ps1)
 }
-
-# Load resource files needed for tests
-. (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
-
-Import-ResourceFiles -Root $srcRoot -MyMode $mode
-
-. (Join-Path -Path $srcRoot -ChildPath common\Globals.ps1)
-. (Join-Path -Path $srcRoot -ChildPath common\Utils.ps1)
-. (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\Globals.ps1)
-. (Join-Path -Path $srcRoot -ChildPath mode\$mode\common\$mode.ps1)
-. (Join-Path -Path $testRoot -ChildPath mocks\SfbServerMock.ps1)
 
 Describe -Tag 'SfBServer' "Check scenario resources" {
     BeforeAll {
@@ -66,27 +68,30 @@ Describe -Tag 'SfBServer' "Check scenario resources" {
     }
 
     Context "Checking scenario resources" {
-        foreach($scenario in $scenarios)
-        {
-            It "Scenario $($scenario.BaseName) should have a resource in ScenarioDescriptions" {
-                $global:ScenarioDescriptions.($scenario.BaseName) | Should -Not -BeNullOrEmpty
+        It "Scenario should have a resource in ScenarioDescriptions" {
+            foreach($scenario in $scenarios)
+            {
+                #"Scenario $($scenario.BaseName) should have a resource in ScenarioDescriptions" | Write-Host
+                 $global:ScenarioDescriptions.($scenario.BaseName) | Should -Not -BeNullOrEmpty
             }
         }
     }
 
     Context "Checking for event IDs" {
-        foreach($scenario in $scenarios)
-        {
-            It "Scenario $($scenario.BaseName) should have an event id" {
+        It "Scenarios should have an event id" {
+            foreach($scenario in $scenarios)
+            {
+                #"Scenario $($scenario.BaseName) should have an event id" | Write-Host
                 $global:EventIDs.($scenario.BaseName) | Should -Not -BeNullOrEmpty
             }
         }
     }
 
     Context "Checking names" {
-        foreach($scenario in $scenarios)
-        {
-            It "Scenario $($scenario.BaseName).Name should have a default value" {
+        It "Scenarios should have a default value" {
+            foreach($scenario in $scenarios)
+            {
+                #"Scenario $($scenario.BaseName).Name should have a name" | Write-Host
                 . $scenario.FullName
 
                 $parameters = @{
@@ -101,9 +106,10 @@ Describe -Tag 'SfBServer' "Check scenario resources" {
     }
 
     Context "Checking results" {
-        foreach($scenario in $scenarios)
-        {
-            It "Scenario $($scenario.BaseName).Results should be empty by default" {
+        It "Scenario results should be empty by default" {
+            foreach($scenario in $scenarios)
+            {
+                #"Scenario $($scenario.BaseName).Results should be empty by default" | Write-Host
                 . $scenario.FullName
 
                 $obj = New-Object -TypeName $scenario.BaseName -ArgumentList ([guid]::Empty)
@@ -114,9 +120,10 @@ Describe -Tag 'SfBServer' "Check scenario resources" {
     }
 
     Context "Checking metrics" {
-        foreach($scenario in $scenarios)
-        {
-            It "Scenario $($scenario.BaseName).Metrics should be empty by default" {
+        It "Scenario Metrics should be empty by default" {
+            foreach($scenario in $scenarios)
+            {
+                #"Scenario $($scenario.BaseName).Metrics should be empty by default" | Write-Host
                 . $scenario.FullName
 
                 $obj = New-Object -TypeName $scenario.BaseName -ArgumentList ([guid]::Empty)
@@ -126,9 +133,10 @@ Describe -Tag 'SfBServer' "Check scenario resources" {
     }
 
     Context "Checking success" {
-        foreach($scenario in $scenarios)
-        {
-            It "Scenario $($scenario.BaseName).Success Should -BeTrue by default"{
+        It "Scenario success should be True by default" {
+            foreach($scenario in $scenarios)
+            {
+                #"Scenario $($scenario.BaseName).Success Should be True by default" | Write-Host
                 . $scenario.FullName
 
                 $obj = New-Object -TypeName $scenario.BaseName -ArgumentList ([guid]::Empty)
@@ -138,9 +146,10 @@ Describe -Tag 'SfBServer' "Check scenario resources" {
     }
 
     Context "Checking ExecutionId" {
-        foreach($scenario in $scenarios)
-        {
-            It "Scenario $($scenario.BaseName).ExecutionId should be empty GUID" {
+        It "Scenario ExecutionId should be empty GUID" {
+            foreach($scenario in $scenarios)
+            {
+                #"Scenario $($scenario.BaseName).ExecutionId should be empty GUID" | Write-Host
                 . $scenario.FullName
 
                 $obj = New-Object -TypeName $scenario.BaseName -ArgumentList ([guid]::Empty)
@@ -150,9 +159,10 @@ Describe -Tag 'SfBServer' "Check scenario resources" {
     }
 
     Context "Checking ID" {
-        foreach($scenario in $scenarios)
-        {
-            It "Scenario $($scenario.BaseName).Id should have a value" {
+        It "Scenario Id should have a value" {
+            foreach($scenario in $scenarios)
+            {
+                #"Scenario $($scenario.BaseName).Id should have a value" | Write-Host
                 . $scenario.FullName
 
                 $obj = New-Object -TypeName $scenario.BaseName -ArgumentList ([guid]::Empty)

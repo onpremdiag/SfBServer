@@ -30,58 +30,60 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
-$mode     = $Matches.Mode
+BeforeAll {
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
+    $testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+    $mode     = $Matches.Mode
 
 
-$global:OPDOptions  = @{
-    OriginalCulture  = ([System.Threading.Thread]::CurrentThread.CurrentCulture).Name
-}
-
-$classes   = Get-ChildItem -Path "$srcRoot\classes"              -Recurse -Filter *.ps1
-$rules     = Get-ChildItem -Path "$srcRoot\mode\$mode\rules"     -Recurse -Filter RD*.ps1 | Where-Object { $_.FullName -notlike "*\samples\*"}
-$insights  = Get-ChildItem -Path "$srcRoot\mode\$mode\insights"  -Recurse -Filter ID*.ps1 | Where-Object { $_.FullName -notlike "*\samples\*"}
-$analyzers = Get-ChildItem -Path "$srcRoot\mode\$mode\analyzers" -Recurse -Filter AD*.ps1 | Where-Object { $_.FullName -notlike "*\samples\*"}
-
-foreach ($group in $classes, $insights, $rules, $analyzers)
-{
-    foreach ($file in $group)
-    {
-        . $file.FullName
+    $global:OPDOptions  = @{
+        OriginalCulture  = ([System.Threading.Thread]::CurrentThread.CurrentCulture).Name
     }
+
+    $classes   = Get-ChildItem -Path "$srcRoot\classes"              -Recurse -Filter *.ps1
+    $rules     = Get-ChildItem -Path "$srcRoot\mode\$mode\rules"     -Recurse -Filter RD*.ps1 | Where-Object { $_.FullName -notlike "*\samples\*"}
+    $insights  = Get-ChildItem -Path "$srcRoot\mode\$mode\insights"  -Recurse -Filter ID*.ps1 | Where-Object { $_.FullName -notlike "*\samples\*"}
+    $analyzers = Get-ChildItem -Path "$srcRoot\mode\$mode\analyzers" -Recurse -Filter AD*.ps1 | Where-Object { $_.FullName -notlike "*\samples\*"}
+
+    foreach ($group in $classes, $insights, $rules, $analyzers)
+    {
+        foreach ($file in $group)
+        {
+            . $file.FullName
+        }
+    }
+
+    # Load resource files needed for tests
+    . (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
+
+    Import-ResourceFiles -Root $srcRoot -MyMode $mode
+
+    . (Join-Path -Path $srcRoot -ChildPath "common\Globals.ps1")
+    . (Join-Path -Path $srcRoot -ChildPath "common\Utils.ps1")
+    . (Join-Path -Path $srcRoot -ChildPath "mode\$mode\common\Globals.ps1")
+    . (Join-Path -Path $srcRoot -ChildPath "mode\$mode\common\$mode.ps1")
+
+    . (Join-Path -Path $testRoot -ChildPath "mocks\SfbServerMock.ps1")
+    . (Join-Path -Path $testRoot -ChildPath "mocks\ActiveDirectoryMocks.ps1")
+    . (Join-Path -Path $testRoot -ChildPath "mocks\LyncOnlineConnectorMocks.ps1")
+
+    . $sut
 }
-
-# Load resource files needed for tests
-. (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
-
-Import-ResourceFiles -Root $srcRoot -MyMode $mode
-
-. (Join-Path -Path $srcRoot -ChildPath "common\Globals.ps1")
-. (Join-Path -Path $srcRoot -ChildPath "common\Utils.ps1")
-. (Join-Path -Path $srcRoot -ChildPath "mode\$mode\common\Globals.ps1")
-. (Join-Path -Path $srcRoot -ChildPath "mode\$mode\common\$mode.ps1")
-
-. (Join-Path -Path $testRoot -ChildPath "mocks\SfbServerMock.ps1")
-. (Join-Path -Path $testRoot -ChildPath "mocks\ActiveDirectoryMocks.ps1")
-. (Join-Path -Path $testRoot -ChildPath "mocks\LyncOnlineConnectorMocks.ps1")
-
-. $sut
 
 Describe -Tag 'SfBserver' "ADCheckEdgeConfiguration" {
-    BeforeAll {
-        Mock Write-OPDEventLog {}
-    }
-
-    BeforeEach {
-        Mock Initialize-Module { return $true }
-        $analyzer = [ADCheckEdgeConfiguration]::new()
-    }
-
     Context "Verifies that edge configuration is properly configured" {
+        BeforeAll {
+            Mock Write-OPDEventLog {}
+        }
+
+        BeforeEach {
+            Mock Initialize-Module { return $true }
+            $analyzer = [ADCheckEdgeConfiguration]::new()
+        }
+
         It "Analyzer should complete with no errors" {
             Mock Get-CsAccessEdgeConfiguration {
                 @(

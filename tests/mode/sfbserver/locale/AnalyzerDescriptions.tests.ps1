@@ -32,39 +32,44 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-$myPath   = $PSCommandPath
-$srcRoot  = "$root\src"
-$testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+BeforeAll {
+	$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+	$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+	$myPath   = $PSCommandPath
+	$srcRoot  = "$root\src"
+	$testRoot = "$root\tests"
+	$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
 
-Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
-$global:OPDOptions  = @{
-    OriginalCulture  = ([System.Threading.Thread]::CurrentThread.CurrentCulture).Name
+	Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
+
+	$global:OPDOptions  = @{
+		OriginalCulture  = ([System.Threading.Thread]::CurrentThread.CurrentCulture).Name
+	}
+
+	# Load resource files needed for tests
+	. (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
+	. (Join-Path -Path $srcRoot  -ChildPath common\Globals.ps1)
+	. (Join-Path -Path $srcRoot  -ChildPath common\Utils.ps1)
+
+	Initialize-ResourceString -Root $srcRoot -MyMode 'SfBServer'
 }
-
-# Load resource files needed for tests
-. (Join-Path -Path $testRoot -ChildPath testhelpers\LoadResourceFiles.ps1)
-. (Join-Path -Path $srcRoot  -ChildPath common\Globals.ps1)
-. (Join-Path -Path $srcRoot  -ChildPath common\Utils.ps1)
-
-Initialize-ResourceString -Root $srcRoot -MyMode 'SfBServer'
 
 Describe -Tag 'SfBServer' "AnalyzerDescriptions" {
 	Context "Checking for TODO" {
-		foreach($AnalyzerDescription in $global:AnalyzerDescriptions.Keys)
-		{
-			It "Analyzer Description for $AnalyzerDescription should not be a TODO marker" {
+		It "Analyzer Descriptions should not have a TODO marker" {
+			foreach($AnalyzerDescription in $global:AnalyzerDescriptions.Keys)
+			{
+				#"Analyzer Description for $AnalyzerDescription should not be a TODO marker" | Write-Host
 				$global:AnalyzerDescriptions.$AnalyzerDescription | Should -Not -Match 'TODO'
 			}
 		}
 	}
 
 	Context "Uniformity" {
-		foreach($AnalyzerDescription in $global:AnalyzerDescriptions.Keys)
-		{
-			It "Analyzer Description for $AnalyzerDescription should begin with Verifies..." {
+		It "Analyzer Description should begin with Verifies..." {
+			foreach($AnalyzerDescription in $global:AnalyzerDescriptions.Keys)
+			{
+				#"Analyzer Description for $AnalyzerDescription should begin with Verifies..." | Write-Host
 				$global:AnalyzerDescriptions.$AnalyzerDescription | Should -BeLike "Verifies*"
 			}
 		}
