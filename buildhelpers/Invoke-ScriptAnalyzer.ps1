@@ -43,7 +43,7 @@ param
 
  # Let's install Script Analyzer (if not already there)
 #Install-BuildModule -Name PSScriptAnalyzer -Version "1.18.3"
-Install-BuildModule -Name PSScriptAnalyzer -Version "1.19.1"
+Install-BuildModule -Name PSScriptAnalyzer -Version "1.20.0"
 
 $saResults = Invoke-ScriptAnalyzer -Path "$SourceDirectory/src/classes" `
     -Profile "$($SourceDirectory)/buildhelpers/PSScriptAnalyzerSettings.psd1" `
