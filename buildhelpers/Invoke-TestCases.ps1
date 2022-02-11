@@ -44,7 +44,7 @@ param
 Set-StrictMode -Version Latest
 
 # Load helper functions for the build process
-. "$SourceDirectory\buildhelpers\build_utils.ps1"
+. "$SourceDirectory/buildhelpers/build_utils.ps1"
 
  # Let's install Pester (if not already there)
 Install-BuildModule -Name Pester -Version "5.3.1"
@@ -60,8 +60,8 @@ foreach ($language in $Languages)
     {
         $testResults = Using-Culture -Culture $locale `
             -ScriptBlock { `
-                Invoke-Pester -Path $SourceDirectory\tests `
-                -OutputFile $SourceDirectory\Test-Pester.$locale.XML `
+                Invoke-Pester -Path $SourceDirectory/tests `
+                -OutputFile $SourceDirectory/Test-Pester.$locale.XML `
                 -OutputFormat NUnitXml `
                 -PassThru
             }
@@ -70,9 +70,9 @@ foreach ($language in $Languages)
     {
         $testResults = Using-Culture -Culture $locale `
             -ScriptBlock { `
-                Invoke-Pester -Path $SourceDirectory\tests `
+                Invoke-Pester -Path $SourceDirectory/tests `
                 -Tag 'Core', $Product `
-                -OutputFile $SourceDirectory\Test-Pester.$locale.XML `
+                -OutputFile $SourceDirectory/Test-Pester.$locale.XML `
                 -OutputFormat NUnitXml `
                 -PassThru
         }

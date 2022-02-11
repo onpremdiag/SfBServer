@@ -67,8 +67,8 @@ Write-Verbose "BUILD_SOURCESDIRECTORY: $Env:BUILD_SOURCESDIRECTORY"
 
 # Apply GitHub repo to the following files
 $files  = @()
-$files += Get-ChildItem -Path $Env:BUILD_SOURCESDIRECTORY\src\common\globals.ps1
-$files += Get-ChildItem -Path $Env:BUILD_SOURCESDIRECTORY\src\common\Update-OPD.ps1
+$files += Get-ChildItem -Path $Env:BUILD_SOURCESDIRECTORY/src/common/globals.ps1
+$files += Get-ChildItem -Path $Env:BUILD_SOURCESDIRECTORY/src/common/Update-OPD.ps1
 
 foreach($file in $files)
 {

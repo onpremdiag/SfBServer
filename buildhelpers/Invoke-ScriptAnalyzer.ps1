@@ -39,34 +39,34 @@ param
 )
 
 # Load helper functions for the build process
-. "$SourceDirectory\buildhelpers\build_utils.ps1"
+. "$SourceDirectory/buildhelpers/build_utils.ps1"
 
  # Let's install Script Analyzer (if not already there)
 #Install-BuildModule -Name PSScriptAnalyzer -Version "1.18.3"
 Install-BuildModule -Name PSScriptAnalyzer -Version "1.19.1"
 
-$saResults = Invoke-ScriptAnalyzer -Path "$SourceDirectory\src\classes" `
-    -Profile "$($SourceDirectory)\buildhelpers\PSScriptAnalyzerSettings.psd1" `
+$saResults = Invoke-ScriptAnalyzer -Path "$SourceDirectory/src/classes" `
+    -Profile "$($SourceDirectory)/buildhelpers/PSScriptAnalyzerSettings.psd1" `
     -Recurse | Where-Object {$_.RuleName -ne 'TypeNotFound'}
 
-$saResults += Invoke-ScriptAnalyzer -Path "$SourceDirectory\src\common" `
-    -Profile "$($SourceDirectory)\buildhelpers\PSScriptAnalyzerSettings.psd1" `
+$saResults += Invoke-ScriptAnalyzer -Path "$SourceDirectory/src/common" `
+    -Profile "$($SourceDirectory)/buildhelpers/PSScriptAnalyzerSettings.psd1" `
     -Recurse | Where-Object {$_.RuleName -ne 'TypeNotFound'}
 
-$saResults += Invoke-ScriptAnalyzer -Path "$SourceDirectory\src\OPD-console.ps1" `
-    -Profile "$($SourceDirectory)\buildhelpers\PSScriptAnalyzerSettings.psd1" `
+$saResults += Invoke-ScriptAnalyzer -Path "$SourceDirectory/src/OPD-console.ps1" `
+    -Profile "$($SourceDirectory)/buildhelpers/PSScriptAnalyzerSettings.psd1" `
     -Recurse | Where-Object {$_.RuleName -ne 'TypeNotFound'}
 
 if ([string]::IsNullOrEmpty($Product))
 {
-    $saResults += Invoke-ScriptAnalyzer -Path "$SourceDirectory\src\mode" `
-    -Profile "$($SourceDirectory)\buildhelpers\PSScriptAnalyzerSettings.psd1" `
+    $saResults += Invoke-ScriptAnalyzer -Path "$SourceDirectory/src/mode" `
+    -Profile "$($SourceDirectory)/buildhelpers/PSScriptAnalyzerSettings.psd1" `
     -Recurse | Where-Object {$_.RuleName -ne 'TypeNotFound'}
 }
 else
 {
-    $saResults += Invoke-ScriptAnalyzer -Path "$SourceDirectory\src\mode\$Product" `
-        -Profile "$($SourceDirectory)\buildhelpers\PSScriptAnalyzerSettings.psd1" `
+    $saResults += Invoke-ScriptAnalyzer -Path "$SourceDirectory/src/mode/$Product" `
+        -Profile "$($SourceDirectory)/buildhelpers/PSScriptAnalyzerSettings.psd1" `
         -Recurse | Where-Object {$_.RuleName -ne 'TypeNotFound'}
 }
 
@@ -79,10 +79,10 @@ if ($saResults)
         Sort-Object -Property @{Expression="ScriptName"}, @{Expression="Severity"}, @{Expression="RuleName"} | `
         Format-Table
 
-    $saResults | Out-File -FilePath "$SourceDirectory\PSSA-output.txt" -Force -Encoding utf8
+    $saResults | Out-File -FilePath "$SourceDirectory/PSSA-output.txt" -Force -Encoding utf8
     Write-Host "##vso[task.complete result=Failed;] Build failed" -ForegroundColor Red -BackgroundColor Black
 }
 else
 {
-    "{0}: No PSScriptAnalyzer warnings" -f (Get-Date -Format o) | Out-file -FilePath "$SourceDirectory\PSSA-output.txt" -Force -Encoding utf8
+    "{0}: No PSScriptAnalyzer warnings" -f (Get-Date -Format o) | Out-file -FilePath "$SourceDirectory/PSSA-output.txt" -Force -Encoding utf8
 }
