@@ -94,7 +94,6 @@ steps:
     arguments: -SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT
     script: >-
       Write-Host "Removing non-product files..."
-
       foreach($folder in (Get-ChildItem -Path $(Build.SourcesDirectory)\src\mode -Directory))
       {
           Write-Host "Checking [$($folder.name)] against [$env:BUILD_PRODUCT]"
@@ -110,7 +109,8 @@ steps:
    targetType: 'inline'
    script: |
       Write-Host "Removing online documentation files..."
-      Remove-Item -Recurse -Path $(Build.SourcesDirectory)\src\mode\$env:BUILD_PRODUCT\docs -Force    
+      Remove-Item -Recurse -Path $(Build.SourcesDirectory)\src\mode\$env:BUILD_PRODUCT\docs -Force
+      Remove-Item -Recurse -Path $(Build.SourcesDirectory)\src\mode\$env:BUILD_PRODUCT\BuildArtifacts -Force
 - task: PublishBuildArtifacts@1
   displayName: Publish Script Analyzer results
   inputs:
