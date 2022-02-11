@@ -17,7 +17,7 @@ steps:
     script: |
       $alias = $env:BUILD_REQUESTEDFOREMAIL.Split('@')[0]
       $buildPrefix = '{0}_{1}' -f $alias, $env:BUILD_SOURCEBRANCHNAME
-      $buildProduct = 'SfBServer'
+      $buildProduct = 'sfbserver'
       Write-Host "##vso[task.setvariable variable=BUILD_PREFIX]$buildPrefix"
       Write-Host "##vso[task.setvariable variable=BUILD_PRODUCT]$buildProduct"
 - task: PowerShell@2
