@@ -3,6 +3,8 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+name: $(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rrr)-alpha
+
 trigger:
 - master
 
@@ -29,9 +31,10 @@ steps:
     script: |
       $alias = $env:BUILD_REQUESTEDFOREMAIL.Split('@')[0]
       $buildPrefix = '{0}_{1}' -f $alias, $env:BUILD_SOURCEBRANCHNAME
+      $env:BUILD_PRODUCT = 'SfBServer'
 
       Write-Host "##vso[task.setvariable variable=BUILD_PREFIX]$buildPrefix"
-      Write-Host "##vso[task.setvariable variable=BUILD_PRODUCT]$buildProduct"
+      Write-Host "##vso[task.setvariable variable=BUILD_PRODUCT]$env:BUILD_PRODUCT
 - task: PowerShell@2
   displayName: Display the build variables that are available
   inputs:
