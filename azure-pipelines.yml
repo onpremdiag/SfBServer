@@ -71,3 +71,42 @@ steps:
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-TestCases.ps1'
     arguments: "-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'"
+- task: PublishTestResults@2
+  displayName: Publish Test Results
+  inputs:
+    testRunner: NUnit
+    failTaskOnFailedTests: true
+
+- task: PowerShell@2
+  displayName: Remove any non-product files
+  inputs:
+    targetType: inline
+    filePath: $(Build.SourcesDirectory)\buildhelpers\GenerateBITables.ps1
+    arguments: -SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT
+    script: >-
+      Write-Host "Removing non-product files..."
+
+      foreach($folder in (Get-ChildItem -Path $(Build.SourcesDirectory)\src\mode -Directory))
+      {
+          Write-Host "Checking [$($folder.name)] against [$env:BUILD_PRODUCT]"
+          if ($folder.Name -ne $env:BUILD_PRODUCT)
+          {
+              Write-Host "Removing [$($folder.FullName)]"
+              Remove-Item -Recurse -Path $folder.FullName -Force
+          }
+      }
+- task: PublishBuildArtifacts@1
+  displayName: Publish Script Analyzer results
+  inputs:
+    PathtoPublish: $(System.DefaultWorkingDirectory)/PSSA-output.txt
+    ArtifactName: ScriptAnalyzerOutput      
+- task: PublishBuildArtifacts@1
+  displayName: Create build drop
+  inputs:
+    PathtoPublish: $(Build.SourcesDirectory)/src
+    ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)
+- task: PublishBuildArtifacts@1
+  displayName: Create buildhelpers drop
+  inputs:
+    PathtoPublish: $(Build.SourcesDirectory)/buildhelpers
+    ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)-BuildHelpers
