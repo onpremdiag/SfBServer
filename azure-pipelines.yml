@@ -11,6 +11,18 @@ pool:
 
 steps:
 - task: PowerShell@2
+  displayName: Construct the build number
+  inputs: 
+    targetType: 'inline'
+    script: |
+      $Major = $(MajorVersion)
+      $Minor = $(MinorVersion)
+      $Build = (Get-Date -format "yyMM")
+      $Revision = "{0}{1}" -f (Get-Date -format "dd"), $env:BUILD_BUILDNUMBER.Split('.')[1]
+
+      $BuildNumber = "{0}.{1}.{2}.{3}-alpha" - $Major, $Minor, $Build, $Revision
+      Write-Host "##vso[task.setvariable variable=BUILD_BUILDNUMBER]$BuildNumber"
+- task: PowerShell@2
   displayName: What kind of build is it?
   inputs:
     targetType: 'inline'
@@ -20,7 +32,6 @@ steps:
       $buildNumber = '{0}.{1}.{2}.{3}{4}-alpha' -f $(MajorVersion),$(MinorVersion),$(Date:yyMM),$(Date:dd),$(Rev:rrr)
       Write-Host "##vso[task.setvariable variable=BUILD_PREFIX]$buildPrefix"
       Write-Host "##vso[task.setvariable variable=BUILD_PRODUCT]$buildProduct"
-      Write-Host "##vso[task.setvariable variable=BUILD_BUILDNUMBER]$buildNumber"
 - task: PowerShell@2
   displayName: Display the build variables that are available
   inputs:
