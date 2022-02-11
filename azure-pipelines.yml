@@ -19,8 +19,8 @@ steps:
       $Minor = $(MinorVersion)
       $Build = (Get-Date -format "yyMM")
       $Revision = "{0}{1}" -f (Get-Date -format "dd"), $env:BUILD_BUILDNUMBER.Split('.')[1]
-
       $BuildNumber = "{0}.{1}.{2}.{3}-alpha" -f $Major, $Minor, $Build, $Revision
+
       Write-Host "##vso[task.setvariable variable=BUILD_BUILDNUMBER]$BuildNumber"
 - task: PowerShell@2
   displayName: What kind of build is it?
@@ -29,7 +29,7 @@ steps:
     script: |
       $alias = $env:BUILD_REQUESTEDFOREMAIL.Split('@')[0]
       $buildPrefix = '{0}_{1}' -f $alias, $env:BUILD_SOURCEBRANCHNAME
-      $buildNumber = '{0}.{1}.{2}.{3}{4}-alpha' -f $(MajorVersion),$(MinorVersion),$(Date:yyMM),$(Date:dd),$(Rev:rrr)
+
       Write-Host "##vso[task.setvariable variable=BUILD_PREFIX]$buildPrefix"
       Write-Host "##vso[task.setvariable variable=BUILD_PRODUCT]$buildProduct"
 - task: PowerShell@2
