@@ -3,7 +3,7 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-name: $(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rrr)-alpha
+name: $(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rrr)
 
 trigger:
 - master
@@ -21,7 +21,7 @@ steps:
       $Minor = $(MinorVersion)
       $Build = (Get-Date -format "yyMM")
       $Revision = "{0}{1}" -f (Get-Date -format "dd"), $env:BUILD_BUILDNUMBER.Split('.')[1]
-      $BuildNumber = "{0}.{1}.{2}.{3}-alpha" -f $Major, $Minor, $Build, $Revision
+      $BuildNumber = "{0}.{1}.{2}.{3}" -f $Major, $Minor, $Build, $Revision
 
       Write-Host "##vso[task.setvariable variable=BUILD_BUILDNUMBER]$BuildNumber"
 - task: PowerShell@2
