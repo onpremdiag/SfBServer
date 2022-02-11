@@ -19,9 +19,9 @@ steps:
     script: |
       $Major = $(MajorVersion)
       $Minor = $(MinorVersion)
-      $Build = (Get-Date -format "yyMM")
-      $Revision = "{0}{1}" -f (Get-Date -format "dd"), $env:BUILD_BUILDNUMBER.Split('.')[1]
-      $BuildNumber = "{0}.{1}.{2}.{3}" -f $Major, $Minor, $Build, $Revision
+      $Build = [int](Get-Date -format "yyMM")
+      $Revision = "{0:d2}{1:d4}" -f [int](Get-Date -format "dd"), [int]($env:BUILD_BUILDNUMBER.Split('.')[1])
+      $BuildNumber = "{0}.{1}.{2:d2}.{3}" -f $Major, $Minor, $Build, $Revision
 
       Write-Host "##vso[task.setvariable variable=BUILD_BUILDNUMBER]$BuildNumber"
 - task: PowerShell@2
