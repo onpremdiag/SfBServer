@@ -68,7 +68,7 @@ Write-Verbose "BUILD_SOURCESDIRECTORY: $Env:BUILD_SOURCESDIRECTORY"
 
 # Apply correct ownership to all of the files
 
-$file = Get-ChildItem -Path $Env:BUILD_SOURCESDIRECTORY/src/common/globals.ps1
+$file = Get-ChildItem -Path $Env:BUILD_SOURCESDIRECTORY/src/common/Globals.ps1
 
 if ($file)
 {
