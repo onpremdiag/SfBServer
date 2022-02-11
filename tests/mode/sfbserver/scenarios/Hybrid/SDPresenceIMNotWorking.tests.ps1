@@ -30,11 +30,11 @@
 #################################################################################
 Set-StrictMode -Version Latest
 
-$sut      = $PSCommandPath -replace '^(.*)\\OnPremDiagtests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
 $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
 $srcRoot  = "$root\src"
 $testRoot = "$root\tests"
-$testMode = $PSCommandPath -match "^(.*)\\OnPremDiagtests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
 $mode     = $Matches.Mode
 
 $classes    = Get-ChildItem -Path "$srcRoot\classes"               -Recurse -Filter *.ps1
