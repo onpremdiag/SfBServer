@@ -21,21 +21,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# Filename: MiscStrings.psd1
-# Description: Misc strings used by SfBServer rules, etc.
-# Owner: mmcintyr <mmcintyr@microsoft.com>
-# Created On: 7/15/2021 1:14 PM
+# Filename: IDUnknownProduct.ps1
+# Description: Get-CsServerVersion returns unexpected product information
+# Owner: Mike McIntyre <mmcintyr@microsoft.com>
+# Created On: 1/26/2022 10:58:09 AM
 #
 #################################################################################
+Set-StrictMode -Version Latest
 
-ConvertFrom-StringData @'
-###PSLOC
-    DomainNotFound  = Domain not found
-    DNSDoesNotExist = DNS name does not exist
-    None            = None
-    CertSubject     = Subject
-    CertThumbprint  = Thumbprint
-    CertUse         = Use
-    CertExpiresOn   = Expires On
-###PSLOC
-'@
+class IDUnknownProduct : InsightDefinition
+{
+    IDUnknownProduct()
+    {
+        $this.Name      = 'IDUnknownProduct'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('91F58BB8-7D34-4737-AD43-B669C71F7B03')
+        $this.Status    = [OPDStatus]::ERROR
+    }
+
+    IDUnknownProduct([OPDStatus] $Status)
+    {
+        $this.Name      = 'IDUnknownProduct'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('91F58BB8-7D34-4737-AD43-B669C71F7B03')
+        $this.Status    = $Status
+    }
+}

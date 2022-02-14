@@ -21,21 +21,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# Filename: MiscStrings.psd1
-# Description: Misc strings used by SfBServer rules, etc.
-# Owner: mmcintyr <mmcintyr@microsoft.com>
-# Created On: 7/15/2021 1:14 PM
+# Filename:  IDSQLPerfIssues.ps1
+# Description: SQL has encountered I/O requests taking too long
+# Owner: Mike McIntyre <mmcintyr@microsoft.com>
+# Created On: 2/7/2022 4:16:26 PM
 #
 #################################################################################
+Set-StrictMode -Version Latest
 
-ConvertFrom-StringData @'
-###PSLOC
-    DomainNotFound  = Domain not found
-    DNSDoesNotExist = DNS name does not exist
-    None            = None
-    CertSubject     = Subject
-    CertThumbprint  = Thumbprint
-    CertUse         = Use
-    CertExpiresOn   = Expires On
-###PSLOC
-'@
+class IDSQLPerfIssues : InsightDefinition
+{
+    IDSQLPerfIssues()
+    {
+        $this.Name      = 'IDSQLPerfIssues'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('10EF6583-78D7-42BE-B3C7-9699C1166A6E')
+        $this.Status    = [OPDStatus]::ERROR
+    }
+
+    IDSQLPerfIssues([OPDStatus] $Status)
+    {
+        $this.Name      = 'IDSQLPerfIssues'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('10EF6583-78D7-42BE-B3C7-9699C1166A6E')
+        $this.Status    = $Status
+    }
+}

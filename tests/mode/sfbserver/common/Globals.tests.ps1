@@ -200,14 +200,6 @@ Describe -Tag 'SfBServer' "Globals" {
             $value.Options     | Should -Be ReadOnly
         }
 
-        It "Connections" {
-            $value = Get-Variable -Name Connections -Scope 'Global'
-
-            $value.Name        | Should -Be 'Connections'
-            $value.Description | Should -Be ([string]::Empty)
-            $value.Value       | Should -Be ([Singleton]::GetInstance())
-        }
-
         It "EnableSessionTicketValue" {
             $value = Get-Variable -Name EnableSessionTicketValue -Scope 'Global'
 

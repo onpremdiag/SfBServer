@@ -75,6 +75,12 @@ ConvertFrom-StringData @'
 	IDIncorrectFederationRoute                       = Topology needs to have at least one and just one Federated Edge Server.
 	IDIncorrectLocalFederationDnsSrvRecord           = Federation SRV record for local SIP domain does not exist or is incorrect.
 	IDIncorrectServerVersion                         = Server version mis-match. Expected {0} or higher but found {1}.
+	IDInsufficientCores                              = Insufficient cores found
+	IDInsufficientCores2015                          = Insufficient cores found: Found: {0}, Expected: {1}
+	IDInsufficientCores2019                          = Insufficient cores found: Found: {0}, Expected: {1}
+	IDInsufficientMemory                             = Insufficient memory found: Expected: {0}GB, Actual: {1}GB
+	IDInsufficientMemory2015                         = Insufficient memory found: Expected: {0}GB, Actual: {1}GB
+	IDInsufficientMemory2019                         = Insufficient memory found: Expected: {0}GB, Actual: {1}GB
 	IDIPAddressNotInPool                             = Unable to locate local machine's IP address, {0}, in list of addresses, {1}, associated with Pool FQDN
 	IDIPv4DoesNotMatchReverseLookup                  = DNS IPv4 name does not match reverse DNS IP address {0} lookup. Expected: {1}, Actual: {2}
 	IDIsNotSfbServerFrontend                         = Skype for Business Server Frontend role is not installed. This usually indicates that this not a Skype for Business Server frontend machine.
@@ -170,6 +176,8 @@ ConvertFrom-StringData @'
 	IDUnableToRetrieveSSLSettings                    = Unable to retrieve SSL settings
 	IDUnableToRetrieveTLSSettings                    = Unable to retrieve TLS settings
 	IDUnknownDomain                                  = Unable to determine the user DNS domain
+	IDUnknownProduct                                 = '{0}' is not an expected value
+	IDUpgradeSQLExpress                              = Outdated version of SQL Server Express has been found. Expected: {0}, Actual: {1}
 	IDUserNotFound                                   = Unable to locate user '{0}' or it does not exist.
 	IDUserNotUCSEnabled                              = The following user account: '{0}' is not enabled for Unified Contact Store.
 	IDUsersValidationErrorFound                      = Microsoft 365 users with validation errors have been found
@@ -178,5 +186,12 @@ ConvertFrom-StringData @'
 	IDWrongMetadataUrlConfiguration                  = Wrong partner application AuthToken Metadata configuration detected. Expected '{0}' but got '{1}'
 	IDWrongOnlineMetadataUrlConfiguration            = Wrong partner application AuthToken Metadata configuration detected. Expected '{0}' but got '{1}'
 	IDWrongPartnerApplication                        = Microsoft.Exchange partner application is registered for an incorrect service name.
+	IDWrongPowerPlan                                 = The power plan configuration is not correct. It should be set to 'High performance' only
 	IDWrongVerificationLevel                         = Office 365 hosting provider VerificationLevel parameter value is incorrect.
+	IDInsufficientSQLCores                           = Insufficient number of cores allocated to SQL Server Express
+	IDEvalLicenseFound                               = An evaluation license has been detected
+	IDExpiringCertificates                           = The following certificate(s) are near expiry: {0}
+	IDUnhealthyDisk                                  = One, or more, disks were found in an 'Unhealthy' state
+	IDSQLPerfIssues                                  = SQL Server has encountered 1 (or more) occurrences of I/O requests taking longer than expected to complete.
+	IDSQLDriveFull                                   = SQL Server has data files have exceeded the maximum size or the hard drive it is located on has run out of space
 '@

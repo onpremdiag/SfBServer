@@ -21,20 +21,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# Filename: RDCheckSfbServerQuorumLoss.ps1
-# Description: Check if minimum number of servers required to start pool are up and running
-# Owner: João Loureiro <joaol@microsoft.com>
-################################################################################
+# Filename: RDCheckLocalSQLVersion.ps1
+# Description: Determine if the Local SQL Express version is running the
+# latest service pack/cumulative update
+#
+# Owner: Mike McIntyre <mmcintyr@microsoft.com>
+# Created On: 1/28/2022 11:37:20 AM
+#
+#################################################################################
 Set-StrictMode -Version Latest
 
-class RDCheckSfbServerQuorumLoss : RuleDefinition
+class RDCheckLocalSQLVersion : RuleDefinition
 {
-    RDCheckSfbServerQuorumLoss([object] $Insight)
+    RDCheckLocalSQLVersion([object] $Insight)
     {
-        $this.Name        ='RDCheckSfbServerQuorumLoss'
+        $this.Name        ='RDCheckLocalSQLVersion'
         $this.Description = $global:RuleDescriptions.($this.Name)
         $this.ExecutionId = [guid]::Empty
-        $this.Id          = [guid]::new('043a5275-5073-4749-b283-4e2e1c794bbb')
+        $this.Id          = [guid]::new('3DC230EA-1C2C-493C-A365-F9E07FF8A76D')
         $this.Success     = $true
         $this.Insight     = $Insight
         $this.EventId     = Get-EventId($this.Name)
@@ -49,99 +53,97 @@ class RDCheckSfbServerQuorumLoss : RuleDefinition
         {
             Set-Variable -Name ProgressPreference -Scope 'Global' -Value "SilentlyContinue" -Force
 
-            $FECount = 1
-
             $ServerFqdn = Resolve-DnsName -Name $env:COMPUTERNAME -Type A -ErrorAction SilentlyContinue
 
             if (-not [string]::IsNullOrEmpty($ServerFqdn))
             {
                 $ServerFqdnName = $ServerFqdn.Name
-
                 if (-not [string]::IsNullOrEmpty($ServerFqdnName))
                 {
-                    $PoolFqdn = Get-CsComputer -Identity $ServerFqdn.Name -ErrorAction SilentlyContinue
-                    if (-not [string]::IsNullOrEmpty($PoolFqdn.Pool))
+                    if ($ServerFqdnName -is [array])
                     {
-                        $FrontEnds  = Get-CsComputer -Pool $PoolFqdn.Pool
+                        $ServerFqdnName = $ServerFqdnName[0]
+                    }
 
-                        if ($PoolFqdn.Fqdn -ne $FrontEnds.Fqdn)
+                    $PoolFqdn = Get-CsComputer -Identity $ServerFqdnName -ErrorAction SilentlyContinue
+
+                    if (-not [string]::IsNullOrEmpty($PoolFqdn))
+                    {
+                        $Service = Get-CsService -UserServer -PoolFqdn $PoolFqdn.Pool -ErrorAction SilentlyContinue
+
+                        if (-not [string]::IsNullOrEmpty($Service))
                         {
-                            $FECount = $FrontEnds.Count
-                        }
+                            $BackendFqdn = $Service.UserDatabase.split(":")[1]
 
-                        $FEAvailable = 0
-
-                        # Test-NetConnection displays a progress bar. We're going to temporarily turn it off
-                        $OriginalProgressPreference = $global:ProgressPreference
-                        Set-Variable -Name ProgressPreference -Scope 'Global' -Value "SilentlyContinue" -Force
-
-                        foreach($FE in $FrontEnds)
-                        {
-                            $Connection = Test-NetConnection -ComputerName $FE.Fqdn -Port 5090 -WarningAction SilentlyContinue
-                            if(-not [string]::IsNullOrEmpty($Connection))
+                            if(-not [string]::IsNullOrEmpty($BackendFqdn))
                             {
-                                if($Connection.TcpTestSucceeded)
+                                $LocalSqlExpress = Test-CsDatabase -ConfiguredDatabases `
+                                                                     -SqlServerFqdn $BackendFqdn `
+                                                                     -ErrorAction SilentlyContinue `
+                                                                     -WarningAction SilentlyContinue
+                                if (-not [string]::IsNullOrEmpty($LocalSqlExpress))
                                 {
-                                    $FEAvailable++
+                                    foreach ($instance in ($LocalSqlExpress | Where-Object {$_.DatabaseName -eq 'rtcxds' -and $_.SQLServerVersion.Edition -like '*Express*'}))
+                                    {
+                                        $SQLExpressVersion = $instance.SQLServerVersion.ProductVersion
+
+                                        if ([string]::IsNullOrEmpty($SQLExpressVersion))
+                                        {
+                                            throw 'IDCheckSQLVersion'
+                                        }
+                                        else
+                                        {
+                                            $ExpressSqlVersion = $global:SqlExpressVersions | Where-Object {$_.ProductVersion.Major -eq $SQLExpressVersion.Major}
+
+                                            if($SQLExpressVersion.CompareTo($ExpressSQLVersion.ProductVersion) -lt 0)
+                                            {
+                                                throw 'IDUpgradeSQLExpress'
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    throw 'IDTestCsDatabaseNoResults'
                                 }
                             }
-                            else
-                            {
-                                # Unable to resolve DNS name
-                                # Network connection fails
-                                throw 'IDTestNetworkConnectionFails'
-                            }
-                         }
-
-                        Set-Variable -Name ProgressPreference -Scope 'Global' -Value $OriginalProgressPreference -Force
-
-                        if ($FECount -ne $FEAvailable)
+                        }
+                        else
                         {
-                            $this.Success           = $false
-                            $this.Insight.Detection = $global:InsightDetections.($this.Insight.Name) -f $FEAvailable, $FECount
-                            $this.Insight.Action    = $global:InsightActions.($this.Insight.Name) -f $PoolFqdn
+                            throw 'IDUnableToGetServiceInfo'
                         }
                     }
                     else
                     {
-                        # Unable to resolve Pool name
-                        throw 'IDNullOrEmptyPoolFQDN'
+                        throw 'IDUnableToGetServiceInfo'
                     }
                 }
                 else
                 {
-                    # Unable to resolve ServerFqdnName
                     throw 'IDUnableToResolveServerFQDN'
                 }
             }
             else
             {
-                # Unable to Resolve-DnsName
                 throw 'IDUnableToResolveDNSName'
             }
-        }
-        catch [System.Management.Automation.PropertyNotFoundException]
-        {
-            $this.Insight.Detection = $global:InsightDetections.'IDPropertyNotFoundException' -f $_.Exception.Message
-            $this.Insight.Action    = $global:InsightActions.'IDPropertyNotFoundException'
-            $this.Success           = $false
         }
         catch
         {
             switch($_.ToString())
             {
-                IDNullOrEmptyPoolFQDN
+                IDUpgradeSQLExpress
                 {
                     $this.Insight.Name      = $_
-                    $this.Insight.Detection = $global:InsightDetections.($_) -f $ServerFqdn.Name
-                    $this.Insight.Action    = $global:InsightActions.($_) -f $ServerFqdn.Name
+                    $this.Insight.Detection = ($global:InsightDetections.($_) -f $ExpressSQLVersion.ProductVersion.ToString(), $SQLExpressVersion.ToString())
+                    $this.Insight.Action    = ($global:InsightActions.($_) -f $ExpressSQLVersion.Description,$ExpressSqlVersion.URL)
                     $this.Success           = $false
                 }
 
-                IDTestNetworkConnectionFails
+                IDTestCsDatabaseNoResults
                 {
                     $this.Insight.Name      = $_
-                    $this.Insight.Detection = $global:InsightDetections.($_) -f $FE.Fqdn
+                    $this.Insight.Detection = $global:InsightDetections.($_) -f $BackendFqdn
                     $this.Insight.Action    = $global:InsightActions.($_)
                     $this.Success           = $false
                 }
@@ -155,6 +157,14 @@ class RDCheckSfbServerQuorumLoss : RuleDefinition
                 }
 
                 IDUnableToResolveServerFQDN
+                {
+                    $this.Insight.Name      = $_
+                    $this.Insight.Detection = $global:InsightDetections.($_)
+                    $this.Insight.Action    = $global:InsightActions.($_)
+                    $this.Success           = $false
+                }
+
+                IDUnableToGetServiceInfo
                 {
                     $this.Insight.Name      = $_
                     $this.Insight.Detection = $global:InsightDetections.($_)

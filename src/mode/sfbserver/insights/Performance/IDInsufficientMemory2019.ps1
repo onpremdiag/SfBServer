@@ -21,21 +21,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# Filename: MiscStrings.psd1
-# Description: Misc strings used by SfBServer rules, etc.
-# Owner: mmcintyr <mmcintyr@microsoft.com>
-# Created On: 7/15/2021 1:14 PM
+# Filename: IDInsufficientMemory2019.ps1
+# Description: Insufficient memory for SFB2019 Front End Server
+# Owner: Mike McIntyre <mmcintyr@microsoft.com>
+# Created On: 1/26/2022 12:43:51 PM
 #
 #################################################################################
+Set-StrictMode -Version Latest
 
-ConvertFrom-StringData @'
-###PSLOC
-    DomainNotFound  = Domain not found
-    DNSDoesNotExist = DNS name does not exist
-    None            = None
-    CertSubject     = Subject
-    CertThumbprint  = Thumbprint
-    CertUse         = Use
-    CertExpiresOn   = Expires On
-###PSLOC
-'@
+class IDInsufficientMemory2019 : InsightDefinition
+{
+    IDInsufficientMemory2019()
+    {
+        $this.Name      = 'IDInsufficientMemory2019'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('17DB4356-E549-4039-B59F-EBE7573FE9B4')
+        $this.Status    = [OPDStatus]::ERROR
+    }
+
+    IDInsufficientMemory2019([OPDStatus] $Status)
+    {
+        $this.Name      = 'IDInsufficientMemory2019'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('17DB4356-E549-4039-B59F-EBE7573FE9B4')
+        $this.Status    = $Status
+    }
+}

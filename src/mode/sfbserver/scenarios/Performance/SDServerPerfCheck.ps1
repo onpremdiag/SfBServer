@@ -21,29 +21,34 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# Filename: SDExchangeIntegrationFailing.ps1
-# Description: Check if Sfb Server and Exchange Server Integration is operational
-# Owner: João Loureiro <joaol@microsoft.com>
-################################################################################
+# Filename: SDServerPerfCheck.ps1
+# Description: <TODO>
+# Task 25831: Diagnostic Investment - Presence subscription and instant messaging delays - Performance
+# Owner: Mike McIntyre <mmcintyr@microsoft.com>
+# Created On: 2/8/2022 3:16:26 PM
+#
+#################################################################################
 Set-StrictMode -Version Latest
 
-class SDExchangeIntegrationFailing : ScenarioDefinition
+class SDServerPerfCheck : ScenarioDefinition
 {
-    SDExchangeIntegrationFailing([guid] $ExecutionId)
+    SDServerPerfCheck([guid] $ExecutionId)
     {
-        $this.Name         = 'SDExchangeIntegrationFailing'
+        $this.Name         = 'SDServerPerfCheck'
         $this.Description  = $global:ScenarioDescriptions.($this.Name)
         $this.ExecutionId  = $ExecutionId
-        $this.Id           = [guid]::new('41039834-ff01-4c67-ae82-bc52538ad560')
+        $this.Id           = [guid]::new('C0CE85AD-3228-425C-9407-387EB9D57655')
         $this.Success      = $true
         $this.EventId      = Get-EventId($this.Name)
 
-        $this.AnalyzerDefinitions = @()
+        # Analyzers
+        Add-AnalyzerDefinition -Scenario $this -AnalyzerDefinition ([ADServerPerfCheck]::new())
 
         $this.Keywords = @()
 
         # Areas
-        Add-Area -Scenario $this -Area ($global:AreaTitles.'Deployment')
+        Add-Area -Scenario $this -Area ($global:AreaTitles.'Performance')
+
     }
 
     [void] Execute()
@@ -80,3 +85,7 @@ class SDExchangeIntegrationFailing : ScenarioDefinition
         }
     }
 }
+
+#
+# SDServerPerfCheck.ps1
+#

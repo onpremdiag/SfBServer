@@ -57,6 +57,7 @@ ConvertFrom-StringData @'
 	RDCheckOAuthIsConfigured                 = Determine if OAuth is configured (at least 1 OAuthServer)
 	RDCheckOnlineSharedSipAddressSpace       = Determine if the SkypeforBusinessOnline hosting provider SharedAddressSpace is enabled
 	RDCheckPatchVersion                      = Determine if the server is at, or above, currently recommended patch level(s)
+	RDCheckPowerPlan                         = Determine the power plan configuration
 	RDCheckProxyConfiguration                = Determine if proxy settings are in sync/correct
 	RDCheckProxyFQDN                         = Determine if the Office 365 hosting provider ProxyFqdn is correct
 	RDCheckProxyPostMigration                = Determine if ProxyFqdn needs to be updated because federated partner has migrated from On-Premise to Online
@@ -103,6 +104,8 @@ ConvertFrom-StringData @'
 	RDIsUniversalServerAdmin                 = Determine if the current user has administrative privileges to run cmdlets
 	RDNoOnPremiseUsers                       = Determine if there are any On-Premise users still present
 	RDOAuthCertificateValid                  = Determine if the OAuthTokenIssuer certificate has not expired and has a serial number
+	RDServerCores                            = Determine if the number of CPU cores available are correct
+	RDServerMemory                           = Determine if the server meets the minimum required memory
 	RDSfbServerPowerShellModuleLoaded        = Determine if this is a Skype for Business Server PowerShell module is loaded
 	RDSharedSipAddressSpace                  = Determine if the Office 365 tenant shared SIP address space is enabled
 	RDTeamsModuleLoaded                      = Determine if the required version MicrosoftTeams module is loaded
@@ -113,5 +116,11 @@ ConvertFrom-StringData @'
 	RDTestOAuthServerConfiguration           = Determine if the OAuthServer configuration is correct
 	RDTestPartnerApplication                 = Determine if the Exchange application service exists and has the correct values
 	RDUsageTrend                             = Determine if the Usage Report returns results in the expected time limit (60 sec)
-###PSLOC
+	RDCheckLocalSQLVersion                   = Determine if the correct version of SQL Server Express is installed.
+	RDServerSocketCoreRatio                  = Determine if the correct number of CPU cores are assigned to SQL Server Express
+	RDServerLicenseVersion                   = Determine if we have a volume license key installed
+	RDCheckCertsExpiring                     = Determine if any Skype for Business Server certs are near expiry
+	RDCheckDiskHealthStatus                  = Determine if the disk status on the server for database and logs disks is 'Healthy'
+	RDSqlIOLatency                           = Determine if there are any SQL I/O issues in the application log
+	RDDBDriveFull                            = Determine if there are any DATABASE DRIVE FULL issues in the application log
 '@

@@ -21,21 +21,35 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# Filename: MiscStrings.psd1
-# Description: Misc strings used by SfBServer rules, etc.
-# Owner: mmcintyr <mmcintyr@microsoft.com>
-# Created On: 7/15/2021 1:14 PM
+# Filename: IDInsufficientSQLCores.ps1
+# Description: Not enough CPU Cores allocated to SQL Server Express
+# Owner: Mike McIntyre <mmcintyr@microsoft.com>
+# Created On: 2/1/2022 10:20:07 AM
 #
 #################################################################################
+Set-StrictMode -Version Latest
 
-ConvertFrom-StringData @'
-###PSLOC
-    DomainNotFound  = Domain not found
-    DNSDoesNotExist = DNS name does not exist
-    None            = None
-    CertSubject     = Subject
-    CertThumbprint  = Thumbprint
-    CertUse         = Use
-    CertExpiresOn   = Expires On
-###PSLOC
-'@
+class IDInsufficientSQLCores : InsightDefinition
+{
+    IDInsufficientSQLCores()
+    {
+        $this.Name      = 'IDInsufficientSQLCores'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('BB29BE21-465C-4C85-9979-24C06A9BE6BA')
+        $this.Status    = [OPDStatus]::ERROR
+    }
+
+    IDInsufficientSQLCores([OPDStatus] $Status)
+    {
+        $this.Name      = 'IDInsufficientSQLCores'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('BB29BE21-465C-4C85-9979-24C06A9BE6BA')
+        $this.Status    = $Status
+    }
+}
+
+#
+# IDInsufficientSQLCores.ps1
+#

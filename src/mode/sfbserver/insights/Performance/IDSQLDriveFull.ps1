@@ -21,21 +21,32 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# Filename: MiscStrings.psd1
-# Description: Misc strings used by SfBServer rules, etc.
-# Owner: mmcintyr <mmcintyr@microsoft.com>
-# Created On: 7/15/2021 1:14 PM
+# Filename: IDSQLDriveFull.ps1
+# Description: SQL Drives full event in Application log
+# Owner: Mike McIntyre <mmcintyr@microsoft.com>
+# Created On: 2/8/2022 9:51:17 AM
 #
 #################################################################################
+Set-StrictMode -Version Latest
 
-ConvertFrom-StringData @'
-###PSLOC
-    DomainNotFound  = Domain not found
-    DNSDoesNotExist = DNS name does not exist
-    None            = None
-    CertSubject     = Subject
-    CertThumbprint  = Thumbprint
-    CertUse         = Use
-    CertExpiresOn   = Expires On
-###PSLOC
-'@
+class IDSQLDriveFull : InsightDefinition
+{
+    IDSQLDriveFull()
+    {
+        $this.Name      = 'IDSQLDriveFull'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('A1D79C07-837E-4643-8AE9-FBE8DFB304CC')
+        $this.Status    = [OPDStatus]::ERROR
+    }
+
+    IDSQLDriveFull([OPDStatus] $Status)
+    {
+        $this.Name      = 'IDSQLDriveFull'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('A1D79C07-837E-4643-8AE9-FBE8DFB304CC')
+        $this.Status    = $Status
+    }
+}
+

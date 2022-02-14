@@ -21,21 +21,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# Filename: MiscStrings.psd1
-# Description: Misc strings used by SfBServer rules, etc.
-# Owner: mmcintyr <mmcintyr@microsoft.com>
-# Created On: 7/15/2021 1:14 PM
+# Filename: IDEvalLicenseFound.ps1
+# Description: <TODO>
+# Owner: Mike McIntyre <mmcintyr@microsoft.com>
+# Created On: 2/1/2022 12:17:27 PM
 #
 #################################################################################
+Set-StrictMode -Version Latest
 
-ConvertFrom-StringData @'
-###PSLOC
-    DomainNotFound  = Domain not found
-    DNSDoesNotExist = DNS name does not exist
-    None            = None
-    CertSubject     = Subject
-    CertThumbprint  = Thumbprint
-    CertUse         = Use
-    CertExpiresOn   = Expires On
-###PSLOC
-'@
+class IDEvalLicenseFound : InsightDefinition
+{
+    IDEvalLicenseFound()
+    {
+        $this.Name      = 'IDEvalLicenseFound'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('48CF719B-1150-462C-9E73-3926145EB76E')
+        $this.Status    = [OPDStatus]::ERROR
+    }
+
+    IDEvalLicenseFound([OPDStatus] $Status)
+    {
+        $this.Name      = 'IDEvalLicenseFound'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('48CF719B-1150-462C-9E73-3926145EB76E')
+        $this.Status    = $Status
+    }
+}

@@ -72,5 +72,6 @@ ConvertFrom-StringData @'
 	ADCheckWinHttp                      = Verifies WinHTTP protocol settings for TLS 1.2 compliance
 	ADCheckStrongCryptoEnabled          = Verifies SchUseStrongCrypt is set properly for .NET framework(s)
 	ADCheckSFBVersion                   = Verifies that the minimum version of Skype for Business Server is installed
+	ADServerPerfCheck                   = Verifies key performance parameter for Skype for Business Server
 ###PSLOC
 '@

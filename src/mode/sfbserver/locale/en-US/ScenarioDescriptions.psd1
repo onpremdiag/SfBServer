@@ -49,4 +49,5 @@ ConvertFrom-StringData @'
 	SDTLSDeprecation                         = Check to see if TLS 1.0/1.1 deprecation is properly configured
 	SDUserContactCardPhoneNumberNotAvailable = User contact card phone number is missing
 	SDUserContactListIsMissing               = User contact list is not available
+	SDServerPerfCheck                        = Skype for Business Server Performance Check
 '@

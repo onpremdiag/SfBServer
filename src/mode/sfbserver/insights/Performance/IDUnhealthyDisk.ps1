@@ -21,21 +21,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# Filename: MiscStrings.psd1
-# Description: Misc strings used by SfBServer rules, etc.
-# Owner: mmcintyr <mmcintyr@microsoft.com>
-# Created On: 7/15/2021 1:14 PM
+# Filename: IDUnhealthyDisk.ps1
+# Description: Disk found in unhealthy state
+# Owner: Mike McIntyre <mmcintyr@microsoft.com>
+# Created On: 2/3/2022 12:39:35 PM
 #
 #################################################################################
+Set-StrictMode -Version Latest
 
-ConvertFrom-StringData @'
-###PSLOC
-    DomainNotFound  = Domain not found
-    DNSDoesNotExist = DNS name does not exist
-    None            = None
-    CertSubject     = Subject
-    CertThumbprint  = Thumbprint
-    CertUse         = Use
-    CertExpiresOn   = Expires On
-###PSLOC
-'@
+class IDUnhealthyDisk : InsightDefinition
+{
+    IDUnhealthyDisk()
+    {
+        $this.Name      = 'IDUnhealthyDisk'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('250EF8CA-BB52-4718-BDE6-9E7A543D8211')
+        $this.Status    = [OPDStatus]::ERROR
+    }
+
+    IDUnhealthyDisk([OPDStatus] $Status)
+    {
+        $this.Name      = 'IDUnhealthyDisk'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('250EF8CA-BB52-4718-BDE6-9E7A543D8211')
+        $this.Status    = $Status
+    }
+}

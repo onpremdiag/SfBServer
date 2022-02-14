@@ -21,21 +21,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# Filename: MiscStrings.psd1
-# Description: Misc strings used by SfBServer rules, etc.
-# Owner: mmcintyr <mmcintyr@microsoft.com>
-# Created On: 7/15/2021 1:14 PM
+# Filename: IDUpgradeSQLExpress.ps1
+# Description: Insight when SQL Express version needs to be updated
+# Owner: Mike McIntyre <mmcintyr@microsoft.com>
+# Created On: 1/31/2022 1:59:54 PM
 #
 #################################################################################
+Set-StrictMode -Version Latest
 
-ConvertFrom-StringData @'
-###PSLOC
-    DomainNotFound  = Domain not found
-    DNSDoesNotExist = DNS name does not exist
-    None            = None
-    CertSubject     = Subject
-    CertThumbprint  = Thumbprint
-    CertUse         = Use
-    CertExpiresOn   = Expires On
-###PSLOC
-'@
+class IDUpgradeSQLExpress : InsightDefinition
+{
+    IDUpgradeSQLExpress()
+    {
+        $this.Name      = 'IDUpgradeSQLExpress'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('D3E9BC98-998A-4AD8-BC13-348E3D3F5B9C')
+        $this.Status    = [OPDStatus]::ERROR
+    }
+
+    IDUpgradeSQLExpress([OPDStatus] $Status)
+    {
+        $this.Name      = 'IDUpgradeSQLExpress'
+        $this.Action    = $global:InsightActions.($this.Name)
+        $this.Detection = $global:InsightDetections.($this.Name)
+        $this.Id        = [guid]::new('D3E9BC98-998A-4AD8-BC13-348E3D3F5B9C')
+        $this.Status    = $Status
+    }
+}
