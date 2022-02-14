@@ -96,7 +96,7 @@ class RDServerMemory : RuleDefinition
                 IDInsufficientMemory
                 {
                     $this.Insight.Name      = $_
-                    $this.Insight.Detection = ($global:InsightDetections.$_ -f $MinimumMemory, $Memory)
+                    $this.Insight.Detection = ($global:InsightDetections.$_ -f $MinimumMemory, $Memory.Memory)
                     $this.Success           = $false
 
                     switch -Wildcard ($Product)
