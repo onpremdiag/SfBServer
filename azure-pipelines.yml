@@ -14,7 +14,7 @@ pool:
 steps:
 - task: PowerShell@2
   displayName: Construct the build number
-  inputs: 
+  inputs:
     targetType: 'inline'
     script: |
       $Major = $(MajorVersion)
@@ -64,7 +64,7 @@ steps:
   displayName: Set the product title
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/Set-Title.ps1'
-    arguments: '-Product $env:BUILD_PRODUCT'    
+    arguments: '-Product $env:BUILD_PRODUCT'
 - task: PowerShell@2
   displayName: Set the GitHub repo
   inputs:
@@ -80,6 +80,11 @@ steps:
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-TestCases.ps1'
     arguments: "-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'"
+-task: PowerShell@2
+  displayName: Build nuget package
+  inputs:
+    filePath: '$(Build.SourcesDirectory)/buildhelpers/Generate-NuGetPackage.ps1'
+    arguments: "-Version $(Build.BuildNumber)"
 - task: PublishTestResults@2
   displayName: Publish Test Results
   inputs:
@@ -115,7 +120,7 @@ steps:
   displayName: Publish Script Analyzer results
   inputs:
     PathtoPublish: $(System.DefaultWorkingDirectory)/PSSA-output.txt
-    ArtifactName: ScriptAnalyzerOutput      
+    ArtifactName: ScriptAnalyzerOutput
 - task: PublishBuildArtifacts@1
   displayName: Create build drop
   inputs:
