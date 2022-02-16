@@ -68,22 +68,22 @@ steps:
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/Set-GitHubRepo.ps1'
     arguments: '-Product $env:BUILD_PRODUCT'
-- task: PowerShell@2
-  displayName: Run Script Analyzer
-  inputs:
-    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-ScriptAnalyzer.ps1'
-    arguments: '-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT'
-- task: PowerShell@2
-  displayName: Run the Pester tests (English)
-  inputs:
-    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-TestCases.ps1'
-    arguments: "-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'"
+#- task: PowerShell@2
+#  displayName: Run Script Analyzer
+#  inputs:
+#    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-ScriptAnalyzer.ps1'
+#    arguments: '-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT'
+#- task: PowerShell@2
+#  displayName: Run the Pester tests (English)
+#  inputs:
+#    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-TestCases.ps1'
+#    arguments: "-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'"
 - task: NuGetCommand@2
   displayName: 'Create OPDCore NuGet package'
   inputs:
     command: pack
     packagesToPack: '$(Build.SourcesDirectory)/buildhelpers/PoPCore.nuspec'
-    packDestination: '$(Build.ArtifactStagingDirectory);$(Build.ArtifactStagingDirectory)/**/*.nupkg'
+    packDestination: '$(Build.ArtifactStagingDirectory)'
     versioningScheme: byBuildNumber
 - task: NuGetCommand@2
   displayName: 'Push OPDCore NuGet package -> NuGet Gallery'
@@ -98,7 +98,6 @@ steps:
   inputs:
     testRunner: NUnit
     failTaskOnFailedTests: true
-
 - task: PowerShell@2
   displayName: Remove any non-product files
   inputs:
