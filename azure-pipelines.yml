@@ -83,7 +83,7 @@ steps:
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-TestCases.ps1'
     arguments: "-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'"
--task: PowerShell@2
+- task: PowerShell@2
   displayName: Build nuget package
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/Generate-NuGetPackage.ps1'
