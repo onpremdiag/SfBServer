@@ -6,7 +6,10 @@
 name: $(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rrr)
 
 trigger:
-- master
+  branches:
+    include:
+    - master
+    - mmcintyr/*
 
 pool:
   vmImage: windows-latest
