@@ -93,6 +93,7 @@ steps:
     nuGetFeedType: external
     publishFeedCredentials: NuGetConnection
     versioningScheme: byBuildNumber
+    verbosityPush: 'Detailed'
 - task: PublishTestResults@2
   displayName: Publish Test Results
   inputs:
