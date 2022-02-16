@@ -78,15 +78,6 @@ steps:
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-TestCases.ps1'
     arguments: "-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'"
-- task: NuGetAuthenticate@0
-  inputs:
-    nuGetServiceConnections: 'NuGetConnection'
-- task: NuGetCommand@2
-  inputs:
-    command: push
-    nuGetFeedType: external
-    versioningScheme: byEnvVar
-    versionEnvVar: $env:BUILD_BUILDNUMBER
 - task: NuGetCommand@2
   displayName: 'Create OPDCore NuGet package'
   inputs:
