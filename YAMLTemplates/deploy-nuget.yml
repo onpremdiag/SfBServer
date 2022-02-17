@@ -144,3 +144,9 @@ steps:
   inputs:
     PathtoPublish: $(System.DefaultWorkingDirectory)/OPDCore.$(Build.BuildNumber).nupkg
     ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'NuGetConnection'
