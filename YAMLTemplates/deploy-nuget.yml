@@ -141,3 +141,8 @@ steps:
   inputs:
     PathtoPublish: $(Build.SourcesDirectory)/buildhelpers
     ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)-BuildHelpers
+- task: PublishBuildArtifacts@1
+  displayName: Create nuget package drop
+  inputs:
+    PathtoPublish: $(System.DefaultWorkingDirectory)/OPDCore.$(Build.BuildNumber).nupkg
+    ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
