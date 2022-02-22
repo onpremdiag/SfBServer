@@ -19,7 +19,8 @@ steps:
       $Minor = $(MinorVersion)
       $Build = [int](Get-Date -format "yyMM")
       $Revision = "{0:d2}{1:d4}" -f [int](Get-Date -format "dd"), [int]($env:BUILD_BUILDNUMBER.Split('.')[1])
-      $BuildNumber = "{0}.{1}.{2:d2}.{3}" -f $Major, $Minor, $Build, $Revision
+      #$BuildNumber = "{0}.{1}.{2:d2}.{3}" -f $Major, $Minor, $Build, $Revision
+      $BuildNumber = "$(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rrr)"
 
       Write-Host "##vso[task.setvariable variable=BUILD_BUILDNUMBER]$BuildNumber"
 - task: PowerShell@2
@@ -129,11 +130,11 @@ steps:
   inputs:
     PathtoPublish: '$(Build.SourcesDirectory)/buildhelpers'
     ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)-BuildHelpers
-- task: PublishBuildArtifacts@1
-  displayName: Create nuget package drop
-  inputs:
-    PathtoPublish: $(Build.SourcesDirectory)/OPDCore.$(Build.BuildNumber).nupkg
-    ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
+#- task: PublishBuildArtifacts@1
+#  displayName: Create nuget package drop
+#  inputs:
+#    PathtoPublish: $(Build.SourcesDirectory)/OPDCore.$(Build.BuildNumber).nupkg
+#    ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
 - task: BackupDirectory@1
   inputs:
     source: '$(Build.SourcesDirectory)/src'
