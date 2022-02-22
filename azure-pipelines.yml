@@ -14,19 +14,19 @@ pool:
   vmImage: windows-latest
 
 steps:
-- task: PowerShell@2
-  displayName: Construct the build number
-  inputs:
-    targetType: 'inline'
-    script: |
-      $Major = $(MajorVersion)
-      $Minor = $(MinorVersion)
-      $Build = [int](Get-Date -format "yyMM")
-      $Revision = "{0:d2}{1:d3}" -f [int](Get-Date -format "dd"), [int]($env:BUILD_BUILDNUMBER.Split('.')[1])
-      #$BuildNumber = "{0}.{1}.{2:d2}.{3}" -f $Major, $Minor, $Build, $Revision
+#- task: PowerShell@2
+#  displayName: Construct the build number
+#  inputs:
+#    targetType: 'inline'
+#    script: |
+#      $Major = $(MajorVersion)
+#      $Minor = $(MinorVersion)
+#      $Build = [int](Get-Date -format "yyMM")
+#      $Revision = "{0:d2}{1:d3}" -f [int](Get-Date -format "dd"), [int]($env:BUILD_BUILDNUMBER.Split('.')[1])
+#      #$BuildNumber = "{0}.{1}.{2:d2}.{3}" -f $Major, $Minor, $Build, $Revision
 
-      #Write-Host "##vso[task.setvariable variable=BUILD_BUILDNUMBER]$BuildNumber"
-      Write-Host "##vso[task.setvariable variable=BUILD_BUILDNUMBER] ${{ variables.BuildNumber }}"
+#      #Write-Host "##vso[task.setvariable variable=BUILD_BUILDNUMBER]$BuildNumber"
+#      Write-Host "##vso[task.setvariable variable=BUILD_BUILDNUMBER] ${{ variables.BuildNumber }}"
 - task: PowerShell@2
   displayName: What kind of build is it?
   inputs:
