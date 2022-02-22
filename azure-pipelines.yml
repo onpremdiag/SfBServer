@@ -134,18 +134,16 @@ steps:
   inputs:
     PathtoPublish: $(Build.SourcesDirectory)/OPDCore.$(Build.BuildNumber).nupkg
     ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
-- task: jungeriusit.jungit-robocopy.jungit-robobackup.BackupDirectory@1
-  displayName: 'Create release file'
+- task: BackupDirectory@1
   inputs:
-    source: '$(System.TeamProject)-$(Build.BuildNumber)'
-    destination: '$(SYSTEM.ARTIFACTSDIRECTORY)/$(System.TeamProject)-$(Build.BuildNumber)'
+    source: '$(Build.SourcesDirectory)/src'
+    destination: '$(TEMP)/$(System.TeamProject)-$(Build.BuildNumber)'
     copyOptions: '/S /E'
-    createStampedBackupFolder: false
 - task: ArchiveFiles@2
   displayName: 'Create zip file'
   inputs:
-    rootFolderOrFile: '$(SYSTEM.ARTIFACTSDIRECTORY)/$(System.TeamProject)-$(Build.BuildNumber)'
-    archiveFile: '$(SYSTEM.ARTIFACTSDIRECTORY)/$(Build.BuildNumber).zip'
+    rootFolderOrFile: '$(TEMP)/$(System.TeamProject)-$(Build.BuildNumber)'
+    archiveFile: '$(TEMP)/$(Build.BuildNumber).zip'
     verbose: true
 - task: marcelo-formentao.github-tools.github-release-publish-task.GitHubReleasePublish@1
   displayName: 'Push release to GitHub'
@@ -155,5 +153,5 @@ steps:
     githubTag: '$(Build.BuildNumber)'
     githubReleaseTitle: '$(Build.BuildNumber)'
     githubReleaseDraft: false
-    githubReleaseAsset: '$(SYSTEM.ARTIFACTSDIRECTORY)/$(Build.BuildNumber).zip'
+    githubReleaseAsset: '$(TEMP)/$(Build.BuildNumber).zip'
     githubReuseDraftOnly: false
