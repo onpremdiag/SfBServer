@@ -122,18 +122,18 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: Create build drop
   inputs:
-    PathtoPublish: $(Build.SourcesDirectory)/src
-    ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)
+    PathtoPublish: '$(Build.SourcesDirectory)/src'
+    ArtifactName: '$(System.TeamProject)-$(Build.BuildNumber)'
 - task: PublishBuildArtifacts@1
   displayName: Create buildhelpers drop
   inputs:
-    PathtoPublish: $(Build.SourcesDirectory)/buildhelpers
+    PathtoPublish: '$(Build.SourcesDirectory)/buildhelpers'
     ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)-BuildHelpers
-- task: PublishBuildArtifacts@1
-  displayName: Create nuget package drop
-  inputs:
-    PathtoPublish: $(System.DefaultWorkingDirectory)/OPDCore.$(Build.BuildNumber).nupkg
-    ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
+#- task: PublishBuildArtifacts@1
+#  displayName: Create nuget package drop
+#  inputs:
+#    PathtoPublish: $(System.DefaultWorkingDirectory)/OPDCore.$(Build.BuildNumber).nupkg
+#    ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
 #- task: jungeriusit.jungit-robocopy.jungit-robobackup.BackupDirectory@1
 #  displayName: 'Create release file'
 #  inputs:
@@ -157,7 +157,6 @@ steps:
 #    githubReleaseDraft: false
 #    githubReleaseAsset: '$(Agent.TempDirectory)/$(Build.BuildNumber).zip'
 #    githubReuseDraftOnly: false
-
 - task: PowerShell@2
   displayName: Display the build artifacts folder
   inputs:
