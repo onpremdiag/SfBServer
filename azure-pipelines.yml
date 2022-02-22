@@ -129,37 +129,31 @@ steps:
   inputs:
     PathtoPublish: '$(Build.SourcesDirectory)/buildhelpers'
     ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)-BuildHelpers
-#- task: PublishBuildArtifacts@1
-#  displayName: Create nuget package drop
-#  inputs:
-#    PathtoPublish: $(System.DefaultWorkingDirectory)/OPDCore.$(Build.BuildNumber).nupkg
-#    ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
-#- task: jungeriusit.jungit-robocopy.jungit-robobackup.BackupDirectory@1
-#  displayName: 'Create release file'
-#  inputs:
-#    source: '$(System.TeamProject)-$(Build.BuildNumber)'
-#    destination: '$(Agent.TempDirectory)'
-#    copyOptions: '/S /E'
-#    createStampedBackupFolder: false
-#- task: ArchiveFiles@2
-#  displayName: 'Create zip file'
-#  inputs:
-#    rootFolderOrFile: '$(Agent.TempDirectory)'
-#    archiveFile: '$(Agent.TempDirectory)/$(Build.BuildNumber).zip'
-#    verbose: true
-#- task: marcelo-formentao.github-tools.github-release-publish-task.GitHubReleasePublish@1
-#  displayName: 'Push release to GitHub'
-#  inputs:
-#    githubEndpoint: 'github.com_onpremdiag'
-#    githubRepository: onpremdiag/SfBServer
-#    githubTag: '$(Build.BuildNumber)'
-#    githubReleaseTitle: '$(Build.BuildNumber)'
-#    githubReleaseDraft: false
-#    githubReleaseAsset: '$(Agent.TempDirectory)/$(Build.BuildNumber).zip'
-#    githubReuseDraftOnly: false
-- task: PowerShell@2
-  displayName: Display the build artifacts folder
+- task: PublishBuildArtifacts@1
+  displayName: Create nuget package drop
   inputs:
-   targetType: 'inline'
-   script: |
-     Get-ChildItem $(SYSTEM.ARTIFACTSDIRECTORY) -Recurse
+    PathtoPublish: $(Build.SourcesDirectory)/OPDCore.$(Build.BuildNumber).nupkg
+    ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
+- task: jungeriusit.jungit-robocopy.jungit-robobackup.BackupDirectory@1
+  displayName: 'Create release file'
+  inputs:
+    source: '$(System.TeamProject)-$(Build.BuildNumber)'
+    destination: '$(SYSTEM.ARTIFACTSDIRECTORY)/$(System.TeamProject)-$(Build.BuildNumber)'
+    copyOptions: '/S /E'
+    createStampedBackupFolder: false
+- task: ArchiveFiles@2
+  displayName: 'Create zip file'
+  inputs:
+    rootFolderOrFile: '$(SYSTEM.ARTIFACTSDIRECTORY)/$(System.TeamProject)-$(Build.BuildNumber)'
+    archiveFile: '$(SYSTEM.ARTIFACTSDIRECTORY)/$(Build.BuildNumber).zip'
+    verbose: true
+- task: marcelo-formentao.github-tools.github-release-publish-task.GitHubReleasePublish@1
+  displayName: 'Push release to GitHub'
+  inputs:
+    githubEndpoint: 'github.com_onpremdiag'
+    githubRepository: onpremdiag/SfBServer
+    githubTag: '$(Build.BuildNumber)'
+    githubReleaseTitle: '$(Build.BuildNumber)'
+    githubReleaseDraft: false
+    githubReleaseAsset: '$(SYSTEM.ARTIFACTSDIRECTORY)/$(Build.BuildNumber).zip'
+    githubReuseDraftOnly: false
