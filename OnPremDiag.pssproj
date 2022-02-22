@@ -496,7 +496,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="YAMLTemplates\deploy-nuget.yml" />
-    <Content Include="YAMLTemplates\azure-pipelines.yml" />
+    <Content Include="azure-pipelines.yml" />
     <Content Include="buildhelpers\Create-NuGetPackage.cmd" />
     <Content Include="buildhelpers\ReleaseNotesTemplate.md" />
     <Content Include="docs\Installation.md" />

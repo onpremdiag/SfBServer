@@ -68,16 +68,16 @@ steps:
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/Set-GitHubRepo.ps1'
     arguments: '-Product $env:BUILD_PRODUCT'
-- task: PowerShell@2
-  displayName: Run Script Analyzer
-  inputs:
-    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-ScriptAnalyzer.ps1'
-    arguments: '-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT'
-- task: PowerShell@2
-  displayName: Run the Pester tests (English)
-  inputs:
-    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-TestCases.ps1'
-    arguments: "-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'"
+#- task: PowerShell@2
+#  displayName: Run Script Analyzer
+#  inputs:
+#    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-ScriptAnalyzer.ps1'
+#    arguments: '-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT'
+#- task: PowerShell@2
+#  displayName: Run the Pester tests (English)
+#  inputs:
+#    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-TestCases.ps1'
+#    arguments: "-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'"
 - task: PowerShell@2
   displayName: Build nuget package
   inputs:
@@ -114,11 +114,11 @@ steps:
       Write-Host "Removing online documentation files..."
       Remove-Item -Recurse -Path $(Build.SourcesDirectory)\src\mode\$env:BUILD_PRODUCT\docs -Force
       Remove-Item -Recurse -Path $(Build.SourcesDirectory)\src\mode\$env:BUILD_PRODUCT\BuildArtifacts -Force
-- task: PublishBuildArtifacts@1
-  displayName: Publish Script Analyzer results
-  inputs:
-    PathtoPublish: $(System.DefaultWorkingDirectory)/PSSA-output.txt
-    ArtifactName: ScriptAnalyzerOutput
+#- task: PublishBuildArtifacts@1
+#  displayName: Publish Script Analyzer results
+#  inputs:
+#    PathtoPublish: $(System.DefaultWorkingDirectory)/PSSA-output.txt
+#    ArtifactName: ScriptAnalyzerOutput
 - task: PublishBuildArtifacts@1
   displayName: Create build drop
   inputs:
@@ -134,3 +134,27 @@ steps:
   inputs:
     PathtoPublish: $(System.DefaultWorkingDirectory)/OPDCore.$(Build.BuildNumber).nupkg
     ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
+- task: jungeriusit.jungit-robocopy.jungit-robobackup.BackupDirectory@1
+  displayName: 'Create release file'
+  inputs:
+    source: '$(System.TeamProject)-$(Build.BuildNumber)'
+    destination: '$(Agent.TempDirectory)'
+    copyOptions: '/S /E'
+    createStampedBackupFolder: false
+- task: ArchiveFiles@2
+  displayName: 'Create zip file'
+  inputs:
+    rootFolderOrFile: '$(Agent.TempDirectory)'
+    archiveFile: '$(Agent.TempDirectory)/$(Build.BuildNumber).zip'
+    verbose: true
+- task: marcelo-formentao.github-tools.github-release-publish-task.GitHubReleasePublish@1
+  displayName: 'Push release to GitHub'
+  inputs:
+    githubEndpoint: 'On Prem Diagnostic for Skype for Business'
+    githubRepository: onpremdiag/SfBServer
+    githubTag: '$(Build.BuildNumber)'
+    githubReleaseTitle: '$(Build.BuildNumber)'
+    githubReleaseDraft: false
+    githubReleaseAsset: '$(Agent.TempDirectory)/$(Build.BuildNumber).zip'
+    githubReuseDraftOnly: false
+
