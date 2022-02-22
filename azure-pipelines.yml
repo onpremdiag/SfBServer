@@ -1,9 +1,5 @@
 name: $(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rrr)
 
-variables:
-- name: BuildNumber
-  value: $(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rrr)
-
 trigger:
   branches:
     include:
@@ -14,19 +10,6 @@ pool:
   vmImage: windows-latest
 
 steps:
-#- task: PowerShell@2
-#  displayName: Construct the build number
-#  inputs:
-#    targetType: 'inline'
-#    script: |
-#      $Major = $(MajorVersion)
-#      $Minor = $(MinorVersion)
-#      $Build = [int](Get-Date -format "yyMM")
-#      $Revision = "{0:d2}{1:d3}" -f [int](Get-Date -format "dd"), [int]($env:BUILD_BUILDNUMBER.Split('.')[1])
-#      #$BuildNumber = "{0}.{1}.{2:d2}.{3}" -f $Major, $Minor, $Build, $Revision
-
-#      #Write-Host "##vso[task.setvariable variable=BUILD_BUILDNUMBER]$BuildNumber"
-#      Write-Host "##vso[task.setvariable variable=BUILD_BUILDNUMBER] ${{ variables.BuildNumber }}"
 - task: PowerShell@2
   displayName: What kind of build is it?
   inputs:
@@ -73,16 +56,16 @@ steps:
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/Set-GitHubRepo.ps1'
     arguments: '-Product $env:BUILD_PRODUCT'
-#- task: PowerShell@2
-#  displayName: Run Script Analyzer
-#  inputs:
-#    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-ScriptAnalyzer.ps1'
-#    arguments: '-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT'
-#- task: PowerShell@2
-#  displayName: Run the Pester tests (English)
-#  inputs:
-#    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-TestCases.ps1'
-#    arguments: "-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'"
+- task: PowerShell@2
+  displayName: Run Script Analyzer
+  inputs:
+    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-ScriptAnalyzer.ps1'
+    arguments: '-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT'
+- task: PowerShell@2
+  displayName: Run the Pester tests (English)
+  inputs:
+    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-TestCases.ps1'
+    arguments: "-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'"
 - task: PowerShell@2
   displayName: Build nuget package
   inputs:
@@ -119,11 +102,11 @@ steps:
       Write-Host "Removing online documentation files..."
       Remove-Item -Recurse -Path $(Build.SourcesDirectory)\src\mode\$env:BUILD_PRODUCT\docs -Force
       Remove-Item -Recurse -Path $(Build.SourcesDirectory)\src\mode\$env:BUILD_PRODUCT\BuildArtifacts -Force
-#- task: PublishBuildArtifacts@1
-#  displayName: Publish Script Analyzer results
-#  inputs:
-#    PathtoPublish: $(System.DefaultWorkingDirectory)/PSSA-output.txt
-#    ArtifactName: ScriptAnalyzerOutput
+- task: PublishBuildArtifacts@1
+  displayName: Publish Script Analyzer results
+  inputs:
+    PathtoPublish: $(System.DefaultWorkingDirectory)/PSSA-output.txt
+    ArtifactName: ScriptAnalyzerOutput
 - task: PublishBuildArtifacts@1
   displayName: Create build drop
   inputs:
@@ -134,11 +117,17 @@ steps:
   inputs:
     PathtoPublish: '$(Build.SourcesDirectory)/buildhelpers'
     ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)-BuildHelpers
-#- task: PublishBuildArtifacts@1
-#  displayName: Create nuget package drop
-#  inputs:
-#    PathtoPublish: $(Build.SourcesDirectory)/OPDCore.$(Build.BuildNumber).nupkg
-#    ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
+- task: PublishBuildArtifacts@1
+  displayName: Create nuget package drop
+  inputs:
+    PathtoPublish: $(Build.SourcesDirectory)/OPDCore.$(Build.BuildNumber).nupkg
+    ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'NuGetConnection'
 - task: BackupDirectory@1
   inputs:
     source: '$(Build.SourcesDirectory)/src'
