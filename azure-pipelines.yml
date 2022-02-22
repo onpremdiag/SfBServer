@@ -121,10 +121,10 @@ steps:
   inputs:
     PathtoPublish: $(Build.SourcesDirectory)/OPDCore.$(Build.BuildNumber).nupkg
     ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
-- task: DotNetCoreCLI@2
+- task: NuGetCommand@2
   inputs:
     command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg
     nuGetFeedType: 'external'
     publishFeedCredentials: 'NuGetConnection'
 - task: BackupDirectory@1
