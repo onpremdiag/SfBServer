@@ -150,7 +150,7 @@ steps:
 - task: marcelo-formentao.github-tools.github-release-publish-task.GitHubReleasePublish@1
   displayName: 'Push release to GitHub'
   inputs:
-    githubEndpoint: 'On Prem Diagnostic for Skype for Business'
+    githubEndpoint: 'github.com_onpremdiag'
     githubRepository: onpremdiag/SfBServer
     githubTag: '$(Build.BuildNumber)'
     githubReleaseTitle: '$(Build.BuildNumber)'
