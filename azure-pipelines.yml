@@ -123,10 +123,12 @@ steps:
     ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
 - task: NuGetCommand@2
   inputs:
+    displayName: 'Push OPDCore NuGet package -> NuGet Gallery'
     command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
+    packagesToPush: $(Build.SourcesDirectory)/OPDCore.$(Build.BuildNumber).nupkg
     nuGetFeedType: 'external'
     publishFeedCredentials: 'NuGetConnection'
+    versioningScheme: byBuildNumber
 - task: BackupDirectory@1
   inputs:
     source: '$(Build.SourcesDirectory)/src'
