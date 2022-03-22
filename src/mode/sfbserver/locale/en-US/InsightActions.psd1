@@ -60,8 +60,10 @@ ConvertFrom-StringData @'
 	IDEdgeServerNotListening                         = Remote PowerShell needs to be enabled on the edge server and confirm TCP port 5985 is not being blocked by the firewall. For more information please refer to the following article https://docs.microsoft.com/powershell/module/Microsoft.PowerShell.Core/Enable-PSRemoting?view=powershell-5.1.
 	IDEdgeServerNotReachable                         = Please check if edge server is available and there are no connectivity issues. For more information please refer to the following article https://docs.microsoft.com/powershell/module/microsoft.powershell.management/test-connection?view=powershell-7.
 	IDEdgeServerWrongExternalSipPort                 = Please confirm Edge Pool is enabled for listening on TCP port 5061.
+	IDEvalLicenseFound                               = Please apply valid volume license key
 	IDException                                      = Resolve the issue and run the Diagnostics script again.
 	IDExchangeAutodiscoverUrlNotConfigured           = Please refer to the following for guidance: https://blog.schertz.name/2015/09/exchange-and-skype-for-business-integration/
+	IDExpiringCertificates                           = Please renew certificates prior to expiration
 	IDExternalDNSResolutionFailed                    = Please check if Skype for Business Edge Server public DNS server is configured and external DNS resolution is functional.
 	IDExternalWSNotInSPNList                         = Please verify that Skype for Business Server external Web services URLs are registered as Service Principal names. For more details please refer to the following article https://docs.microsoft.com/skypeforbusiness/manage/authentication/configure-a-hybrid-environment
 	IDFileDoesNotExist                               = Please contact your system administrator or open a support ticket with Microsoft.
@@ -82,6 +84,7 @@ ConvertFrom-StringData @'
 	IDInsufficientMemory                             = Please refer to the appropriate documentation for your server installation.
 	IDInsufficientMemory2015                         = Please refer to the following guidance: https://docs.microsoft.com/skypeforbusiness/plan-your-deployment/requirements-for-your-environment/server-requirements
 	IDInsufficientMemory2019                         = Please refer to the following guidance: https://docs.microsoft.com/skypeforbusiness/plan/system-requirements
+	IDInsufficientSQLCores                           = Expected: {0}, Actual: {1}. Please refer to the following guidance: https://docs.microsoft.com/sql/sql-server/compute-capacity-limits-by-edition-of-sql-server?view=sql-server-ver15
 	IDIPAddressNotInPool                             = In case DNS Load balancing is being Frontend IP address is required  to be added to the Pool DNS Record. Note: If hardware load balancing, this may be a false positive.
 	IDIPv4DoesNotMatchReverseLookup                  = Please verify if the DNS record entry is correct as hosts files entries.
 	IDIsNotSfbServerFrontend                         = The diagnostics script must be run on a Skype for Business Server Frontend.
@@ -100,6 +103,7 @@ ConvertFrom-StringData @'
 	IDNoClientAccessServerRole                       = Please review the client access server role Exchange service using Get-ClientAccessServer cmdlet.
 	IDNoDefaultSipDomainFound                        = Please confirm that 'Get-CsSipDomain | Where-Object {$_.IsDefault}' cmdlet returns a non-empty result.
 	IDNoDNSRecordFound                               = Please add a Pool FQDN DNS Record. For DNS Load Balancing all Front Servers in this Pool should be added.
+	IDNoEdgeCertsFound                               = Please verify that the edge server has a valid certificate installed.
 	IDNoEdgePoolsFound                               = Please open Skype for Business Server Topology Builder and confirm if an Edge pool has been configured.
 	IDNoEdgeServersFound                             = Please confirm that at least one Edge Server Pool has been configured.
 	IDNoExchangeConnectivity                         = Please refer to the following for guidance: https://blog.schertz.name/2015/09/exchange-and-skype-for-business-integration/
@@ -152,6 +156,8 @@ ConvertFrom-StringData @'
 	IDSIPHostingProviderSharedAddressSpaceEnabled    = For hybrid environments, please run 'Federation is not working (Hybrid deployment)' diagnostic. If this shouldn't be configured as hybrid deployment, please disable shared SIP address space.
 	IDSIPHostingProviderSharedAddressSpaceNotEnabled = Please enable shared SIP address space with Office 365 by following guidance available on the following article https://docs.microsoft.com/skypeforbusiness/hybrid/configure-federation-with-skype-for-business-online.
 	IDSIPSharedAddressSpaceEnabled                   = Please disable shared SIP address space with Office 365 by following guidance available on the following article https://docs.microsoft.com/skypeforbusiness/hybrid/cloud-consolidation-disabling-hybrid#disable-shared-sip-address-space-in-microsoft-365-organization.
+	IDSQLDriveFull                                   = Please refer to the following guidance: https://systemcenter.wiki/?GetElement=Microsoft.LS.2013.Monitoring.Rule.InfoEvent.Registrar.ES_E_DATABASE_DRIVE_FULL&Type=Rule&ManagementPack=Microsoft.LS.2013.Monitoring.ComponentAndUser&Version=5.0.8308.956
+	IDSQLPerfIssues                                  = Please refer to the following guidance: https://docs.microsoft.com/sql/relational-databases/errors-events/mssqlserver-833-database-engine-error?view=sql-server-ver15
 	IDSQLServerBackendConnectionIsDown               = Please make sure that SQL Server back end services are running and firewall SQL exceptions are in place. SQL Server back end connectivity can be tested by running Test-CsDatabase -ConfiguredDatabases - SqlSerfverFqdn <SQLBackendFqdn>.
 	IDSQLServicesNotRunning                          = Please start SQL Server services by running Start-Service -DisplayName "SQL Server (*)" PowerShell command.
 	IDSSLNotDisabled                                 = Please refer to the following guidance: https://docs.microsoft.com/skypeforbusiness/manage/topology/disable-tls-1.0-1.1
@@ -159,6 +165,7 @@ ConvertFrom-StringData @'
 	IDTeamsModuleNotLoaded                           = Please visit https://docs.microsoft.com/microsoftteams/teams-powershell-install for instructions on how to acquire and install
 	IDTestCsDatabaseNoResults                        = The 'Test-CsDatabase -LocalService' returned an empty result. If problem persists please contact your system administrator or open a support ticket with Microsoft.
 	IDTestNetworkConnectionFails                     = Please confirm DNS server is reachable. If problem persists please contact your system administrator or open a support ticket with Microsoft.
+	IDThumbprintMismatch                             = Please verify that the certificate thumbprint values across all edge servers in the same pool match.
 	IDTLSNotEnabled                                  = Please refer to the following guidance: https://docs.microsoft.com/skypeforbusiness/manage/topology/disable-tls-1.0-1.1
 	IDTooManyCertsInRootCA                           = Local computer 'Trusted Root Certification Authorities' store should have less than {0} certificates. Please remove certificates incorrectly stored.
 	IDUCSConnectivityNotAvailable                    = To address the problem please follow guidance available at https://docs.microsoft.com/skypeforbusiness/plan-your-deployment/integrate-with-exchange/integrate-with-exchange to configure Exchange integration. Alternatively consider disabling UCS since is no longer default contact list provider.
@@ -176,6 +183,7 @@ ConvertFrom-StringData @'
 	IDUnableToResolveServerFQDN                      = Please execute 'Resolve-DnsName -Name $env:COMPUTERNAME -Type A' cmdlet and confirm valid output is returned.
 	IDUnableToRetrieveSSLSettings                    = Please confirm that the logged in account has the correct permissions to access the registry. If it does, please contact your system administrator or open a support ticket with Microsoft.
 	IDUnableToRetrieveTLSSettings                    = Please confirm that the logged in account has the correct permissions to access the registry. If it does, please contact your system administrator or open a support ticket with Microsoft.
+	IDUnhealthyDisk                                  = Please review event logs for any disk errors
 	IDUnknownDomain                                  = Please confirm if $env:USERDNSDOMAIN environment variable points to correct user local domain
 	IDUnknownProduct                                 = '{0}' is not an expected value
 	IDUpgradeSQLExpress                              = Please upgrade to {0}: {1}
@@ -189,10 +197,4 @@ ConvertFrom-StringData @'
 	IDWrongPartnerApplication                        = Please re-run PowerShell script available at https://docs.microsoft.com/skypeforbusiness/manage/authentication/configure-a-hybrid-environment
 	IDWrongPowerPlan                                 = Please ensure that the power plan is set to 'High performance' only.
 	IDWrongVerificationLevel                         = Please set VerificationLevel Office 365 hosting provider property value as per guidance available at https://docs.microsoft.com/skypeforbusiness/hybrid/configure-federation-with-skype-for-business-online.
-	IDInsufficientSQLCores                           = Expected: {0}, Actual: {1}. Please refer to the following guidance: https://docs.microsoft.com/sql/sql-server/compute-capacity-limits-by-edition-of-sql-server?view=sql-server-ver15
-	IDEvalLicenseFound                               = Please apply valid volume license key
-	IDExpiringCertificates                           = Please renew certificates prior to expiration
-	IDUnhealthyDisk                                  = Please review event logs for any disk errors
-	IDSQLPerfIssues                                  = Please refer to the following guidance: https://docs.microsoft.com/sql/relational-databases/errors-events/mssqlserver-833-database-engine-error?view=sql-server-ver15
-	IDSQLDriveFull                                   = Please refer to the following guidance: https://systemcenter.wiki/?GetElement=Microsoft.LS.2013.Monitoring.Rule.InfoEvent.Registrar.ES_E_DATABASE_DRIVE_FULL&Type=Rule&ManagementPack=Microsoft.LS.2013.Monitoring.ComponentAndUser&Version=5.0.8308.956
 '@

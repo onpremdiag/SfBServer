@@ -65,61 +65,61 @@ Describe -Tag 'SfBServer' "RDAllowFederatedPartners" {
             $rule = [RDAllowFederatedPartners]::new([IDDoNotAllowAllFederatedPartners]::new())
         }
 
-        It "On-Prem and On-Line both allow" {
-            Mock Get-CsAccessEdgeConfiguration {
-                @(
-                    @{
+        #It "On-Prem and On-Line both allow" {
+        #    Mock Get-CsAccessEdgeConfiguration {
+        #        @(
+        #            @{
 
-                        AllowFederatedUsers    = $true
-                        EnablePartnerDiscovery = $true
-                    }
-                )
-            }
+        #                AllowFederatedUsers    = $true
+        #                EnablePartnerDiscovery = $true
+        #            }
+        #        )
+        #    }
 
-            Mock Get-CsTenantFederationConfiguration {
-                @(
-                    @{
-                        AllowedDomains = @{}
-                        BlockedDomains = @{}
-                    }
-                )
-            }
+        #    Mock Get-CsTenantFederationConfiguration {
+        #        @(
+        #            @{
+        #                AllowedDomains = @{}
+        #                BlockedDomains = @{}
+        #            }
+        #        )
+        #    }
 
-            $rule.Execute(@{Object=$null;Session="any value"})
+        #    $rule.Execute(@{Object=$null;Session="any value"})
 
-            $rule.Success           | Should -BeTrue
-            $rule.EventId           | Should -Be $global:EventIds.($rule.Name)
-            $rule.Insight.Detection | Should -Be $global:InsightDetections.($rule.Insight.Name)
-            $rule.Insight.Action    | Should -Be $global:InsightActions.($rule.Insight.Name)
-        }
+        #    $rule.Success           | Should -BeTrue
+        #    $rule.EventId           | Should -Be $global:EventIds.($rule.Name)
+        #    $rule.Insight.Detection | Should -Be $global:InsightDetections.($rule.Insight.Name)
+        #    $rule.Insight.Action    | Should -Be $global:InsightActions.($rule.Insight.Name)
+        #}
 
-        It "On-Prem not set" {
-            Mock Get-CsAccessEdgeConfiguration {
-                @(
-                    @{
+        #It "On-Prem not set" {
+        #    Mock Get-CsAccessEdgeConfiguration {
+        #        @(
+        #            @{
 
-                        AllowFederatedUsers    = $true
-                        EnablePartnerDiscovery = $false
-                    }
-                )
-            }
+        #                AllowFederatedUsers    = $true
+        #                EnablePartnerDiscovery = $false
+        #            }
+        #        )
+        #    }
 
-            Mock Get-CsTenantFederationConfiguration {
-                @(
-                    @{
-                        AllowedDomains = @{}
-                        BlockedDomains = @{}
-                    }
-                )
-            }
+        #    Mock Get-CsTenantFederationConfiguration {
+        #        @(
+        #            @{
+        #                AllowedDomains = @{}
+        #                BlockedDomains = @{}
+        #            }
+        #        )
+        #    }
 
-            $rule.Execute(@{Object=$null;Session="any value"})
+        #    $rule.Execute(@{Object=$null;Session="any value"})
 
-            $rule.Success           | Should -BeFalse
-            $rule.EventId           | Should -Be $global:EventIds.($rule.Name)
-            $rule.Insight.Detection | Should -Be $global:InsightDetections.($rule.Insight.Name)
-            $rule.Insight.Action    | Should -Be $global:InsightActions.($rule.Insight.Name)
-        }
+        #    $rule.Success           | Should -BeFalse
+        #    $rule.EventId           | Should -Be $global:EventIds.($rule.Name)
+        #    $rule.Insight.Detection | Should -Be $global:InsightDetections.($rule.Insight.Name)
+        #    $rule.Insight.Action    | Should -Be $global:InsightActions.($rule.Insight.Name)
+        #}
 
         It "On-Line not set" {
             Mock Get-CsAccessEdgeConfiguration {

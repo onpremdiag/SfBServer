@@ -67,7 +67,9 @@ class RDAllowFederatedPartners : RuleDefinition
             try
             {
                 $OL_TenantFedConf = Get-CsTenantFederationConfiguration
-                $OL_OpenFed       = ($OL_TenantFedConf.AllowedDomains.Count -eq 0) -and ($OL_TenantFedConf.BlockedDomains.Count -eq 0)
+
+                #Bug 34828: SFB OPD - Federation is not working : False positive error when open federation is enabled
+                $OL_OpenFed       = ($OL_TenantFedConf.AllowedDomains.AllowedDomain.Count -eq 0) -and ($OL_TenantFedConf.BlockedDomains.Count -eq 0)
             }
             catch
             {

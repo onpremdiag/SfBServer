@@ -57,7 +57,7 @@ class RDDBDriveFull : RuleDefinition
             # Check the database drive free space and alert if it's approaching its capacity.
             # Alert for event ID 30596 - ES_E_DATABASE_DRIVE_FULL
 
-            $Events = Get-WinEvent -LogName Application -MaxEvents 300 | Where-Object {$_.Id -eq $ES_E_DATABASE_DRIVE_FULL}
+            $Events = Get-WinEvent -LogName 'LS User Services' -MaxEvents 300 | Where-Object {$_.Id -eq $ES_E_DATABASE_DRIVE_FULL}
 
             if ($Events)
             {

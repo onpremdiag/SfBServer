@@ -66,7 +66,7 @@ Describe -Tag 'SfBServer' "RDDBDriveFull" {
         }
 
         It "No events in Application log (SUCCESS)" {
-            Mock Get-WinEvent {} -ParameterFilter {$Logname -eq 'Application'}
+            Mock Get-WinEvent {} -ParameterFilter {$Logname -eq 'LS User Services'}
 
             $rule.Execute($null)
             $rule.Success           | Should -BeTrue
@@ -89,7 +89,7 @@ Describe -Tag 'SfBServer' "RDDBDriveFull" {
                         TimeCreated = (Get-Date)
                     }
                 )
-            } -ParameterFilter {$Logname -eq 'Application' -and $MaxEvents -eq 300}
+            } -ParameterFilter {$Logname -eq 'LS User Services' -and $MaxEvents -eq 300}
 
             $rule.Execute($null)
             $rule.Success           | Should -BeFalse

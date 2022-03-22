@@ -59,8 +59,10 @@ ConvertFrom-StringData @'
 	IDEdgeServerNotListening                         = The edge server, '{0}', is not listening on the remote TCP port 5985.
 	IDEdgeServerNotReachable                         = The edge server, '{0}', is not returning the echo response replies to the ICMP echo requests packets or pings.
 	IDEdgeServerWrongExternalSipPort                 = Unable to validate the port being used for External SIP connections. Either the edge server is unreachable or the port has the incorrect value.
+	IDEvalLicenseFound                               = An evaluation license has been detected
 	IDException                                      = An Exception has occurred while running the diagnostic script: {0}
 	IDExchangeAutodiscoverUrlNotConfigured           = Autodiscover URL is not well formed for Exchange On-Premise. Expected '{0}' but got '{1}'
+	IDExpiringCertificates                           = The following certificate(s) are near expiry: {0}
 	IDExternalDNSResolutionFailed                    = Attempting to resolve sipfed.online.lync.com DNS A record failed.
 	IDExternalWSNotInSPNList                         = External web service does not exist in Service Principal Names (SPN) list
 	IDFileDoesNotExist                               = Unable to locate file '{0}'
@@ -81,6 +83,7 @@ ConvertFrom-StringData @'
 	IDInsufficientMemory                             = Insufficient memory found: Expected: {0}GB, Actual: {1}GB
 	IDInsufficientMemory2015                         = Insufficient memory found: Expected: {0}GB, Actual: {1}GB
 	IDInsufficientMemory2019                         = Insufficient memory found: Expected: {0}GB, Actual: {1}GB
+	IDInsufficientSQLCores                           = Insufficient number of cores allocated to SQL Server Express
 	IDIPAddressNotInPool                             = Unable to locate local machine's IP address, {0}, in list of addresses, {1}, associated with Pool FQDN
 	IDIPv4DoesNotMatchReverseLookup                  = DNS IPv4 name does not match reverse DNS IP address {0} lookup. Expected: {1}, Actual: {2}
 	IDIsNotSfbServerFrontend                         = Skype for Business Server Frontend role is not installed. This usually indicates that this not a Skype for Business Server frontend machine.
@@ -99,6 +102,7 @@ ConvertFrom-StringData @'
 	IDNoClientAccessServerRole                       = Unable to determine the client access server role for the Exchange service
 	IDNoDefaultSipDomainFound                        = Unable to locate any information regarding SIP domains.
 	IDNoDNSRecordFound                               = No DNS record was found.
+	IDNoEdgeCertsFound                               = No certificates were found on edge server '{0}'
 	IDNoEdgePoolsFound                               = No Edge pools were found.
 	IDNoEdgeServersFound                             = No edge server was found for this configuration.
 	IDNoExchangeConnectivity                         = Test-CsExStorageConnectivity cmdlet that verifies if Skype for Business Server Storage service can communicate with Exchange Server failed for SIP user {0}
@@ -151,6 +155,8 @@ ConvertFrom-StringData @'
 	IDSIPHostingProviderSharedAddressSpaceEnabled    = Shared SIP address space is enabled so this is configured as an hybrid environment.
 	IDSIPHostingProviderSharedAddressSpaceNotEnabled = Shared SIP address space required for federation with Office 365 is disabled.
 	IDSIPSharedAddressSpaceEnabled                   = Shared SIP address space is enabled so this is still configured as an hybrid environment.
+	IDSQLDriveFull                                   = SQL Server has data files have exceeded the maximum size or the hard drive it is located on has run out of space
+	IDSQLPerfIssues                                  = SQL Server has encountered 1 (or more) occurrences of I/O requests taking longer than expected to complete.
 	IDSQLServerBackendConnectionIsDown               = The Skype for Business Server SQL back end connectivity to '{0}' is not available.
 	IDSQLServicesNotRunning                          = At least one local SQL Server service is not started.
 	IDSSLNotDisabled                                 = {0} not configured correctly. DisabledByDefault: Expected: 1, Actual: {1}, Enabled: Expected: 0, Actual: {2}
@@ -158,6 +164,7 @@ ConvertFrom-StringData @'
 	IDTeamsModuleNotLoaded                           = MicrosofTeams 2.0.0, or later, is required to be installed and loaded
 	IDTestCsDatabaseNoResults                        = Unable to verify connectivity to one or more Skype for Business Server databases.
 	IDTestNetworkConnectionFails                     = Unable to verify network connection with '{0}'.
+	IDThumbprintMismatch                             = Certificate thumbprint do not match on {0}. Expected: {1}, Actual: {2}
 	IDTLSNotEnabled                                  = {0} not configured correctly. DisabledByDefault: Expected: 0, Actual: {1}, Enabled: Expected: 1, Actual: {2}
 	IDTooManyCertsInRootCA                           = There are {0} certificates in local computer 'Trusted Root Certification Authorities' store.
 	IDUCSConnectivityNotAvailable                    = Server-to-Server authentication between Skype for Business and Exchange is either not configured or the connection is currently down. Note: If user contact list is expected to be empty this error is expected.
@@ -175,6 +182,7 @@ ConvertFrom-StringData @'
 	IDUnableToResolveServerFQDN                      = Unable to resolve the FQDN for your Skype for Business Server.
 	IDUnableToRetrieveSSLSettings                    = Unable to retrieve SSL settings
 	IDUnableToRetrieveTLSSettings                    = Unable to retrieve TLS settings
+	IDUnhealthyDisk                                  = One, or more, disks were found in an 'Unhealthy' state
 	IDUnknownDomain                                  = Unable to determine the user DNS domain
 	IDUnknownProduct                                 = '{0}' is not an expected value
 	IDUpgradeSQLExpress                              = Outdated version of SQL Server Express has been found. Expected: {0}, Actual: {1}
@@ -188,10 +196,4 @@ ConvertFrom-StringData @'
 	IDWrongPartnerApplication                        = Microsoft.Exchange partner application is registered for an incorrect service name.
 	IDWrongPowerPlan                                 = The power plan configuration is not correct. It should be set to 'High performance' only
 	IDWrongVerificationLevel                         = Office 365 hosting provider VerificationLevel parameter value is incorrect.
-	IDInsufficientSQLCores                           = Insufficient number of cores allocated to SQL Server Express
-	IDEvalLicenseFound                               = An evaluation license has been detected
-	IDExpiringCertificates                           = The following certificate(s) are near expiry: {0}
-	IDUnhealthyDisk                                  = One, or more, disks were found in an 'Unhealthy' state
-	IDSQLPerfIssues                                  = SQL Server has encountered 1 (or more) occurrences of I/O requests taking longer than expected to complete.
-	IDSQLDriveFull                                   = SQL Server has data files have exceeded the maximum size or the hard drive it is located on has run out of space
 '@

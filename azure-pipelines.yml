@@ -56,26 +56,26 @@ steps:
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/Set-GitHubRepo.ps1'
     arguments: '-Product $env:BUILD_PRODUCT'
-#- task: PowerShell@2
-#  displayName: Run Script Analyzer
-#  inputs:
-#    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-ScriptAnalyzer.ps1'
-#    arguments: '-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT'
-#- task: PowerShell@2
-#  displayName: Run the Pester tests (English)
-#  inputs:
-#    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-TestCases.ps1'
-#    arguments: "-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'"
+- task: PowerShell@2
+  displayName: Run Script Analyzer
+  inputs:
+    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-ScriptAnalyzer.ps1'
+    arguments: '-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT'
+- task: PowerShell@2
+  displayName: Run the Pester tests (English)
+  inputs:
+    filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-TestCases.ps1'
+    arguments: "-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'"
 - task: PowerShell@2
   displayName: Build nuget package
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/Create-NuGetPackage.ps1'
     arguments: "-Version $(Build.BuildNumber)"
-#- task: PublishTestResults@2
-#  displayName: Publish Test Results
-#  inputs:
-#    testRunner: NUnit
-#    failTaskOnFailedTests: true
+- task: PublishTestResults@2
+  displayName: Publish Test Results
+  inputs:
+    testRunner: NUnit
+    failTaskOnFailedTests: true
 - task: PowerShell@2
   displayName: Remove any non-product files
   inputs:
@@ -101,21 +101,21 @@ steps:
       Write-Host "Removing online documentation files..."
       Remove-Item -Recurse -Path $(Build.SourcesDirectory)\src\mode\$env:BUILD_PRODUCT\docs -Force
       Remove-Item -Recurse -Path $(Build.SourcesDirectory)\src\mode\$env:BUILD_PRODUCT\BuildArtifacts -Force
-#- task: PublishBuildArtifacts@1
-#  displayName: Publish Script Analyzer results
-#  inputs:
-#    PathtoPublish: $(System.DefaultWorkingDirectory)/PSSA-output.txt
-#    ArtifactName: ScriptAnalyzerOutput
+- task: PublishBuildArtifacts@1
+  displayName: Publish Script Analyzer results
+  inputs:
+    PathtoPublish: $(System.DefaultWorkingDirectory)/PSSA-output.txt
+    ArtifactName: ScriptAnalyzerOutput
 - task: PublishBuildArtifacts@1
   displayName: Create build drop
   inputs:
     PathtoPublish: '$(Build.SourcesDirectory)/src'
     ArtifactName: '$(System.TeamProject)-$(Build.BuildNumber)'
-- task: PublishBuildArtifacts@1
-  displayName: Create buildhelpers drop
-  inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)/buildhelpers'
-    ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)-BuildHelpers
+#- task: PublishBuildArtifacts@1
+#  displayName: Create buildhelpers drop
+#  inputs:
+#    PathtoPublish: '$(Build.SourcesDirectory)/buildhelpers'
+#    ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)-BuildHelpers
 - task: PublishBuildArtifacts@1
   displayName: Create nuget package drop
   inputs:
