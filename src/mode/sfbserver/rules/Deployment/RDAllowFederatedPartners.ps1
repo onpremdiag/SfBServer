@@ -51,7 +51,7 @@ class RDAllowFederatedPartners : RuleDefinition
         try
         {
             Set-Variable -Name ProgressPreference -Scope 'Global' -Value "SilentlyContinue" -Force
-            $OL_AccessEdge    = $null
+            $OP_AccessEDGE    = $null
             $OL_TenantFedConf = $null
             $OL_OpenFed       = $null
 
@@ -70,6 +70,17 @@ class RDAllowFederatedPartners : RuleDefinition
 
                 #Bug 34828: SFB OPD - Federation is not working : False positive error when open federation is enabled
                 $OL_OpenFed       = ($OL_TenantFedConf.AllowedDomains.AllowedDomain.Count -eq 0) -and ($OL_TenantFedConf.BlockedDomains.Count -eq 0)
+            }
+            catch [System.Management.Automation.PropertyNotFoundException]
+            {
+                if ($_.Exception.Message.Contains('AllowedDomain') -and $OL_TenantFedConf.BlockedDomains.Count -eq 0)
+                {
+                    $OL_OpenFed = $true
+                }
+                else
+                {
+                    $OL_OpenFed = $false
+                }
             }
             catch
             {
