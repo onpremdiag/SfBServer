@@ -422,7 +422,6 @@
     <Folder Include="buildhelpers\" />
     <Folder Include="docs\" />
     <Folder Include="docs\media\" />
-    <Folder Include="YAMLTemplates\" />
     <Folder Include="plastertemplates\" />
     <Folder Include="plastertemplates\insight\" />
     <Folder Include="plastertemplates\analyzer\" />
@@ -509,7 +508,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="YAMLTemplates\deploy-nuget.yml" />
     <Content Include="azure-pipelines.yml" />
     <Content Include="buildhelpers\Create-NuGetPackage.cmd" />
     <Content Include="buildhelpers\ReleaseNotesTemplate.md" />
@@ -616,6 +614,7 @@
     <Content Include="src\mode\sfbserver\docs\wiki\SDOnPremFederation.md" />
     <Content Include="src\mode\sfbserver\docs\wiki\SDPresenceAndIMDelay.md" />
     <Content Include="src\mode\sfbserver\docs\wiki\SDPresenceIMNotWorking.md" />
+    <Content Include="src\mode\sfbserver\docs\wiki\SDServerPerfCheck.md" />
     <Content Include="src\mode\sfbserver\docs\wiki\SDSfbServerFrontendServiceNotStarting.md" />
     <Content Include="src\mode\sfbserver\docs\wiki\SDSfbServerPSModuleLoadedAndIsFrontend.md" />
     <Content Include="src\mode\sfbserver\docs\wiki\SDUserContactCardPhoneNumberNotAvailable.md" />
