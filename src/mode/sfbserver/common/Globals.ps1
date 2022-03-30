@@ -346,7 +346,7 @@ New-Variable -Name SQLExpress2014 `
 
 $SQLExpress2014 +=
     New-Object PSObject -Property @{
-        Description    = 'Microsoft SQL Server 2014 Service Pack 3 (SP3) Express'
+        Description    = 'Microsoft SQL Server 2014 Service Pack 3 (SP3)'
         ProductVersion = [System.Version]"12.0.6024.0"
         ProductLevel   = 'SP3'
         Edition        = "Express Edition 2014"
@@ -361,11 +361,11 @@ New-Variable -Name SQLExpress2016 `
 
 $SQLExpress2016 +=
     New-Object PSObject -Property @{
-        Description    = 'Microsoft SQL Server 2016 Service Pack 2 Express'
-        ProductVersion = [System.Version]"13.0.5026.0"
-        ProductLevel   = 'SP2'
+        Description    = 'Microsoft SQL Server 2016 Service Pack 3 (SP3)'
+        ProductVersion = [System.Version]"13.0.6300.2"
+        ProductLevel   = 'SP3'
         Edition        = "Express Edition 2016"
-        URL            = "https://www.microsoft.com/download/details.aspx?id=56840"
+        URL            = "https://www.microsoft.com/download/details.aspx?id=103440"
     }
 
 New-Variable -Name SQLExpress2017 `

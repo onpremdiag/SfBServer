@@ -86,7 +86,7 @@ class RDCompareAllowedDomains : RuleDefinition
             }
             catch [System.Management.Automation.PropertyNotFoundException]
             {
-                if ($_.Exception.Message.Contains('AllowedDomains'))
+                if ($_.Exception.Message.Contains('AllowedDomain'))
                 {
                     $OL_allowedDomains = $global:MiscStrings.'None'
                 }
