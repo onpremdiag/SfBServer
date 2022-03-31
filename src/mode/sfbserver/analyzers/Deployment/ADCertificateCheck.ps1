@@ -46,14 +46,8 @@ class ADCertificateCheck : AnalyzerDefinition
         #
 
         Add-RuleDefinition -Analyzer $this -RuleDefinition ([RDCheckMisplacedRootCACertificates]::new([IDLocalCertStoreNotFound]::new()))
-        #Add-RuleDefinition -Analyzer $this -RuleDefinition ([RDDuplicatesInTrustedRootCA]::new([]::new()))
+        Add-RuleDefinition -Analyzer $this -RuleDefinition ([RDDuplicatesInTrustedRootCA]::new([IDDuplicatesInTrustedRootCA]::new()))
         Add-RuleDefinition -Analyzer $this -RuleDefinition ([RDCheckTooManyCertsRootCA]::new([IDNoCertificatesFound]::new()))
-        #Add-RuleDefinition -Analyzer $this -RuleDefinition ([RDRootCACertsInPersonalStore]::new([]::new()))
-        #Add-RuleDefinition -Analyzer $this -RuleDefinition ([RDDuplicatedFriendlyName]::new([]::new()))
-        #Add-RuleDefinition -Analyzer $this -RuleDefinition ([RDMisplacedRootCACertsInIntermediateCAStore]::new([]::new()))
-        #Add-RuleDefinition -Analyzer $this -RuleDefinition ([RDExpiredCertsInRootStore]::new([]::new()))
-        #Add-RuleDefinition -Analyzer $this -RuleDefinition ([RDExpiredCertsInIntermediateStore]::new([]::new()))
-        #Add-RuleDefinition -Analyzer $this -RuleDefinition ([RDExpiredCertsInPersonalStore]::new([]::new()))
         Add-RuleDefinition -Analyzer $this -RuleDefinition ([RDCheckEdgeCerts]::new([IDEdgeCertsNotOnSan]::new()))
     }
 

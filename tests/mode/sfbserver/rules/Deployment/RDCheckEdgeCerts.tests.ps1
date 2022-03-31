@@ -190,15 +190,15 @@ Describe -Tag 'SfBServer', 'Rule' "RDCheckEdgeCerts" {
             $rule.Insight.Detection | Should -Be (($global:InsightDetections.'IDEdgeServerNotReachable') -f "edge.contoso.com")
         }
 
-        It "Unable to Invoke-RemoteSessionCommand (IDUnableToConnect)" {
+        It "Unable to Invoke-RemoteSessionCommand (IDNoEdgeCertsFound)" {
 
-            Mock Invoke-RemoteCommand {$null}
+            Mock Invoke-ScriptBlockHandler {$null}
 
             $rule.Execute(@{Obj=$null;Credential=$CredentialObject})
 
             $rule.Success           | Should -BeFalse
-            $rule.Insight.Name      | Should -Be 'IDUnableToConnect'
-            $rule.Insight.Detection | Should -Be (($global:InsightDetections.'IDUnableToConnect') -f "edge.contoso.com")
+            $rule.Insight.Name      | Should -Be 'IDNoEdgeCertsFound'
+            $rule.Insight.Detection | Should -Be (($global:InsightDetections.'IDNoEdgeCertsFound') -f "edge.contoso.com")
         }
 
         It "Get-CsService is returning null or empty (IDGetCsServiceFails)" {

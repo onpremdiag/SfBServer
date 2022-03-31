@@ -2342,11 +2342,26 @@ Function Invoke-ScriptBlockHandler
 {
     param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true,
+            ParameterSetName = 'Computer',
+            Position=0)]
+        [ValidateNotNullOrEmpty()]
         [string]$ComputerName,
 
         [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [scriptblock]$ScriptBlock,
+
+        [Parameter(Mandatory = $true,
+            ParameterSetName = 'Computer',
+            Position=1)]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential] $Credentials,
+
+        [Parameter(Mandatory = $true,
+            ParameterSetName = 'Session',
+            Position=0)]
+        [System.Object] $Session,
 
         [Parameter(Mandatory = $false)]
         [string]$ScriptBlockDescription,
@@ -2365,10 +2380,11 @@ Function Invoke-ScriptBlockHandler
             "Kerberos",
             "Negotiate",
             "NegotiateWithImplicitCredential")]
-        [string]$Authentication = "Default",
+        [string]$Authentication,
 
         [Parameter(Mandatory = $false)]
         [scriptblock]$CatchActionFunction
+
     )
 
     Write-VerboseWriter("Calling: Invoke-ScriptBlockHandler")
@@ -2383,10 +2399,33 @@ Function Invoke-ScriptBlockHandler
         if (($ComputerName).Split(".")[0] -ne $env:COMPUTERNAME)
         {
             $params = @{
-                ComputerName   = $ComputerName
-                ScriptBlock    = $ScriptBlock
-                ErrorAction    = "Stop"
-                Authentication = $Authentication
+                ComputerName = $ComputerName
+                ScriptBlock  = $ScriptBlock
+                ErrorAction  = $ErrorActionPreference
+            }
+
+            if ($Authentication)
+            {
+                Write-VerboseWriter("Including Authentication")
+                $params.Add("Authentication", $Authentication)
+            }
+
+            if ($Credentials)
+            {
+                Write-VerboseWriter("Including Credentials object")
+                $params.Add("Credential", $Credentials)
+            }
+
+            if ($Session)
+            {
+                Write-VerboseWriter("Removing Computer name - Session object specified")
+                $params.Remove("ComputerName")
+
+                Write-VerboseWriter("Removing Credentials - Session object specified")
+                $params.Remove("Credential")
+
+                Write-VerboseWriter("Including Session object")
+                $params.Add("Session", $Session)
             }
 
             if ($IncludeNoProxyServerOption)

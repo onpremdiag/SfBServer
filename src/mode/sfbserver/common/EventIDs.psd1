@@ -99,6 +99,7 @@
     RDCheckOAuthIsConfigured                        = 9767
     RDCheckOnlineSharedSipAddressSpace              = 9777
     RDCheckPatchVersion                             = 9755
+    RDCheckPowerPlan                                = 9784
     RDCheckProxyConfiguration                       = 9769
     RDCheckProxyFQDN                                = 9709
     RDCheckProxyPostMigration                       = 9763
@@ -145,6 +146,8 @@
     RDIsUniversalServerAdmin                        = 9720
     RDNoOnPremiseUsers                              = 9772
     RDOAuthCertificateValid                         = 9748
+    RDServerCores                                   = 9785
+    RDServerMemory                                  = 9786
     RDSfbServerPowerShellModuleLoaded               = 9721
     RDSharedSipAddressSpace                         = 9717
     RDTeamsModuleLoaded                             = 9771
@@ -173,4 +176,13 @@
     SDTLSDeprecation                                = 9518
     SDUserContactCardPhoneNumberNotAvailable        = 9501
     SDUserContactListIsMissing                      = 9502
+    RDCheckLocalSQLVersion                          = 9787
+    RDServerSocketCoreRatio                         = 9788
+    RDServerLicenseVersion                          = 9789
+    RDCheckCertsExpiring                            = 9790
+    RDCheckDiskHealthStatus                         = 9791
+    RDSqlIOLatency                                  = 9792
+    RDDBDriveFull                                   = 9793
+    ADServerPerfCheck                               = 9642
+    SDServerPerfCheck                               = 9519
 }

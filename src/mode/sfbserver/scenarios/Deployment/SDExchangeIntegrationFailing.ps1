@@ -23,7 +23,7 @@
 #
 # Filename: SDExchangeIntegrationFailing.ps1
 # Description: Check if Sfb Server and Exchange Server Integration is operational
-# Owner: Joï¿½o Loureiro <joaol@microsoft.com>
+# Owner: João Loureiro <joaol@microsoft.com>
 ################################################################################
 Set-StrictMode -Version Latest
 

@@ -58,100 +58,100 @@ BeforeAll {
 }
 
 Describe -Tag 'SfBServer' "RDUsageTrend" {
-	Context "Checks to see if Response Group Usage Report times out" {
-		BeforeEach {
-			Mock Write-OPDEventLog {}
+    Context "Checks to see if Response Group Usage Report times out" {
+        BeforeEach {
+            Mock Write-OPDEventLog {}
 
-			$rule = [RDUsageTrend]::new([IDRGSUsageTrend]::new())
-		}
+            $rule = [RDUsageTrend]::new([IDRGSUsageTrend]::new())
+        }
 
-		It "1. It should pass - no timeout" {
-			Mock Get-CsService {
-				@(
-					@{
-						Identity        = 'MonitoringDatabase:sql.contoso.com'
-						SqlInstanceName = [string]::Empty
-						SiteId          = 'Site:Contoso'
-						PoolFqdn        = 'sql.contoso.com'
-						Role            = 'MonitoringDatabase'
-					}
-				)
-			}
+        It "1. It should pass - no timeout" {
+            Mock Get-CsService {
+                @(
+                    @{
+                        Identity        = 'MonitoringDatabase:sql.contoso.com'
+                        SqlInstanceName = [string]::Empty
+                        SiteId          = 'Site:Contoso'
+                        PoolFqdn        = 'sql.contoso.com'
+                        Role            = 'MonitoringDatabase'
+                    }
+                )
+            }
 
-			Mock Invoke-SqlCmd {}
+            Mock Invoke-SqlCmd {}
 
-			Mock Measure-Command {
-				@(
-					@{
-						Seconds           = 0
-						Milliseconds      = 338
-						TotalSeconds      = 0.3382778
-						TotalMilliseconds = 338.2778
-					}
-				)
-			}
+            Mock Measure-Command {
+                @(
+                    @{
+                        Seconds           = 0
+                        Milliseconds      = 338
+                        TotalSeconds      = 0.3382778
+                        TotalMilliseconds = 338.2778
+                    }
+                )
+            }
 
-			$rule.Execute($null)
+            $rule.Execute($null)
 
             $rule.Success           | Should -BeTrue
             $rule.EventId           | Should -Be $global:EventIds.($rule.Name)
             $rule.Insight.Detection | Should -Be $global:InsightDetections.'IDRGSUsageTrend'
             $rule.Insight.Action    | Should -Be $global:InsightActions.'IDRGSUsageTrend'
-		}
+        }
 
-		It "2. It should fail - timeout condition" {
-			Mock Get-CsService {
-				@(
-					@{
-						Identity        = 'MonitoringDatabase:sql.contoso.com'
-						SqlInstanceName = [string]::Empty
-						SiteId          = 'Site:Contoso'
-						PoolFqdn        = 'sql.contoso.com'
-						Role            = 'MonitoringDatabase'
-					}
-				)
-			}
+        It "2. It should fail - timeout condition" {
+            Mock Get-CsService {
+                @(
+                    @{
+                        Identity        = 'MonitoringDatabase:sql.contoso.com'
+                        SqlInstanceName = [string]::Empty
+                        SiteId          = 'Site:Contoso'
+                        PoolFqdn        = 'sql.contoso.com'
+                        Role            = 'MonitoringDatabase'
+                    }
+                )
+            }
 
-			Mock Invoke-SqlCmd {}
+            Mock Invoke-SqlCmd {}
 
-			Mock Measure-Command {
-				@(
-					@{
-						TotalSeconds           = 61
-					}
-				)
-			}
+            Mock Measure-Command {
+                @(
+                    @{
+                        TotalSeconds           = 61
+                    }
+                )
+            }
 
-			$rule.Execute($null)
+            $rule.Execute($null)
 
             $rule.Success           | Should -BeFalse
             $rule.EventId           | Should -Be $global:EventIds.($rule.Name)
             $rule.Insight.Detection | Should -Be $global:InsightDetections.'IDRGSUsageTrend'
             $rule.Insight.Action    | Should -Be $global:InsightActions.'IDRGSUsageTrend'
-		}
+        }
 
-		It "3. It should fail - no monitoring role" {
-			Mock Get-CsService { $null }
+        It "3. It should fail - no monitoring role" {
+            Mock Get-CsService { $null }
 
-			Mock Invoke-SqlCmd {}
+            Mock Invoke-SqlCmd {}
 
-			Mock Measure-Command {
-				@(
-					@{
-						Seconds           = 0
-						Milliseconds      = 338
-						TotalSeconds      = 0.3382778
-						TotalMilliseconds = 338.2778
-					}
-				)
-			}
+            Mock Measure-Command {
+                @(
+                    @{
+                        Seconds           = 0
+                        Milliseconds      = 338
+                        TotalSeconds      = 0.3382778
+                        TotalMilliseconds = 338.2778
+                    }
+                )
+            }
 
-			$rule.Execute($null)
+            $rule.Execute($null)
 
             $rule.Success           | Should -BeFalse
             $rule.EventId           | Should -Be $global:EventIds.($rule.Name)
             $rule.Insight.Detection | Should -Be $global:InsightDetections.'IDNoMonitoringRole'
             $rule.Insight.Action    | Should -Be $global:InsightActions.'IDNoMonitoringRole'
-		}
-	}
+        }
+    }
 }

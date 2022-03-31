@@ -43,6 +43,25 @@ class RDCheckEdgeCerts : RuleDefinition
         $this.EventId     = Get-EventId($this.Name)
     }
 
+    [object] GetEdgeServerCerts([object]$Session)
+    {
+        $edgeCerts = $null
+
+        if (-not [string]::IsNullOrEmpty($Session))
+        {
+            $scriptBlock =
+            {
+                Set-Variable -Name ProgressPreference -Scope 'Global' -Value "SilentlyContinue" -Force;
+                Get-CsCertificate -Type AccessEdgeExternal | `
+                Select-Object -Property PsComputerName, AlternativeNames, Thumbprint, Use
+            }
+
+            $edgeCerts = Invoke-ScriptBlockHandler -Session $Session -ScriptBlock $scriptBlock
+        }
+
+        return $edgeCerts
+    }
+
     [void] Execute([object] $obj)
     {
         $global:CurrentRule         = $this.Id
@@ -75,39 +94,46 @@ class RDCheckEdgeCerts : RuleDefinition
 
                             if (-not [string]::IsNullOrEmpty($Session))
                             {
-                                $scriptBlock =
-                                {
-                                    Set-Variable -Name ProgressPreference -Scope 'Global' -Value "SilentlyContinue" -Force;
-                                    Get-CsCertificate -Type AccessEdgeExternal | `
-                                    Select-Object -Property PsComputerName, AlternativeNames, Thumbprint, Use
-                                }
+                                $edgeCerts = $this.GetEdgeServerCerts($Session)
 
-                                $edgeCerts = Invoke-RemoteCommand -Session $Session `
-                                                                  -ScriptBlock $scriptBlock
-
-                                if(-not [string]::IsNullOrEmpty($edgeCerts))
+                                if ($edgeCerts)
                                 {
-                                    foreach($edgeCert in $edgeCerts)
+                                    $Identity  = $edgeCerts[0].PsComputerName
+                                    $PoolFQDN  = (Get-CsComputer -Identity $Identity).Pool
+                                    $FQDN      = (Get-CsService -EdgeServer -PoolFqdn $PoolFQDN).AccessEdgeExternalFqdn
+                                    $SANOnCert = Test-SanOnCert -SAN $FQDN -Certificate $edgeCerts[0]
+
+                                    if(-not $SANOnCert)
                                     {
-                                        $Identity  = $edgeCert.PsComputerName
-                                        $PoolFQDN  = (Get-CsComputer -Identity $Identity).Pool
-                                        $FQDN      = (Get-CsService -EdgeServer -PoolFqdn $PoolFQDN).AccessEdgeExternalFqdn
-                                        $SANOnCert = Test-SanOnCert -SAN $FQDN -Certificate $edgeCert
-
-                                        if(-not $SANOnCert)
+                                        throw 'IDEdgeCertsNotOnSan'
+                                    }
+                                    else
+                                    {
+                                        if ($edgeCerts -is [array])
                                         {
-                                            throw 'IDEdgeCertsNotOnSan'
+                                            foreach($edgeCert in ($edgeCerts[1]..$edgeCerts[$edgeCerts.Count -1]))
+                                            {
+                                                if($edgeCert.Thumbprint -ne $edgeCerts[0].Thumbprint)
+                                                {
+                                                    throw 'IDThumbprintMismatch'
+                                                }
+                                                else
+                                                {
+                                                    $this.Success = $true
+                                                }
+                                            }
+
+                                            $this.Results += @{EdgeCerts=$edgeCerts}
                                         }
                                         else
                                         {
-                                            $this.Success = $true
+                                            $this.Results += @{EdgeCerts=$edgeCerts}
                                         }
                                     }
-                                    $this.Results += @{EdgeCerts=$edgeCerts}
                                 }
                                 else
                                 {
-                                    throw 'IDUnableToConnect'
+                                    throw 'IDNoEdgeCertsFound'
                                 }
                             }
                             else
@@ -127,34 +153,52 @@ class RDCheckEdgeCerts : RuleDefinition
         {
             switch($_.ToString())
             {
+                IDNoEdgeCertsFound
+                {
+                    $this.Insight.Name      = $_
+                    $this.Success           = $false
+                    $this.Insight.Detection = ($global:InsightDetections.($_) -f $edgeServer)
+                    $this.Insight.Action    = $global:InsightActions.($_)
+                }
+
+                IDThumbprintMismatch
+                {
+                    $this.Insight.Name      = $_
+                    $this.Insight.Detection = ($global:InsightDetections.($_) -f $edgeCert.PSComputerName, $edgeCerts[0].Thumbprint, $edgeCert.Thumbprint)
+                    $this.Insight.Action    = $global:InsightActions.($_)
+                    $this.Success           = $false
+                }
+
                 IDEdgeCertsNotOnSan
                 {
                     $this.Success           = $false
-                    $this.Insight.Name      = 'IDEdgeCertsNotOnSan'
-                    $this.Insight.Detection = ($this.Insight.Detection -f $Identity, $FQDN, "TopologyFqdn")
+                    $this.Insight.Name      = $_
+                    $this.Insight.Detection = ($global:InsightDetections.($_) -f $Identity, $FQDN, "TopologyFqdn")
+                    $this.Insight.Action    = $global:InsightActions.($_)
+
                 }
 
                 IDEdgeServerNotReachable
                 {
                     $this.Success           = $false
-                    $this.Insight.Name      = 'IDEdgeServerNotReachable'
-                    $this.Insight.Detection = ($global:InsightDetections.($this.Insight.Name)) -f $edgeServer
-                    $this.Insight.Action    = $global:InsightActions.($this.Insight.Name)
+                    $this.Insight.Name      = $_
+                    $this.Insight.Detection = ($global:InsightDetections.($_) -f $edgeServer)
+                    $this.Insight.Action    = $global:InsightActions.($_)
                 }
 
                 IDGetCsServiceFails
                 {
-                    $this.Insight.Name      = 'IDGetCsServiceFails'
-                    $this.Insight.Detection = $global:InsightDetections.($this.Insight.Name)
-                    $this.Insight.Action    = $global:InsightActions.($this.Insight.Name)
+                    $this.Insight.Name      = $_
+                    $this.Insight.Detection = $global:InsightDetections.($_)
+                    $this.Insight.Action    = $global:InsightActions.($_)
                     $this.Success           = $false
                 }
 
                 IDUnableToConnect
                 {
-                    $this.Insight.Name      = 'IDUnableToConnect'
-                    $this.Insight.Detection = ($global:InsightDetections.($this.Insight.Name) -f $edgeServer)
-                    $this.Insight.Action    = ($global:InsightActions.($this.Insight.Name) -f $edgeServer)
+                    $this.Insight.Name      = $_
+                    $this.Insight.Detection = ($global:InsightDetections.($_) -f $edgeServer)
+                    $this.Insight.Action    = ($global:InsightActions.($_) -f $edgeServer)
                     $this.Success           = $false
                 }
 

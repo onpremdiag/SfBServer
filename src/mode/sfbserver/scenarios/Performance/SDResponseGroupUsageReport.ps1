@@ -48,7 +48,7 @@ class SDResponseGroupUsageReport : ScenarioDefinition
         Add-Keyword -Scenario $this -Keyword 'SQL'
 
         # Areas
-        Add-Area -Scenario $this -Area ($global:AreaTitles.'Performance')
+        # Bug 34369: 'Check if response group usage reports correctly' menu entry is duplicated
         Add-Area -Scenario $this -Area ($global:AreaTitles.'ResponseGroups')
 
     }

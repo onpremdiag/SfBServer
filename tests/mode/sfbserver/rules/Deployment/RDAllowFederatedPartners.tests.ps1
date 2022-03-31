@@ -125,7 +125,6 @@ Describe -Tag 'SfBServer' "RDAllowFederatedPartners" {
             Mock Get-CsAccessEdgeConfiguration {
                 @(
                     @{
-
                         AllowFederatedUsers    = $true
                         EnablePartnerDiscovery = $true
                     }
@@ -135,7 +134,11 @@ Describe -Tag 'SfBServer' "RDAllowFederatedPartners" {
             Mock Get-CsTenantFederationConfiguration {
                 @(
                     @{
-                        AllowedDomains = "Domain=microsoft.com"
+                        AllowedDomains = @(
+                            @{
+                                AllowedDomain = "contoso.com"
+                            }
+                        )
                         BlockedDomains = @{}
                     }
                 )

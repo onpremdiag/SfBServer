@@ -1,29 +1,14 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 name: $(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rrr)
 
 trigger:
-- master
+  branches:
+    include:
+    - master
 
 pool:
   vmImage: windows-latest
 
 steps:
-- task: PowerShell@2
-  displayName: Construct the build number
-  inputs: 
-    targetType: 'inline'
-    script: |
-      $Major = $(MajorVersion)
-      $Minor = $(MinorVersion)
-      $Build = [int](Get-Date -format "yyMM")
-      $Revision = "{0:d2}{1:d4}" -f [int](Get-Date -format "dd"), [int]($env:BUILD_BUILDNUMBER.Split('.')[1])
-      $BuildNumber = "{0}.{1}.{2:d2}.{3}" -f $Major, $Minor, $Build, $Revision
-
-      Write-Host "##vso[task.setvariable variable=BUILD_BUILDNUMBER]$BuildNumber"
 - task: PowerShell@2
   displayName: What kind of build is it?
   inputs:
@@ -64,7 +49,7 @@ steps:
   displayName: Set the product title
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/Set-Title.ps1'
-    arguments: '-Product $env:BUILD_PRODUCT'    
+    arguments: '-Product $env:BUILD_PRODUCT'
 - task: PowerShell@2
   displayName: Set the GitHub repo
   inputs:
@@ -80,12 +65,16 @@ steps:
   inputs:
     filePath: '$(Build.SourcesDirectory)/buildhelpers/Invoke-TestCases.ps1'
     arguments: "-SourceDirectory $(Build.SourcesDirectory) -Product $env:BUILD_PRODUCT -Languages 'English'"
+- task: PowerShell@2
+  displayName: Build nuget package
+  inputs:
+    filePath: '$(Build.SourcesDirectory)/buildhelpers/Create-NuGetPackage.ps1'
+    arguments: "-Version $(Build.BuildNumber)"
 - task: PublishTestResults@2
   displayName: Publish Test Results
   inputs:
     testRunner: NUnit
     failTaskOnFailedTests: true
-
 - task: PowerShell@2
   displayName: Remove any non-product files
   inputs:
@@ -115,14 +104,48 @@ steps:
   displayName: Publish Script Analyzer results
   inputs:
     PathtoPublish: $(System.DefaultWorkingDirectory)/PSSA-output.txt
-    ArtifactName: ScriptAnalyzerOutput      
+    ArtifactName: ScriptAnalyzerOutput
 - task: PublishBuildArtifacts@1
   displayName: Create build drop
   inputs:
-    PathtoPublish: $(Build.SourcesDirectory)/src
-    ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)
+    PathtoPublish: '$(Build.SourcesDirectory)/src'
+    ArtifactName: '$(System.TeamProject)-$(Build.BuildNumber)'
 - task: PublishBuildArtifacts@1
   displayName: Create buildhelpers drop
   inputs:
-    PathtoPublish: $(Build.SourcesDirectory)/buildhelpers
+    PathtoPublish: '$(Build.SourcesDirectory)/buildhelpers'
     ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)-BuildHelpers
+- task: PublishBuildArtifacts@1
+  displayName: Create nuget package drop
+  inputs:
+    PathtoPublish: $(Build.SourcesDirectory)/OPDCore.$(Build.BuildNumber).nupkg
+    ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
+- task: NuGetCommand@2
+  inputs:
+    displayName: 'Push OPDCore NuGet package -> NuGet Gallery'
+    command: 'push'
+    packagesToPush: $(Build.SourcesDirectory)/OPDCore.$(Build.BuildNumber).nupkg
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'NuGetConnection'
+    versioningScheme: byBuildNumber
+- task: BackupDirectory@1
+  inputs:
+    source: '$(Build.SourcesDirectory)/src'
+    destination: '$(TEMP)/$(System.TeamProject)-$(Build.BuildNumber)'
+    copyOptions: '/S /E'
+- task: ArchiveFiles@2
+  displayName: 'Create zip file'
+  inputs:
+    rootFolderOrFile: '$(TEMP)/$(System.TeamProject)-$(Build.BuildNumber)'
+    archiveFile: '$(TEMP)/$(Build.BuildNumber).zip'
+    verbose: true
+- task: marcelo-formentao.github-tools.github-release-publish-task.GitHubReleasePublish@1
+  displayName: 'Push release to GitHub'
+  inputs:
+    githubEndpoint: 'github.com_onpremdiag'
+    githubRepository: onpremdiag/SfBServer
+    githubTag: '$(Build.BuildNumber)'
+    githubReleaseTitle: '$(Build.BuildNumber)'
+    githubReleaseDraft: false
+    githubReleaseAsset: '$(TEMP)/$(Build.BuildNumber).zip'
+    githubReuseDraftOnly: false

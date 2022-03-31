@@ -86,7 +86,10 @@ class RDCompareAllowedDomains : RuleDefinition
             }
             catch [System.Management.Automation.PropertyNotFoundException]
             {
-                $OL_allowedDomains = $global:MiscStrings.'None'
+                if ($_.Exception.Message.Contains('AllowedDomain'))
+                {
+                    $OL_allowedDomains = $global:MiscStrings.'None'
+                }
             }
 
             #ONPREM Get Allowed Domains
@@ -102,7 +105,10 @@ class RDCompareAllowedDomains : RuleDefinition
             }
             catch [System.Management.Automation.PropertyNotFoundException]
             {
-                $OP_allowedDomains = $global:MiscStrings.'None'
+                if ($_.Exception.Message.Contains('Domain'))
+                {
+                    $OP_allowedDomains = $global:MiscStrings.'None'
+                }
             }
 
             # Let's compare the two

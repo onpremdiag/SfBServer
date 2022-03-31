@@ -336,3 +336,71 @@ New-Variable -Name InstallAzureADModule `
              -Scope 'Global' `
              -Option ReadOnly `
              -Force
+
+#region SQL Express Version
+New-Variable -Name SQLExpress2014 `
+             -Value @() `
+             -Scope 'Global' `
+             -Description 'SQL Server Express Edition 2014' `
+             -Force
+
+$SQLExpress2014 +=
+    New-Object PSObject -Property @{
+        Description    = 'Microsoft SQL Server 2014 Service Pack 3 (SP3)'
+        ProductVersion = [System.Version]"12.0.6024.0"
+        ProductLevel   = 'SP3'
+        Edition        = "Express Edition 2014"
+        URL            = "https://www.microsoft.com/download/details.aspx?id=57473"
+    }
+
+New-Variable -Name SQLExpress2016 `
+             -Value @() `
+             -Scope 'Global' `
+             -Description 'SQL Server Express Edition 2016' `
+             -Force
+
+$SQLExpress2016 +=
+    New-Object PSObject -Property @{
+        Description    = 'Microsoft SQL Server 2016 Service Pack 3 (SP3)'
+        ProductVersion = [System.Version]"13.0.6300.2"
+        ProductLevel   = 'SP3'
+        Edition        = "Express Edition 2016"
+        URL            = "https://www.microsoft.com/download/details.aspx?id=103440"
+    }
+
+New-Variable -Name SQLExpress2017 `
+             -Value @() `
+             -Scope 'Global' `
+             -Description 'SQL Server Express Edition 2017' `
+             -Force
+
+$SQLExpress2017 +=
+    New-Object PSObject -Property @{
+        Description    = 'SQL Server 2017 for Microsoft Windows Latest Cumulative Update'
+        ProductVersion = [System.Version]"14.0.3430.2"
+        ProductLevel   = 'CU28'
+        Edition        = "Express Edition 2017"
+        URL            = "https://www.microsoft.com/download/details.aspx?id=56128"
+    }
+
+New-Variable -Name SQLExpress2019 `
+             -Value @() `
+             -Scope 'Global' `
+             -Description 'SQL Server Express Edition 2019' `
+             -Force
+
+$SQLExpress2019 +=
+    New-Object PSObject -Property @{
+        Description    = 'SQL Server 2019 for Microsoft Windows Latest Cumulative Update'
+        ProductVersion = [System.Version]"15.0.4198.2"
+        ProductLevel   = 'CU15'
+        Edition        = "Express Edition 2019"
+        URL            = "https://www.microsoft.com/download/details.aspx?id=100809"
+    }
+
+New-Variable -Name SQLExpressVersions `
+             -Value @($SQLExpress2014, $SQLExpress2016, $SQLExpress2017, $SQLExpress2019) `
+             -Scope 'Global' `
+             -Description 'SQL Server Express Version' `
+             -Force
+#endregion

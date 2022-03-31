@@ -35,8 +35,10 @@ ConvertFrom-StringData @'
 	RDAutoDiscoverServiceInternalUri         = Determine if the AutoDiscoverServiceInternalUri value contains a valid configuration
 	RDCheckAddressInPool                     = Determine if current machine is in list of addresses for the pool
 	RDCheckAutoDiscoverURL                   = Determine if the SkypeforBusinessOnline hosting provider AutodiscoverURL is valid
+	RDCheckCertsExpiring                     = Determine if any Skype for Business Server certs are near expiry
 	RDCheckCMSReplicationStatus              = Determine if Central Management Store replication is up to date
 	RDCheckDirSyncEnabled                    = Determine if Directory Sync is enabled
+	RDCheckDiskHealthStatus                  = Determine if the disk status on the server for database and logs disks is 'Healthy'
 	RDCheckDNSResolution                     = Determine if the IPv4 address can be resolved and the reverse lookup matches
 	RDCheckDomainApprovedForFederation       = Determine if open federation is enabled or target domain is approved for federation
 	RDCheckEdgeCerts                         = Determine if Edge servers external certificate meet basic requirements
@@ -50,6 +52,7 @@ ConvertFrom-StringData @'
 	RDCheckLocalDBVersionMismatch            = Determine if local databases version match expected version
 	RDCheckLocalDomainFederationDNSRecord    = Determine if local domain federation DNS SRV record is discoverable
 	RDCheckLocalSQLServerSchemaVersion       = Determine if local SQL Server database installed version is different than expected version
+	RDCheckLocalSQLVersion                   = Determine if the correct version of SQL Server Express is installed.
 	RDCheckLyncdiscoverRecord                = Determine if lyncdiscover.<domain> DNS CNAME record points to webdir.online.lync.com
 	RDCheckMisplacedRootCACertificates       = Determine if there are misplaced certificates in local machine Root system store
 	RDCheckModernAuth                        = Determine if Modern Authentication is being used
@@ -57,6 +60,7 @@ ConvertFrom-StringData @'
 	RDCheckOAuthIsConfigured                 = Determine if OAuth is configured (at least 1 OAuthServer)
 	RDCheckOnlineSharedSipAddressSpace       = Determine if the SkypeforBusinessOnline hosting provider SharedAddressSpace is enabled
 	RDCheckPatchVersion                      = Determine if the server is at, or above, currently recommended patch level(s)
+	RDCheckPowerPlan                         = Determine the power plan configuration
 	RDCheckProxyConfiguration                = Determine if proxy settings are in sync/correct
 	RDCheckProxyFQDN                         = Determine if the Office 365 hosting provider ProxyFqdn is correct
 	RDCheckProxyPostMigration                = Determine if ProxyFqdn needs to be updated because federated partner has migrated from On-Premise to Online
@@ -90,6 +94,7 @@ ConvertFrom-StringData @'
 	RDCheckWinHttpSettings                   = Determine if the WinHTTP settings have been properly configured for TLS 1.0/1.1 deprecation.
 	RDCompareAllowedDomains                  = Determine if the On-Premise domains configuration match Office 365 tenant domain configuration
 	RDCsPartnerApplication                   = Determine if the partner application exists and is configured with the proper value
+	RDDBDriveFull                            = Determine if there are any DATABASE DRIVE FULL issues in the application log
 	RDDuplicatesInTrustedRootCA              = Determine if there are duplicate certificates in the trusted root certification authority
 	RDEdgeConfigAllowFederatedUsers          = Determine if remote user access is enabled
 	RDEdgeConfigAllowOutsideUsers            = Determine if the edge configuration allows outside users
@@ -103,8 +108,13 @@ ConvertFrom-StringData @'
 	RDIsUniversalServerAdmin                 = Determine if the current user has administrative privileges to run cmdlets
 	RDNoOnPremiseUsers                       = Determine if there are any On-Premise users still present
 	RDOAuthCertificateValid                  = Determine if the OAuthTokenIssuer certificate has not expired and has a serial number
+	RDServerCores                            = Determine if the number of CPU cores available are correct
+	RDServerLicenseVersion                   = Determine if we have a volume license key installed
+	RDServerMemory                           = Determine if the server meets the minimum required memory
+	RDServerSocketCoreRatio                  = Determine if the correct number of CPU cores are assigned to SQL Server Express
 	RDSfbServerPowerShellModuleLoaded        = Determine if this is a Skype for Business Server PowerShell module is loaded
 	RDSharedSipAddressSpace                  = Determine if the Office 365 tenant shared SIP address space is enabled
+	RDSqlIOLatency                           = Determine if there are any SQL I/O issues in the application log
 	RDTeamsModuleLoaded                      = Determine if the required version MicrosoftTeams module is loaded
 	RDTestAppPrincipalExists                 = Determine if the app principal ID exists
 	RDTestAutoDiscover                       = Determine if the DNS name for the Autodiscover is resolvable
@@ -113,5 +123,4 @@ ConvertFrom-StringData @'
 	RDTestOAuthServerConfiguration           = Determine if the OAuthServer configuration is correct
 	RDTestPartnerApplication                 = Determine if the Exchange application service exists and has the correct values
 	RDUsageTrend                             = Determine if the Usage Report returns results in the expected time limit (60 sec)
-###PSLOC
 '@

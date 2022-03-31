@@ -33,5 +33,9 @@ ConvertFrom-StringData @'
     DomainNotFound  = Domain not found
     DNSDoesNotExist = DNS name does not exist
     None            = None
+    CertSubject     = Subject
+    CertThumbprint  = Thumbprint
+    CertUse         = Use
+    CertExpiresOn   = Expires On
 ###PSLOC
 '@

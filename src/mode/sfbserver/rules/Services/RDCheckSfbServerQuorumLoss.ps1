@@ -23,7 +23,7 @@
 #
 # Filename: RDCheckSfbServerQuorumLoss.ps1
 # Description: Check if minimum number of servers required to start pool are up and running
-# Owner: Joï¿½o Loureiro <joaol@microsoft.com>
+# Owner: João Loureiro <joaol@microsoft.com>
 ################################################################################
 Set-StrictMode -Version Latest
 
@@ -133,8 +133,8 @@ class RDCheckSfbServerQuorumLoss : RuleDefinition
                 IDNullOrEmptyPoolFQDN
                 {
                     $this.Insight.Name      = $_
-                    $this.Insight.Detection = ($global:InsightDetections.($_) -f $ServerFqdn.Name)
-                    $this.Insight.Action    = ($global:InsightActions.($_) -f $ServerFqdn.Name)
+                    $this.Insight.Detection = $global:InsightDetections.($_) -f $ServerFqdn.Name
+                    $this.Insight.Action    = $global:InsightActions.($_) -f $ServerFqdn.Name
                     $this.Success           = $false
                 }
 

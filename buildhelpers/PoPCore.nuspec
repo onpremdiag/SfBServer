@@ -9,7 +9,8 @@
     <license type="expression">MIT</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>On Premise Diagnostic (OPD) Core</description>
-    <copyright>Copyright (c) 2018-2021, Microsoft Corporation. All rights reserved.</copyright>
+    <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+    <projectUrl>https://github.com/onpremdiag/SfBServer</projectUrl>
     <tags></tags>
   </metadata>
   <files>

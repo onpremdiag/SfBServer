@@ -55,17 +55,19 @@ class RDCheckSSLSettings : RuleDefinition
             # Diagnostic should only check local FE plus SQL associated with current FE pool
 
             # Current local FE
-            $FEServer = $null
-            $Pools    = Get-CSPool -ErrorAction SilentlyContinue
+            $FEServer    = $null
+            $Pools       = Get-CSPool -ErrorAction SilentlyContinue
+            $LocalServer = $env:COMPUTERNAME+'.'+$env:USERDNSDOMAIN
 
             if (-not [string]::IsNullOrEmpty($Pools))
             {
-                 $FEServer = $Pools | Where-Object {$_.Services -like '*Registrar*'} | Where-Object {$_.Fqdn -eq $env:COMPUTERNAME+'.'+$env:USERDNSDOMAIN}
+                # Bug 34470: TLS checks not detecting front end server
+                $FEServer = $Pools | Where-Object {$_.Services -like '*Registrar*'} | Where-Object {$_.Computers -like "*$($LocalServer)*"}
             }
 
             if (-not [string]::IsNullOrEmpty($FEServer))
             {
-                $localFE     = $FEServer.Fqdn
+                $localFE     = $LocalServer
                 $SSLSettings = Get-AllTlsSettingsFromRegistry -MachineName $localFE
                 $finished    = $false
 

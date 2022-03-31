@@ -57,17 +57,19 @@ class RDCheckWinHttpSettings : RuleDefinition
             # Diagnostic should only check local FE plus SQL associated with current FE pool
 
             # Current local FE
-            $FEServer = $null
-            $Pools    = Get-CSPool -ErrorAction SilentlyContinue
+            $FEServer    = $null
+            $Pools       = Get-CSPool -ErrorAction SilentlyContinue
+            $LocalServer = $env:COMPUTERNAME+'.'+$env:USERDNSDOMAIN
 
             if (-not [string]::IsNullOrEmpty($Pools))
             {
-                 $FEServer = $Pools | Where-Object {$_.Services -like '*Registrar*'} | Where-Object {$_.Fqdn -eq $env:COMPUTERNAME+'.'+$env:USERDNSDOMAIN}
+                # Bug 34470: TLS checks not detecting front end server
+                $FEServer = $Pools | Where-Object {$_.Services -like '*Registrar*'} | Where-Object {$_.Computers -like "*$($LocalServer)*"}
             }
 
             if (-not [string]::IsNullOrEmpty($FEServer))
             {
-                $localFE     = $FEServer.Fqdn
+                $localFE            = $LocalServer
                 $WinHTTPSettingsx32 = Invoke-RegistryGetValue -MachineName $localFE `
                                         -SubKey 'SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp' `
                                         -GetValue 'DefaultSecureProtocols' -DefaultValue $null
@@ -75,7 +77,7 @@ class RDCheckWinHttpSettings : RuleDefinition
                                         -SubKey 'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp' `
                                         -GetValue 'DefaultSecureProtocols' -DefaultValue $null
 
-                $finished    = $false
+                $finished           = $false
 
                 if (-not [string]::IsNullOrEmpty($WinHTTPSettingsx32) -or -not [string]::IsNullOrEmpty($WinHTTPSettingsx64))
                 {

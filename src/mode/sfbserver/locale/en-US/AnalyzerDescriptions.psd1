@@ -51,10 +51,14 @@ ConvertFrom-StringData @'
 	ADCheckRootCACertificates           = Verifies the local machine certificate store configuration is correct
 	ADCheckSChannelRegistryKeys         = Verifies the schannel client authentication trust mode and session ticket TLS optimization registry keys configuration
 	ADCheckSecurityGroupMembership      = Verifies if account has Skype for Business Server administrative privileges
+	ADCheckSFBVersion                   = Verifies that the minimum version of Skype for Business Server is installed
 	ADCheckSIPHostingProvider           = Verifies the SIP Hosting Provider settings for hybrid deployment
 	ADCheckSIPHostingProviderForOnPrem  = Verifies the SIP Hosting Provider settings for On-Premise deployment
+	ADCheckSSLSettings                  = Verifies SSL 3.0/2.0 are properly configured for TLS 1.1/1.0 deprecation
+	ADCheckStrongCryptoEnabled          = Verifies SchUseStrongCrypt is set properly for .NET framework(s)
 	ADCheckTLSSettings                  = Verifies TLS 1.0/1.1 deprecation
 	ADCheckUserUCS                      = Verifies if user contact list is being accessed through Unified Contact Store
+	ADCheckWinHttp                      = Verifies WinHTTP protocol settings for TLS 1.2 compliance
 	ADCompareOnPremToOnline             = Verifies the On-Premise domains configuration match Office 365 tenant domain configuration
 	ADEdgeServerAvailable               = Verifies that the Edge Server is available for remote PowerShell connections
 	ADExchangeHybrid                    = Verifies that connectivity with Exchange (hybrid configuration) is configured correctly
@@ -66,11 +70,8 @@ ConvertFrom-StringData @'
 	ADIsSQLBackendConnectionAvailable   = Verifies the SQL Server back end connectivity
 	ADIsTeamsModuleLoaded               = Verifies that the minimum version MicrosoftTeams module is loaded
 	ADRGSUsageTrend                     = Verifies that the Response Group Usage Report is working properly
+	ADServerPerfCheck                   = Verifies key performance parameters for Skype for Business Server
 	ADSfbServerPowerShellModuleLoaded   = Verifies that the Skype for Business PowerShell module is loaded
 	ADSQLDBVersionMismatch              = Verifies if Skype for Business Server local databases match expected version
-	ADCheckSSLSettings                  = Verifies SSL 3.0/2.0 are properly configured for TLS 1.1/1.0 deprecation
-	ADCheckWinHttp                      = Verifies WinHTTP protocol settings for TLS 1.2 compliance
-	ADCheckStrongCryptoEnabled          = Verifies SchUseStrongCrypt is set properly for .NET framework(s)
-	ADCheckSFBVersion                   = Verifies that the minimum version of Skype for Business Server is installed
 ###PSLOC
 '@

@@ -47,16 +47,6 @@
         Start OPD in the %MODE% mode. This is the default behavior and it will cause
         OPD to run %MODE% specific diagnostic scenarios.
 
-.PARAMETER ShareTelemetry
-    Simply put – Do you want to share Telemetry data with Microsoft?
-        Yes - you agree to share basic execution telemetry with Microsoft
-        No - you are not sharing any telemetry information with Microsoft
-
-.EXAMPLE
-        OPD-console.ps1 -mode %MODE% -ShareTelemetry Yes
-        Start OPD in the %MODE% mode and share runtime telemetry with Microsoft. The default
-        is to NOT share telemetry information.
-
 .PARAMETER AcceptEula
     Specify this switch to AcceptEula to run the OPD tool.
     Failure to specify this parameter will provide menu prompt waiting for user response to Accept
@@ -95,9 +85,6 @@ param
 (
     [Parameter(Mandatory = $false)]
     [String] $Mode = "%MODE%", ## Debug ## "%MODE%",
-
-    [Parameter(Mandatory = $false)]
-    [Switch] $ShareTelemetry,
 
     [Parameter(Mandatory = $false)]
     [Switch] $AcceptEula,
@@ -140,7 +127,6 @@ $global:OPDOptions  = @{
     Mode             = $Mode
     OriginalCulture  = ([System.Threading.Thread]::CurrentThread.CurrentCulture).Name
     ProxyAccessType  = $ProxyAccessType
-    ShareTelemetry   = $ShareTelemetry.IsPresent
     WindowsTitle     = $Host.UI.RawUI.WindowTitle
 }
 
@@ -611,14 +597,6 @@ function Initialize-OPD
 
             Clear-Host
 
-            # Verify if the customer is willing to share the result with Microsoft
-            if (-not $global:OPDOptions.ShareTelemetry)
-            {
-                $global:OPDOptions.ShareTelemetry = Confirm-ShareResults
-            }
-
-            Clear-Host
-
             $sb = New-Object -TypeName System.Text.StringBuilder
             $sb.AppendFormat($global:OPDStrings.'ExecutionMarker', $global:OPDStrings.'Starting', $Mode) | Out-Null
             $sb.AppendFormat(" : {0}", $global:ExecutionId) | Out-Null
@@ -776,12 +754,6 @@ function Start-Console
             }
         }
 
-        # if user opted-in to send data to Microsoft lets do it to ensure the data is preserved even if the user closes the PowerShell window
-        if ($global:OPDOptions.ShareTelemetry)
-        {
-            Send-TelemetryDataToMicrosoft
-        }
-
         Clear-Host
     }
 }
@@ -822,7 +794,8 @@ function Exit-OPD
     # Task 33803: Prompt end user for up/down on diagnosing problem
     Send-YesNoDataToMicrosoft (Get-UserFeedback)
 
-    # Perform any logging/cleanup required upon existing OPD
+    # Perform any logging/cleanup required upon exiting OPD
+
     # Task 33536: Pre-requisite diagnostics information to event log
 
     $sb = New-Object -TypeName System.Text.StringBuilder
