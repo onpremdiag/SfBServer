@@ -4,7 +4,6 @@ trigger:
   branches:
     include:
     - master
-    - mmcintyr/*
 
 pool:
   vmImage: windows-latest
@@ -111,42 +110,42 @@ steps:
   inputs:
     PathtoPublish: '$(Build.SourcesDirectory)/src'
     ArtifactName: '$(System.TeamProject)-$(Build.BuildNumber)'
-#- task: PublishBuildArtifacts@1
-#  displayName: Create buildhelpers drop
-#  inputs:
-#    PathtoPublish: '$(Build.SourcesDirectory)/buildhelpers'
-#    ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)-BuildHelpers
-#- task: PublishBuildArtifacts@1
-#  displayName: Create nuget package drop
-#  inputs:
-#    PathtoPublish: $(Build.SourcesDirectory)/OPDCore.$(Build.BuildNumber).nupkg
-#    ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
-#- task: NuGetCommand@2
-#  inputs:
-#    displayName: 'Push OPDCore NuGet package -> NuGet Gallery'
-#    command: 'push'
-#    packagesToPush: $(Build.SourcesDirectory)/OPDCore.$(Build.BuildNumber).nupkg
-#    nuGetFeedType: 'external'
-#    publishFeedCredentials: 'NuGetConnection'
-#    versioningScheme: byBuildNumber
-#- task: BackupDirectory@1
-#  inputs:
-#    source: '$(Build.SourcesDirectory)/src'
-#    destination: '$(TEMP)/$(System.TeamProject)-$(Build.BuildNumber)'
-#    copyOptions: '/S /E'
-#- task: ArchiveFiles@2
-#  displayName: 'Create zip file'
-#  inputs:
-#    rootFolderOrFile: '$(TEMP)/$(System.TeamProject)-$(Build.BuildNumber)'
-#    archiveFile: '$(TEMP)/$(Build.BuildNumber).zip'
-#    verbose: true
-#- task: marcelo-formentao.github-tools.github-release-publish-task.GitHubReleasePublish@1
-#  displayName: 'Push release to GitHub'
-#  inputs:
-#    githubEndpoint: 'github.com_onpremdiag'
-#    githubRepository: onpremdiag/SfBServer
-#    githubTag: '$(Build.BuildNumber)'
-#    githubReleaseTitle: '$(Build.BuildNumber)'
-#    githubReleaseDraft: false
-#    githubReleaseAsset: '$(TEMP)/$(Build.BuildNumber).zip'
-#    githubReuseDraftOnly: false
+- task: PublishBuildArtifacts@1
+  displayName: Create buildhelpers drop
+  inputs:
+    PathtoPublish: '$(Build.SourcesDirectory)/buildhelpers'
+    ArtifactName: $(System.TeamProject)-$(Build.BuildNumber)-BuildHelpers
+- task: PublishBuildArtifacts@1
+  displayName: Create nuget package drop
+  inputs:
+    PathtoPublish: $(Build.SourcesDirectory)/OPDCore.$(Build.BuildNumber).nupkg
+    ArtifactName:  OPDCore.$(Build.BuildNumber).nupkg
+- task: NuGetCommand@2
+  inputs:
+    displayName: 'Push OPDCore NuGet package -> NuGet Gallery'
+    command: 'push'
+    packagesToPush: $(Build.SourcesDirectory)/OPDCore.$(Build.BuildNumber).nupkg
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'NuGetConnection'
+    versioningScheme: byBuildNumber
+- task: BackupDirectory@1
+  inputs:
+    source: '$(Build.SourcesDirectory)/src'
+    destination: '$(TEMP)/$(System.TeamProject)-$(Build.BuildNumber)'
+    copyOptions: '/S /E'
+- task: ArchiveFiles@2
+  displayName: 'Create zip file'
+  inputs:
+    rootFolderOrFile: '$(TEMP)/$(System.TeamProject)-$(Build.BuildNumber)'
+    archiveFile: '$(TEMP)/$(Build.BuildNumber).zip'
+    verbose: true
+- task: marcelo-formentao.github-tools.github-release-publish-task.GitHubReleasePublish@1
+  displayName: 'Push release to GitHub'
+  inputs:
+    githubEndpoint: 'github.com_onpremdiag'
+    githubRepository: onpremdiag/SfBServer
+    githubTag: '$(Build.BuildNumber)'
+    githubReleaseTitle: '$(Build.BuildNumber)'
+    githubReleaseDraft: false
+    githubReleaseAsset: '$(TEMP)/$(Build.BuildNumber).zip'
+    githubReuseDraftOnly: false
