@@ -510,6 +510,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="pr-build.yml" />
     <Content Include="azure-pipelines.yml" />
     <Content Include="buildhelpers\Create-NuGetPackage.cmd" />
     <Content Include="buildhelpers\ReleaseNotesTemplate.md" />
