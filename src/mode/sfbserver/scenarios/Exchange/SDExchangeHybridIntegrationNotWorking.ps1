@@ -63,15 +63,15 @@ class SDExchangeHybridIntegrationNotWorking : ScenarioDefinition
         $id                     = Get-ProgressId
         $analyzerCount          = 0
 
-        Get-UserInput -ParameterDefinitions $this.ParameterDefinitions
-
         try
         {
             # Verify that Azure AD Module is loaded
-            if (Test-AzureADModule -eq $false)
+            if (-not (Test-AzureADModule))
             {
                 throw 'IDAzureADModuleCheckFailed'
             }
+
+            Get-UserInput -ParameterDefinitions $this.ParameterDefinitions
 
             foreach($analyzer in $this.AnalyzerDefinitions)
             {
@@ -99,10 +99,17 @@ class SDExchangeHybridIntegrationNotWorking : ScenarioDefinition
             {
                 IDAzureADModuleCheckFailed
                 {
-                    $this.Insight.Name      = $_
-                    $this.Insight.Action    = $global:InsightActions.$_
-                    $this.Insight.Detection = $global:InsightDetections.$_
-                    $this.Success           = $false
+                    $LogArguments = @{
+                        LogName   = $global:EventLogName
+                        Source    = "Scenarios"
+                        EntryType = "Error"
+                        Message   = ("{0}" -f $global:InsightDetections.$_)
+                        EventId   = 999
+                    }
+
+                    Write-EventLog  @LogArguments
+
+                    $this.Success  = $false
                 }
 
                 default
