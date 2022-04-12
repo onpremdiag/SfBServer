@@ -196,4 +196,6 @@ ConvertFrom-StringData @'
 	IDWrongPartnerApplication                        = Microsoft.Exchange partner application is registered for an incorrect service name.
 	IDWrongPowerPlan                                 = The power plan configuration is not correct. It should be set to 'High performance' only
 	IDWrongVerificationLevel                         = Office 365 hosting provider VerificationLevel parameter value is incorrect.
+	IDMicrosoftTeamsModuleCheckFailed                = Required minimum version of Microsoft Teams Module was not found
+	IDAzureADModuleCheckFailed                       = Required minimum version of Azure Active Directory Module was not found
 '@

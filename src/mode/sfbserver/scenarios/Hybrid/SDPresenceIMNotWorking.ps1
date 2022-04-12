@@ -80,6 +80,12 @@ class SDPresenceIMNotWorking : ScenarioDefinition
 
         try
         {
+            # Verify that Teams Module is loaded
+            if (Test-MicrosoftTeamsModule -eq $false)
+            {
+                throw 'IDMicrosoftTeamsModuleCheckFailed'
+            }
+
             # Establish a session
             Disconnect-MicrosoftTeams
             Connect-MicrosoftTeams
@@ -106,12 +112,31 @@ class SDPresenceIMNotWorking : ScenarioDefinition
         }
         catch
         {
-            Write-EventLog  -LogName $global:EventLogName `
-                            -source "Scenarios" `
-                            -EntryType Error `
-                            -Message ("{0}`r`n{1}" -f $_.Exception, $_.ScriptStackTrace) `
-                            -EventId 999
-            $this.Success  = $false
+            switch ($_.ToString())
+            {
+                IDMicrosoftTeamsModuleCheckFailed
+                {
+                    $this.Insight.Name      = $_
+                    $this.Insight.Action    = $global:InsightActions.$_
+                    $this.Insight.Detection = $global:InsightDetections.$_
+                    $this.Success           = $false
+                }
+
+                default
+                {
+                    $LogArguments = @{
+                        LogName   = $global:EventLogName
+                        Source    = "Scenarios"
+                        EntryType = "Error"
+                        Message   = ("{0}`r`n{1}" -f $_.Exception, $_.ScriptStackTrace)
+                        EventId   = 999
+                    }
+
+                    Write-EventLog  @LogArguments
+
+                    $this.Success  = $false
+                }
+            }
         }
         finally
         {

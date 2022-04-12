@@ -67,6 +67,12 @@ class SDExchangeHybridIntegrationNotWorking : ScenarioDefinition
 
         try
         {
+            # Verify that Azure AD Module is loaded
+            if (Test-AzureADModule -eq $false)
+            {
+                throw 'IDAzureADModuleCheckFailed'
+            }
+
             foreach($analyzer in $this.AnalyzerDefinitions)
             {
                 $analyzerCount++
@@ -80,6 +86,7 @@ class SDExchangeHybridIntegrationNotWorking : ScenarioDefinition
                 Invoke-Analyzer -analyzer $analyzer
 
                 $this.Success = $this.Success -band $analyzer.Success
+
                 if ($false -eq $analyzer.Success)
                 {
                     $this.Results += $analyzer
@@ -88,12 +95,31 @@ class SDExchangeHybridIntegrationNotWorking : ScenarioDefinition
         }
         catch
         {
-            Write-EventLog  -LogName $global:EventLogName `
-                            -source "Scenarios" `
-                            -EntryType Error `
-                            -Message ("{0}`r`n{1}" -f $_.Exception, $_.ScriptStackTrace) `
-                            -EventId 999
-            $this.Success  = $false
+            switch ($_.ToString())
+            {
+                IDAzureADModuleCheckFailed
+                {
+                    $this.Insight.Name      = $_
+                    $this.Insight.Action    = $global:InsightActions.$_
+                    $this.Insight.Detection = $global:InsightDetections.$_
+                    $this.Success           = $false
+                }
+
+                default
+                {
+                    $LogArguments = @{
+                        LogName   = $global:EventLogName
+                        Source    = "Scenarios"
+                        EntryType = "Error"
+                        Message   = ("{0}`r`n{1}" -f $_.Exception, $_.ScriptStackTrace)
+                        EventId   = 999
+                    }
+
+                    Write-EventLog  @LogArguments
+
+                    $this.Success  = $false
+                }
+            }
         }
         finally
         {

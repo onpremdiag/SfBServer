@@ -280,100 +280,121 @@ function Test-SanOnCert
 
 function Test-MicrosoftTeamsModule
 {
-    $modules = Get-Module -Name 'MicrosoftTeams' -ListAvailable -ErrorAction SilentlyContinue | Sort-Object -Property Version
+    $isLoaded = $global:OPDPreRequisites | Where-Object {$_.Description -eq $global:MicrosoftTeamsModule}
 
-    $prereq = New-Object PSObject
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Description" -Value "Microsoft Teams PowerShell Module"
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Minimum Required Version" -Value $global:MinimumMicrosoftTeams
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Installed Version" -Value "Not Found"
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Help" -Value $global:InstallMicrosoftTeamsPowerShellModule
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Passed" -Value $false
-
-    if (-not [string]::IsNullOrEmpty($modules))
+    if ([string]::IsNullOrEmpty($isLoaded))
     {
-        foreach ($module in $modules)
-        {
-            $prereq.'Installed Version' = ($module.Version).ToString()
+        $modules = Get-Module -Name 'MicrosoftTeams' -ListAvailable -ErrorAction SilentlyContinue | Sort-Object -Property Version
 
-            if ($module.Version.CompareTo($global:MinimumMicrosoftTeams) -ge 0)
+        $prereq = New-Object PSObject
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Description" -Value $global:MicrosoftTeamsModule
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Minimum Required Version" -Value $global:MinimumMicrosoftTeams
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Installed Version" -Value "Not Found"
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Help" -Value $global:InstallMicrosoftTeamsPowerShellModule
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Passed" -Value $false
+
+        if (-not [string]::IsNullOrEmpty($modules))
+        {
+            foreach ($module in $modules)
             {
-                $prereq.Passed = $true
-                break
-            }
-            else
-            {
-                $prereq.Passed = $false
+                $prereq.'Installed Version' = ($module.Version).ToString()
+
+                if ($module.Version.CompareTo($global:MinimumMicrosoftTeams) -ge 0)
+                {
+                    $prereq.Passed = $true
+                    break
+                }
+                else
+                {
+                    $prereq.Passed = $false
+                }
             }
         }
+
+        $global:OPDPreRequisites += $prereq
+        return $prereq.Passed
     }
 
-    $global:OPDPreRequisites += $prereq
-    return $prereq.Passed
+    return $isLoaded.Passed
 }
 
 function Test-SkypeForBusinessModule
 {
-    $modules = Get-Module -Name 'SkypeForBusiness' -ListAvailable -ErrorAction SilentlyContinue | Sort-Object -Property Version
+    $isLoaded = $global:OPDPreRequisites | Where-Object {$_.Description -eq $global:SkypeForBusinessModule}
 
-    $prereq = New-Object PSObject
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Description" -Value "SkypeForBusiness Module"
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Minimum Required Version" -Value $global:MinimumSkypeForBusiness
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Installed Version" -Value "Not Found"
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Help" -Value $global:InstalSkypeForBusinessModule
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Passed" -Value $false
-
-    if (-not [string]::IsNullOrEmpty($modules))
+    if ([string]::IsNullOrEmpty($isLoaded))
     {
-        foreach ($module in $modules)
-        {
-            $prereq.'Installed Version' = ($module.Version).ToString()
+        $modules = Get-Module -Name 'SkypeForBusiness' -ListAvailable -ErrorAction SilentlyContinue | Sort-Object -Property Version
 
-            if ($module.Version.CompareTo($global:MinimumSkypeForBusiness) -ge 0)
+        $prereq = New-Object PSObject
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Description" -Value $global:SkypeForBusinessModule
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Minimum Required Version" -Value $global:MinimumSkypeForBusiness
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Installed Version" -Value "Not Found"
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Help" -Value $global:InstalSkypeForBusinessModule
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Passed" -Value $false
+
+        if (-not [string]::IsNullOrEmpty($modules))
+        {
+            foreach ($module in $modules)
             {
-                $prereq.Passed = $true
-                break
-            }
-            else
-            {
-                $prereq.Passed = $false
+                $prereq.'Installed Version' = ($module.Version).ToString()
+
+                if ($module.Version.CompareTo($global:MinimumSkypeForBusiness) -ge 0)
+                {
+                    $prereq.Passed = $true
+                    break
+                }
+                else
+                {
+                    $prereq.Passed = $false
+                }
             }
         }
+
+        $global:OPDPreRequisites += $prereq
+        return $prereq.Passed
     }
 
-    $global:OPDPreRequisites += $prereq
-    return $prereq.Passed
+    return $isLoaded.Passed
 }
 
 # Task 32927: Exchange Hybrid/Online deployment check if AzureAD module is installed
 function Test-AzureADModule
 {
-    $modules = Get-Module -Name 'MSOnline' -ListAvailable -ErrorAction SilentlyContinue | Sort-Object -Property Version
+    $isLoaded = $global:OPDPreRequisites | Where-Object {$_.Description -eq $global:AzureADModule}
 
-    $prereq = New-Object PSObject
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Description" -Value "Microsoft Azure Active Directory Module for Windows PowerShell"
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Minimum Required Version" -Value $global:MinimumAzureAD
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Installed Version" -Value "Not Found"
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Help" -Value $global:InstallAzureADModule
-    Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Passed" -Value $false
-
-    if (-not [string]::IsNullOrEmpty($modules))
+    if ([string]::IsNullOrEmpty($isLoaded))
     {
-        foreach ($module in $modules)
-        {
-            $prereq.'Installed Version' = ($module.Version).ToString()
+        $modules = Get-Module -Name 'MSOnline' -ListAvailable -ErrorAction SilentlyContinue | Sort-Object -Property Version
 
-            if ($module.Version.CompareTo($global:MinimumAzureAD) -ge 0)
+        $prereq = New-Object PSObject
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Description" -Value $global:AzureADModule
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Minimum Required Version" -Value $global:MinimumAzureAD
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Installed Version" -Value "Not Found"
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Help" -Value $global:InstallAzureADModule
+        Add-Member -InputObject $prereq -MemberType NoteProperty -Name "Passed" -Value $false
+
+        if (-not [string]::IsNullOrEmpty($modules))
+        {
+            foreach ($module in $modules)
             {
-                $prereq.Passed = $true
-                break
-            }
-            else
-            {
-                $prereq.Passed = $false
+                $prereq.'Installed Version' = ($module.Version).ToString()
+
+                if ($module.Version.CompareTo($global:MinimumAzureAD) -ge 0)
+                {
+                    $prereq.Passed = $true
+                    break
+                }
+                else
+                {
+                    $prereq.Passed = $false
+                }
             }
         }
+
+        $global:OPDPreRequisites += $prereq
+        return $prereq.Passed
     }
 
-    $global:OPDPreRequisites += $prereq
-    return $prereq.Passed
+    return $isLoaded.Passed
 }

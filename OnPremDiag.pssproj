@@ -196,6 +196,7 @@
     <Compile Include="src\mode\sfbserver\insights\Deployment\IDWrongVerificationLevel.ps1" />
     <Compile Include="src\mode\sfbserver\insights\Exchange\IDAutoDiscoverDoesNotExist.ps1" />
     <Compile Include="src\mode\sfbserver\insights\Exchange\IDAutoDiscoverNameDoNotMatch.ps1" />
+    <Compile Include="src\mode\sfbserver\insights\Exchange\IDAzureADModuleCheckFailed.ps1" />
     <Compile Include="src\mode\sfbserver\insights\Exchange\IDBadAutoDiscoverServiceInternalUri.ps1" />
     <Compile Include="src\mode\sfbserver\insights\Exchange\IDExchangeAutodiscoverUrlNotConfigured.ps1" />
     <Compile Include="src\mode\sfbserver\insights\Exchange\IDExternalWSNotInSPNList.ps1" />
@@ -256,6 +257,7 @@
     <Compile Include="src\mode\sfbserver\insights\Global\IDTestCsDatabaseNoResults.ps1" />
     <Compile Include="src\mode\sfbserver\insights\Global\IDUnknownDomain.ps1" />
     <Compile Include="src\mode\sfbserver\insights\Hybrid\IDDNSOnPremises.ps1" />
+    <Compile Include="src\mode\sfbserver\insights\Hybrid\IDMicrosoftTeamsModuleCheckFailed.ps1" />
     <Compile Include="src\mode\sfbserver\insights\Services\IDFrontendFqdnCertNotOnSan.ps1" />
     <Compile Include="src\mode\sfbserver\insights\Services\IDIPv4DoesNotMatchReverseLookup.ps1" />
     <Compile Include="src\mode\sfbserver\insights\Services\IDLocalSQLServerSchemaVersionMismatch.ps1" />

@@ -305,11 +305,22 @@ New-Variable -Name MinimumMicrosoftTeams `
              -Option Readonly `
              -Force
 
+New-Variable -Name MicrosoftTeamsModule `
+             -Value 'Microsoft Teams PowerShell Module' `
+             -Scope 'Global' `
+             -Force
+
 New-Variable -Name MinimumSkypeForBusiness `
              -Value ([System.Version]"6.0.0.0") `
              -Description "Minimum version of SkypeForBusiness" `
              -Scope 'Global' `
              -Option Readonly `
+             -Force
+
+New-Variable -Name SkypeForBusinessModule `
+             -Value 'SkypeForBusiness Module' `
+             -Scope 'Global' `
+             -Option ReadOnly `
              -Force
 
 New-Variable -Name InstalSkypeForBusinessModule `
@@ -328,7 +339,13 @@ New-Variable -Name MinimumAzureAD `
              -Value ([System.Version]"1.1.183.57") `
              -Description "Minimum version of Azure Active Directory (AAD) 1.1.183.57" `
              -Scope 'Global' `
-             -Option Readonly `
+             -Option ReadOnly `
+             -Force
+
+New-Variable -Name AzureADModule `
+             -Value 'Microsoft Azure Active Directory Module for Windows PowerShell' `
+             -Scope 'Global' `
+             -Option ReadOnly `
              -Force
 
 New-Variable -Name InstallAzureADModule `
