@@ -1,10 +1,5 @@
 name: $(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rrr)
 
-trigger:
-  branches:
-    include:
-    - master
-
 pool:
   vmImage: windows-latest
 
