@@ -434,7 +434,7 @@ function Get-Scenario
 
     if ($null -ne $ScenarioList)
     {
-        $potentialScenarios += $ScenarioList | Where-Object {$_.Areas -contains $Area} | Sort-Object -Unique
+        $potentialScenarios += $ScenarioList | Where-Object {$_.Areas -contains $Area} | Sort-Object -Unique -Property Description
     }
 
     if ($potentialScenarios.Count -gt 0)

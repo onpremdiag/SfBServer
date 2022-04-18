@@ -22,7 +22,7 @@
 # SOFTWARE.
 #
 # Filename: SDHybridDeploymentProperlyDisabled.ps1
-# Description:  validate if Skype for Business hybrid deployment was properly
+# Description: Validate if Skype for Business hybrid deployment was properly
 # disabled as per Disable hybrid to complete migration to the cloud
 #
 # Owner: mmcintyr <mmcintyr@microsoft.com>
