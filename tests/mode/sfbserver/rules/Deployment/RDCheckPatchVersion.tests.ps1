@@ -31,113 +31,113 @@
 Set-StrictMode -Version Latest
 
 BeforeAll {
-	$sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
-	$root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
-	$srcRoot  = "$root\src"
-	$testRoot = "$root\tests"
-	$testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
-	$mode     = $Matches.Mode
+    $sut      = $PSCommandPath -replace '^(.*)\\tests\\(.*?)\\(.*?)\.tests\.*ps1', '$1\src\$2\$3.ps1'
+    $root     = $PSCommandPath -replace '^(.*)\\tests\\(.*)', '$1'
+    $srcRoot  = "$root\src"
+    $testRoot = "$root\tests"
+    $testMode = $PSCommandPath -match "^(.*)\\tests\\(.*?)\\(?<Mode>.*?)\\(.*?)\.tests\.*ps1"
+    $mode     = $Matches.Mode
 
-	Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
+    Get-ChildItem -Path "$srcRoot\classes" -Recurse -Filter *.ps1 | ForEach-Object {. $_.FullName}
 
-	# Load resource files needed for tests
-	. (Join-Path $testRoot -ChildPath "testhelpers\LoadResourceFiles.ps1")
+    # Load resource files needed for tests
+    . (Join-Path $testRoot -ChildPath "testhelpers\LoadResourceFiles.ps1")
 
-	Import-ResourceFiles -Root $srcRoot -MyMode $mode
+    Import-ResourceFiles -Root $srcRoot -MyMode $mode
 
-	. (Join-Path $srcRoot  -ChildPath "common\Globals.ps1")
-	. (Join-Path $srcRoot  -ChildPath "common\Utils.ps1")
-	. (Join-Path $srcRoot  -ChildPath "mode\$mode\common\Globals.ps1")
-	. (Join-Path $srcRoot  -ChildPath "mode\$mode\common\$mode.ps1")
-	. (Join-Path $srcRoot  -ChildPath "classes\RuleDefinition.ps1")
-	. (Join-Path $srcRoot  -ChildPath "classes\InsightDefinition.ps1")
-	. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDPatchUpdateAvailable.ps1")
-	. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDUnableToGetProductName.ps1")
-	. (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDUnableToGetVersion.ps1")
-	. (Join-Path $testRoot -ChildPath "mocks\SfbServerMock.ps1")
+    . (Join-Path $srcRoot  -ChildPath "common\Globals.ps1")
+    . (Join-Path $srcRoot  -ChildPath "common\Utils.ps1")
+    . (Join-Path $srcRoot  -ChildPath "mode\$mode\common\Globals.ps1")
+    . (Join-Path $srcRoot  -ChildPath "mode\$mode\common\$mode.ps1")
+    . (Join-Path $srcRoot  -ChildPath "classes\RuleDefinition.ps1")
+    . (Join-Path $srcRoot  -ChildPath "classes\InsightDefinition.ps1")
+    . (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDPatchUpdateAvailable.ps1")
+    . (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDUnableToGetProductName.ps1")
+    . (Join-Path $srcRoot  -ChildPath "mode\$mode\insights\Deployment\IDUnableToGetVersion.ps1")
+    . (Join-Path $testRoot -ChildPath "mocks\SfbServerMock.ps1")
 
-	. $sut
+    . $sut
 }
 
 Describe  -Tag 'SfBServer' "RDCheckPatchVersion" {
-	Context "RDCheckPatchVersion" {
-		BeforeAll {
-			Mock Write-OPDEventLog {}
-		}
+    Context "RDCheckPatchVersion" {
+        BeforeAll {
+            Mock Write-OPDEventLog {}
+        }
 
-		BeforeEach {
-			$rd = [RDCheckPatchVersion]::new([IDUnableToGetVersion]::new())
-		}
+        BeforeEach {
+            $rd = [RDCheckPatchVersion]::new([IDUnableToGetVersion]::new())
+        }
 
-		It "Runs with no errors (SUCCESS)" {
-			Mock Get-CsServerVersion { "Skype for Business Server 2019 (7.0.2046.0): Volume license key installed." }
-			Mock Get-CsServerPatchVersion {
-				@(
-					@{
-						ComponentName = "Skype for Business Server 2019, Core Components"
-						Version = "7.0.2046.369"
-					},
-					@{
-						ComponentName = "Skype for Business Server 2019, Core Management Server"
-						Version = "7.0.2046.123"
-					}
-				)
-			}
+        It "Runs with no errors (SUCCESS)" {
+            Mock Get-CsServerVersion { "Skype for Business Server 2019 (7.0.2046.0): Volume license key installed." }
+            Mock Get-CsServerPatchVersion {
+                @(
+                    @{
+                        ComponentName = "Skype for Business Server 2019, Core Components"
+                        Version = "7.0.2046.396"
+                    },
+                    @{
+                        ComponentName = "Skype for Business Server 2019, Core Management Server"
+                        Version = "7.0.2046.123"
+                    }
+                )
+            }
 
-			$rd.Execute($null)
+            $rd.Execute($null)
             $rd.Success           | Should -BeTrue
             $rd.EventId           | Should -Be $global:EventIds.($rd.Name)
             $rd.Insight.Detection | Should -Be $global:InsightDetections.($rd.Insight.Name)
             $rd.Insight.Action    | Should -Be $global:InsightActions.($rd.Insight.Name)
         }
 
-		It "Unable to determine product version (IDUnableToGetVersion)" {
-			Mock Get-CsServerVersion {}
+        It "Unable to determine product version (IDUnableToGetVersion)" {
+            Mock Get-CsServerVersion {}
 
-			$rd.Execute($null)
+            $rd.Execute($null)
             $rd.Success           | Should -BeFalse
             $rd.EventId           | Should -Be $global:EventIds.($rd.Name)
             $rd.Insight.Detection | Should -Be $global:InsightDetections.'IDUnableToGetVersion'
             $rd.Insight.Action    | Should -Be $global:InsightActions.'IDUnableToGetVersion'
 
-		}
+        }
 
-		It "Unable to find matching product (IDUnableToGetProductName)" {
-			Mock Get-CsServerVersion { "Skype for Business Server 2014 (5.0.2046.0): Volume license key installed." }
+        It "Unable to find matching product (IDUnableToGetProductName)" {
+            Mock Get-CsServerVersion { "Skype for Business Server 2014 (5.0.2046.0): Volume license key installed." }
 
-			$rd.Execute($null)
+            $rd.Execute($null)
             $rd.Success           | Should -BeFalse
             $rd.EventId           | Should -Be $global:EventIds.($rd.Name)
             $rd.Insight.Detection | Should -Be $global:InsightDetections.'IDUnableToGetProductName'
             $rd.Insight.Action    | Should -Be $global:InsightActions.'IDUnableToGetProductName'
-		}
+        }
 
-		It "Update is available (IDPatchUpdateAvailable)" {
-			Mock Get-CsServerVersion { "Skype for Business Server 2019 (7.0.2046.0): Volume license key installed." }
-			Mock Get-CsServerPatchVersion {
-				@(
-					@{
-						ComponentName = "Skype for Business Server 2019, Core Components"
-						Version = "7.0.2046.244"
-					}
-				)
-			}
+        It "Update is available (IDPatchUpdateAvailable)" {
+            Mock Get-CsServerVersion { "Skype for Business Server 2019 (7.0.2046.0): Volume license key installed." }
+            Mock Get-CsServerPatchVersion {
+                @(
+                    @{
+                        ComponentName = "Skype for Business Server 2019, Core Components"
+                        Version = "7.0.2046.244"
+                    }
+                )
+            }
 
-			$CurrentProduct  = Get-CsServerVersion
+            $CurrentProduct  = Get-CsServerVersion
             $ProductName     = $global:SkypeForBusinessUpdates |
                                 ForEach-Object {$_.ProductName} |
                                 Sort-Object -Unique |
                                 Where-Object {$CurrentProduct.Contains($_)}
-			$expectedPatches = $global:SkypeForBusinessUpdates | Where-Object {$_.ProductName -eq $ProductName}
-			$actualPatches   = Get-CsServerPatchVersion
-			$patchFound      = $expectedPatches | Where-Object {$_.ComponentName -eq ($actualPatches.ComponentName.Split(',')[1].TrimStart(' '))}
+            $expectedPatches = $global:SkypeForBusinessUpdates | Where-Object {$_.ProductName -eq $ProductName}
+            $actualPatches   = Get-CsServerPatchVersion
+            $patchFound      = $expectedPatches | Where-Object {$_.ComponentName -eq ($actualPatches.ComponentName.Split(',')[1].TrimStart(' '))}
 
-			$rd.Execute($null)
+            $rd.Execute($null)
             $rd.Success           | Should -BeFalse
             $rd.EventId           | Should -Be $global:EventIds.($rd.Name)
             $rd.Insight.Detection | Should -Be ($global:InsightDetections.'IDPatchUpdateAvailable' -f $actualPatches.ComponentName, $actualPatches.Version, $patchFound.Version)
             $rd.Insight.Action    | Should -Be ($global:InsightActions.'IDPatchUpdateAvailable' -f $patchFound.Update, $patchFound.Url)
-			$rd.Insight.Status    | Should -Be 'WARNING'
-		}
-	}
+            $rd.Insight.Status    | Should -Be 'WARNING'
+        }
+    }
 }
