@@ -231,9 +231,9 @@ $SkypeForBusinessUpdates2019 +=
     New-Object PSObject -Property @{
         ProductName   = "Skype for Business Server 2019"
         ComponentName = "Core Components"
-        Version       = [System.Version]"7.0.2046.369"
+        Version       = [System.Version]"7.0.2046.396"
         Update        = "May 11, 2021 Security Update"
-        Url           = "https://support.microsoft.com/help/5003729"
+        Url           = "https://www.microsoft.com/download/details.aspx?id=58347"
     }
 #endregion Updates for Skype for Business Server 2019
 
@@ -249,9 +249,9 @@ $SkypeForBusinessUpdates2015 +=
     New-Object PSObject -Property @{
         ProductName   = "Skype for Business Server 2015"
         ComponentName = "Core Components"
-        Version       = [System.Version]"6.0.9319.619"
+        Version       = [System.Version]"6.0.9319.628"
         Update        = "August 2021 Cumulative Update"
-        Url           = "https://support.microsoft.com/help/5005359"
+        Url           = "https://www.microsoft.com/download/details.aspx?id=47690"
     }
 
 #endregion
