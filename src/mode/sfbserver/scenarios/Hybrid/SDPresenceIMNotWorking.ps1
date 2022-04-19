@@ -76,11 +76,17 @@ class SDPresenceIMNotWorking : ScenarioDefinition
         $id                     = Get-ProgressId
         $analyzerCount          = 0
 
-        Get-UserInput -ParameterDefinitions $this.ParameterDefinitions
-
         try
         {
+            # Verify that Teams Module is loaded
+            if (-not (Test-MicrosoftTeamsModule))
+            {
+                throw 'IDMicrosoftTeamsModuleCheckFailed'
+            }
+
             # Establish a session
+            Get-UserInput -ParameterDefinitions $this.ParameterDefinitions
+
             Disconnect-MicrosoftTeams
             Connect-MicrosoftTeams
 
@@ -106,12 +112,38 @@ class SDPresenceIMNotWorking : ScenarioDefinition
         }
         catch
         {
-            Write-EventLog  -LogName $global:EventLogName `
-                            -source "Scenarios" `
-                            -EntryType Error `
-                            -Message ("{0}`r`n{1}" -f $_.Exception, $_.ScriptStackTrace) `
-                            -EventId 999
-            $this.Success  = $false
+            switch ($_.ToString())
+            {
+                IDMicrosoftTeamsModuleCheckFailed
+                {
+                    $LogArguments = @{
+                        LogName   = $global:EventLogName
+                        Source    = "Scenarios"
+                        EntryType = "Error"
+                        Message   = ("{0}" -f $global:InsightDetections.$_)
+                        EventId   = 999
+                    }
+
+                    Write-EventLog  @LogArguments
+
+                    $this.Success  = $false
+                }
+
+                default
+                {
+                    $LogArguments = @{
+                        LogName   = $global:EventLogName
+                        Source    = "Scenarios"
+                        EntryType = "Error"
+                        Message   = ("{0}`r`n{1}" -f $_.Exception, $_.ScriptStackTrace)
+                        EventId   = 999
+                    }
+
+                    Write-EventLog  @LogArguments
+
+                    $this.Success  = $false
+                }
+            }
         }
         finally
         {

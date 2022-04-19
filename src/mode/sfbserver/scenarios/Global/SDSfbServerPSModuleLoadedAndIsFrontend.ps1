@@ -42,7 +42,7 @@ class SDSfbServerPSModuleLoadedAndIsFrontend : ScenarioDefinition
         Add-AnalyzerDefinition -Scenario $this -AnalyzerDefinition ([ADSfbServerPowerShellModuleLoaded]::new())
         Add-AnalyzerDefinition -Scenario $this -AnalyzerDefinition ([ADIsSfbServerFrontend]::new())
         Add-AnalyzerDefinition -Scenario $this -AnalyzerDefinition ([ADIsSfbServerAdminAccount]::new())
-        Add-AnalyzerDefinition -Scenario $this -AnalyzerDefinition ([ADIsTeamsModuleLoaded]::new())
+        #Add-AnalyzerDefinition -Scenario $this -AnalyzerDefinition ([ADIsTeamsModuleLoaded]::new())
     }
 
     [void] Execute()

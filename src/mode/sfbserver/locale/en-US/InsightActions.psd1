@@ -197,4 +197,7 @@ ConvertFrom-StringData @'
 	IDWrongPartnerApplication                        = Please re-run PowerShell script available at https://docs.microsoft.com/skypeforbusiness/manage/authentication/configure-a-hybrid-environment
 	IDWrongPowerPlan                                 = Please ensure that the power plan is set to 'High performance' only.
 	IDWrongVerificationLevel                         = Please set VerificationLevel Office 365 hosting provider property value as per guidance available at https://docs.microsoft.com/skypeforbusiness/hybrid/configure-federation-with-skype-for-business-online.
+	IDMicrosoftTeamsModuleCheckFailed                = Check event log for details
+	IDAzureADModuleCheckFailed                       = Check event log for details
+
 '@

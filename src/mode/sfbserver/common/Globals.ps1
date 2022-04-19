@@ -231,9 +231,9 @@ $SkypeForBusinessUpdates2019 +=
     New-Object PSObject -Property @{
         ProductName   = "Skype for Business Server 2019"
         ComponentName = "Core Components"
-        Version       = [System.Version]"7.0.2046.369"
+        Version       = [System.Version]"7.0.2046.396"
         Update        = "May 11, 2021 Security Update"
-        Url           = "https://support.microsoft.com/help/5003729"
+        Url           = "https://www.microsoft.com/download/details.aspx?id=58347"
     }
 #endregion Updates for Skype for Business Server 2019
 
@@ -249,9 +249,9 @@ $SkypeForBusinessUpdates2015 +=
     New-Object PSObject -Property @{
         ProductName   = "Skype for Business Server 2015"
         ComponentName = "Core Components"
-        Version       = [System.Version]"6.0.9319.619"
+        Version       = [System.Version]"6.0.9319.628"
         Update        = "August 2021 Cumulative Update"
-        Url           = "https://support.microsoft.com/help/5005359"
+        Url           = "https://www.microsoft.com/download/details.aspx?id=47690"
     }
 
 #endregion
@@ -305,11 +305,22 @@ New-Variable -Name MinimumMicrosoftTeams `
              -Option Readonly `
              -Force
 
+New-Variable -Name MicrosoftTeamsModule `
+             -Value 'Microsoft Teams PowerShell Module' `
+             -Scope 'Global' `
+             -Force
+
 New-Variable -Name MinimumSkypeForBusiness `
              -Value ([System.Version]"6.0.0.0") `
              -Description "Minimum version of SkypeForBusiness" `
              -Scope 'Global' `
              -Option Readonly `
+             -Force
+
+New-Variable -Name SkypeForBusinessModule `
+             -Value 'SkypeForBusiness Module' `
+             -Scope 'Global' `
+             -Option ReadOnly `
              -Force
 
 New-Variable -Name InstalSkypeForBusinessModule `
@@ -328,7 +339,13 @@ New-Variable -Name MinimumAzureAD `
              -Value ([System.Version]"1.1.183.57") `
              -Description "Minimum version of Azure Active Directory (AAD) 1.1.183.57" `
              -Scope 'Global' `
-             -Option Readonly `
+             -Option ReadOnly `
+             -Force
+
+New-Variable -Name AzureADModule `
+             -Value 'Microsoft Azure Active Directory Module for Windows PowerShell' `
+             -Scope 'Global' `
+             -Option ReadOnly `
              -Force
 
 New-Variable -Name InstallAzureADModule `

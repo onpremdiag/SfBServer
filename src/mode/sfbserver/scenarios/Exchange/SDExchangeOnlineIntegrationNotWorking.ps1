@@ -62,10 +62,18 @@ class SDExchangeOnlineIntegrationNotWorking : ScenarioDefinition
         $id                     = Get-ProgressId
         $analyzerCount          = 0
 
-        Get-UserInput -ParameterDefinitions $this.ParameterDefinitions
+
 
         try
         {
+            # Verify that Azure AD Module is loaded
+            if (-not (Test-AzureADModule))
+            {
+                throw 'IDAzureADModuleCheckFailed'
+            }
+
+            Get-UserInput -ParameterDefinitions $this.ParameterDefinitions
+
             foreach($analyzer in $this.AnalyzerDefinitions)
             {
                 $analyzerCount++
@@ -87,12 +95,38 @@ class SDExchangeOnlineIntegrationNotWorking : ScenarioDefinition
         }
         catch
         {
-            Write-EventLog  -LogName $global:EventLogName `
-                            -source "Scenarios" `
-                            -EntryType Error `
-                            -Message ("{0}`r`n{1}" -f $_.Exception, $_.ScriptStackTrace) `
-                            -EventId 999
-            $this.Success  = $false
+            switch ($_.ToString())
+            {
+                IDAzureADModuleCheckFailed
+                {
+                    $LogArguments = @{
+                        LogName   = $global:EventLogName
+                        Source    = "Scenarios"
+                        EntryType = "Error"
+                        Message   = ("{0}" -f $global:InsightDetections.$_)
+                        EventId   = 999
+                    }
+
+                    Write-EventLog  @LogArguments
+
+                    $this.Success  = $false
+                }
+
+                default
+                {
+                    $LogArguments = @{
+                        LogName   = $global:EventLogName
+                        Source    = "Scenarios"
+                        EntryType = "Error"
+                        Message   = ("{0}`r`n{1}" -f $_.Exception, $_.ScriptStackTrace)
+                        EventId   = 999
+                    }
+
+                    Write-EventLog  @LogArguments
+
+                    $this.Success  = $false
+                }
+            }
         }
         finally
         {
